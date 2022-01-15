@@ -1,4 +1,7 @@
 #include "Game.h"
+#ifdef _DEBUG
+#include <iostream>
+#endif
 
 Game::Game() {
 
@@ -12,6 +15,13 @@ void Game::Init() {
 	mWindow = new Window();
 	mWindow->Init();
 	mWindow->Run();
+
+	mDx12Wrapper = new Dx12Wrapper();
+	if (SUCCEEDED(mDx12Wrapper->InitDXGIDevice())) {
+#ifdef _DEBUG
+		std::cout << "Success initialize dxgi device" << std::endl;
+#endif
+	}
 }
 
 void Game::Loop() {

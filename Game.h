@@ -1,5 +1,6 @@
 #pragma once
 #include "Window.h"
+#include "Dx12Wrapper.h"
 
 class Game {
 public:
@@ -9,4 +10,5 @@ public:
 	void Loop();
 private:
 	Window* mWindow;
+	Dx12Wrapper* mDx12Wrapper;
 };
