@@ -10,6 +10,7 @@ Game::Game() {
 
 Game::~Game() {
 	mWindow->~Window();
+	mDx12Wrapper->~Dx12Wrapper();
 }
 
 void Game::Init() {
