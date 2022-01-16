@@ -95,3 +95,61 @@ HRESULT Dx12Wrapper::InitSwapChain(const HWND& hwnd, const unsigned int w, const
 	assert(SUCCEEDED(result));
 	return result;
 }
+
+HRESULT Dx12Wrapper::InitRenderTargets() {
+	// レンダーターゲットビューの作成
+	D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	heapDesc.NodeMask = 0;
+	heapDesc.NumDescriptors = 2;
+	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	auto result = mDev->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(mRtvHeaps.ReleaseAndGetAddressOf()));
+
+	if (FAILED(result)) {
+		return result;
+	}
+
+	DXGI_SWAP_CHAIN_DESC swcDesc = {};
+	result = mSwapChain->GetDesc(&swcDesc);
+	mBackBuffers.resize(swcDesc.BufferCount);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE handle = mRtvHeaps->GetCPUDescriptorHandleForHeapStart();
+
+	//SRGBレンダーターゲットビュー設定
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+
+	for (int i = 0; i < swcDesc.BufferCount; ++i) {
+		result = mSwapChain->GetBuffer(i, IID_PPV_ARGS(&mBackBuffers[i]));
+		assert(SUCCEEDED(result));
+		rtvDesc.Format = mBackBuffers[i]->GetDesc().Format;
+		mDev->CreateRenderTargetView(mBackBuffers[i], &rtvDesc, handle);
+		handle.ptr += mDev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	}
+	return result;
+}
+
+void Dx12Wrapper::StartDraw() {
+	auto bbIdx = mSwapChain->GetCurrentBackBufferIndex();
+
+	auto rtvH = mRtvHeaps->GetCPUDescriptorHandleForHeapStart();
+	rtvH.ptr += static_cast<ULONG_PTR>(bbIdx * mDev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+	mCmdList->OMSetRenderTargets(1, &rtvH, false, nullptr);
+
+	float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+	mCmdList->ClearRenderTargetView(rtvH, clearColor, 0, nullptr);
+}
+
+void Dx12Wrapper::EndDraw() {
+	mCmdList->Close();
+
+	ID3D12CommandList* cmdLists[] = { mCmdList.Get() };
+	mCmdQueue->ExecuteCommandLists(1, cmdLists);
+
+	mCmdAllocator->Reset();
+	mCmdList->Reset(mCmdAllocator.Get(), nullptr);
+
+	mSwapChain->Present(1, 0);
+}

@@ -34,8 +34,13 @@ void Game::Init() {
 #ifdef _DEBUG
 		std::cout << "Failed to initialize swapchain" << std::endl;
 #endif // _DEBUG
-
 	}
+	if (FAILED(mDx12Wrapper->InitRenderTargets())) {
+#ifdef _DEBUG
+		std::cout << "Failed to initialize render target view" << std::endl;
+#endif
+	}
+
 }
 
 void Game::Loop() {
@@ -48,5 +53,7 @@ void Game::Loop() {
 		if (msg.message == WM_QUIT) {
 			break;
 		}
+		mDx12Wrapper->StartDraw();
+		mDx12Wrapper->EndDraw();
 	}
 }
