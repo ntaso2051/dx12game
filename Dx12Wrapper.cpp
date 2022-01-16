@@ -7,10 +7,17 @@ Dx12Wrapper::Dx12Wrapper() {
 
 }
 
+void Dx12Wrapper::EnableDebugLayer() {
+	auto result = D3D12GetDebugInterface(IID_PPV_ARGS(&mDebugLayer));
+	mDebugLayer->EnableDebugLayer();
+}
+
 HRESULT Dx12Wrapper::InitDXGIDevice() {
-	UINT flagsDXGI = 0;
-	flagsDXGI |= DXGI_CREATE_FACTORY_DEBUG;
-	auto result = CreateDXGIFactory2(flagsDXGI, IID_PPV_ARGS(mDxgiFactory.ReleaseAndGetAddressOf()));
+#ifdef _DEBUG
+	auto result = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(mDxgiFactory.ReleaseAndGetAddressOf()));
+#else
+	auto result = CreateDXGIFactory1(IID_PPV_ARGS(mDxgiFactory.ReleaseAndGetAddressOf()));
+#endif
 	//DirectX12まわり初期化
 	//フィーチャレベル列挙
 	D3D_FEATURE_LEVEL levels[] = {
@@ -131,8 +138,22 @@ HRESULT Dx12Wrapper::InitRenderTargets() {
 	return result;
 }
 
+HRESULT Dx12Wrapper::InitFence() {
+	auto result = mDev->CreateFence(mFenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(mFence.ReleaseAndGetAddressOf()));
+	return result;
+}
+
 void Dx12Wrapper::StartDraw() {
 	auto bbIdx = mSwapChain->GetCurrentBackBufferIndex();
+	// バリアの設定
+	D3D12_RESOURCE_BARRIER BarrierDesc = {};
+	BarrierDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	BarrierDesc.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	BarrierDesc.Transition.pResource = mBackBuffers[bbIdx];
+	BarrierDesc.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	BarrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	BarrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	mCmdList->ResourceBarrier(1, &BarrierDesc);
 
 	auto rtvH = mRtvHeaps->GetCPUDescriptorHandleForHeapStart();
 	rtvH.ptr += static_cast<ULONG_PTR>(bbIdx * mDev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
@@ -143,10 +164,29 @@ void Dx12Wrapper::StartDraw() {
 }
 
 void Dx12Wrapper::EndDraw() {
+	// バリアの設定
+	auto bbIdx = mSwapChain->GetCurrentBackBufferIndex();
+	D3D12_RESOURCE_BARRIER BarrierDesc = {};
+	BarrierDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	BarrierDesc.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	BarrierDesc.Transition.pResource = mBackBuffers[bbIdx];
+	BarrierDesc.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	BarrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	BarrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	mCmdList->ResourceBarrier(1, &BarrierDesc);
+
 	mCmdList->Close();
 
 	ID3D12CommandList* cmdLists[] = { mCmdList.Get() };
 	mCmdQueue->ExecuteCommandLists(1, cmdLists);
+	// 待つ
+	mCmdQueue->Signal(mFence.Get(), ++mFenceVal);
+	if (mFence->GetCompletedValue() < mFenceVal) {
+		auto event = CreateEvent(nullptr, false, false, nullptr);
+		mFence->SetEventOnCompletion(mFenceVal, event);
+		WaitForSingleObject(event, INFINITE);
+		CloseHandle(event);
+	}
 
 	mCmdAllocator->Reset();
 	mCmdList->Reset(mCmdAllocator.Get(), nullptr);
