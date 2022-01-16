@@ -21,6 +21,9 @@ void Game::Init() {
 
 	// DirectX12‚Ì‰Šú‰»
 	mDx12Wrapper = new Dx12Wrapper();
+#ifdef _DEBUG
+	mDx12Wrapper->EnableDebugLayer();
+#endif
 	if (FAILED(mDx12Wrapper->InitDXGIDevice())) {
 #ifdef _DEBUG
 		std::cout << "Failed to initialize dxgi device" << std::endl;
@@ -39,6 +42,11 @@ void Game::Init() {
 	if (FAILED(mDx12Wrapper->InitRenderTargets())) {
 #ifdef _DEBUG
 		std::cout << "Failed to initialize render target view" << std::endl;
+#endif
+	}
+	if (FAILED(mDx12Wrapper->InitFence())) {
+#ifdef _DEBUG
+		std::cout << "Failed to initialize fence" << std::endl;
 #endif
 	}
 

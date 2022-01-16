@@ -16,9 +16,14 @@ public:
 	HRESULT InitCommand();
 	HRESULT InitSwapChain(const HWND& hwnd, const unsigned int w, const unsigned int h);
 	HRESULT InitRenderTargets();
+	HRESULT InitFence();
 
+	// ウィンドウをクリア
 	void StartDraw();
 	void EndDraw();
+
+	// デバッグ用
+	void EnableDebugLayer();
 private:
 	// DXGI関連
 	ComPtr<IDXGIFactory4> mDxgiFactory = nullptr;
@@ -31,4 +36,11 @@ private:
 	ComPtr<ID3D12CommandQueue> mCmdQueue = nullptr;								// コマンドキュー
 	ComPtr<ID3D12DescriptorHeap> mRtvHeaps = nullptr;							// ディスクリプタヒープ
 	std::vector<ID3D12Resource*> mBackBuffers;										// バックバッファ
+
+	// フェンス
+	ComPtr<ID3D12Fence> mFence = nullptr;
+	UINT mFenceVal = 0;
+
+	// デバッグ用
+	ComPtr<ID3D12Debug> mDebugLayer = nullptr;
 };
