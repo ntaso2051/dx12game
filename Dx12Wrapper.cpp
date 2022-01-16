@@ -60,13 +60,38 @@ HRESULT Dx12Wrapper::InitCommand() {
 		assert(0);
 		return result;
 	}
-
 	D3D12_COMMAND_QUEUE_DESC cmdQueueDesc = {};
 	cmdQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;//タイムアウトなし
 	cmdQueueDesc.NodeMask = 0;
 	cmdQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;//プライオリティ特に指定なし
 	cmdQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;//ここはコマンドリストと合わせてください
 	result = mDev->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(mCmdQueue.ReleaseAndGetAddressOf()));//コマンドキュー生成
+	assert(SUCCEEDED(result));
+	return result;
+}
+
+HRESULT Dx12Wrapper::InitSwapChain(const HWND& hwnd, const unsigned int w, const unsigned int h) {
+	DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
+	swapchainDesc.Width = w;
+	swapchainDesc.Height = h;
+	swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapchainDesc.Stereo = false;
+	swapchainDesc.SampleDesc.Count = 1;
+	swapchainDesc.SampleDesc.Quality = 0;
+	swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapchainDesc.BufferCount = 2;
+	swapchainDesc.Scaling = DXGI_SCALING_STRETCH;
+	swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+	swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+
+	auto result = mDxgiFactory->CreateSwapChainForHwnd(mCmdQueue.Get(),
+		hwnd,
+		&swapchainDesc,
+		nullptr,
+		nullptr,
+		(IDXGISwapChain1 * *)mSwapChain.ReleaseAndGetAddressOf());
 	assert(SUCCEEDED(result));
 	return result;
 }

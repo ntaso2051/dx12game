@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <cassert>
 #ifdef _DEBUG
 #include <iostream>
 #endif
@@ -12,15 +13,28 @@ Game::~Game() {
 }
 
 void Game::Init() {
+	// Window‚Ìì¬
 	mWindow = new Window();
 	mWindow->Init();
 	mWindow->Run();
 
+	// DirectX12‚Ì‰Šú‰»
 	mDx12Wrapper = new Dx12Wrapper();
-	if (SUCCEEDED(mDx12Wrapper->InitDXGIDevice())) {
+	if (FAILED(mDx12Wrapper->InitDXGIDevice())) {
 #ifdef _DEBUG
-		std::cout << "Success initialize dxgi device" << std::endl;
+		std::cout << "Failed to initialize dxgi device" << std::endl;
 #endif
+	}
+	if (FAILED(mDx12Wrapper->InitCommand())) {
+#ifdef _DEBUG
+		std::cout << "Failed to initialize dxgi command" << std::endl;
+#endif
+	}
+	if (FAILED(mDx12Wrapper->InitSwapChain(mWindow->GetHwnd(), mWindow->GetWidth(), mWindow->GetHeight()))) {
+#ifdef _DEBUG
+		std::cout << "Failed to initialize swapchain" << std::endl;
+#endif // _DEBUG
+
 	}
 }
 

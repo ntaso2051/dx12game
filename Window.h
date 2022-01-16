@@ -11,6 +11,9 @@ public:
 	~Window();
 	void Init();
 	void Run();
+	HWND GetHwnd();
+	const unsigned int GetWidth() { return mWidth; }
+	const unsigned int GetHeight() { return mHeight; }
 private:
 	WNDCLASSEX mWindowClass;
 	HWND mHwnd;

@@ -13,6 +13,7 @@ public:
 	Dx12Wrapper();
 	HRESULT InitDXGIDevice();
 	HRESULT InitCommand();
+	HRESULT InitSwapChain(const HWND& hwnd, const unsigned int w, const unsigned int h);
 private:
 	// DXGIŠÖ˜A
 	ComPtr<IDXGIFactory4> mDxgiFactory = nullptr;

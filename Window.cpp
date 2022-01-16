@@ -34,3 +34,8 @@ void Window::Init() {
 void Window::Run() {
 	ShowWindow(mHwnd, SW_SHOW);
 }
+
+HWND Window::GetHwnd() {
+	return this->mHwnd;
+}
+
