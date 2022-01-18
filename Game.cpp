@@ -50,6 +50,8 @@ void Game::Init() {
 #endif
 	}
 
+	mDx12Wrapper->DrawSqurePolygon(mWindow->GetWidth(), mWindow->GetHeight());
+	mDx12Wrapper->ShaderCompile();
 }
 
 void Game::Loop() {
