@@ -50,8 +50,13 @@ void Game::Init() {
 #endif
 	}
 
-	mDx12Wrapper->DrawSqurePolygon(mWindow->GetWidth(), mWindow->GetHeight());
-	mDx12Wrapper->ShaderCompile();
+	mDx12Wrapper->InitViewport(mWindow->GetWidth(), mWindow->GetHeight());
+
+	mSpriteRenderer = new SpriteRenderer(*mDx12Wrapper);
+	mSpriteRenderer->InitView();
+	mSpriteRenderer->CompileShader();
+	mSpriteRenderer->InitRootSignature();
+	mSpriteRenderer->InitGraphicPipeline();
 }
 
 void Game::Loop() {
@@ -65,6 +70,7 @@ void Game::Loop() {
 			break;
 		}
 		mDx12Wrapper->StartDraw();
+		mSpriteRenderer->Draw();
 		mDx12Wrapper->EndDraw();
 	}
 }

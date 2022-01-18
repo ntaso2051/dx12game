@@ -158,8 +158,6 @@ void Dx12Wrapper::StartDraw() {
 	BarrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	mCmdList->ResourceBarrier(1, &BarrierDesc);
 
-	// TODO: 設計を考える
-	mCmdList->SetPipelineState(mPipelinestate);
 
 
 	auto rtvH = mRtvHeaps->GetCPUDescriptorHandleForHeapStart();
@@ -167,16 +165,10 @@ void Dx12Wrapper::StartDraw() {
 	mCmdList->OMSetRenderTargets(1, &rtvH, false, nullptr);
 	float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 	mCmdList->ClearRenderTargetView(rtvH, clearColor, 0, nullptr);
+}
 
-	// TODO: 設計を考える
-	mCmdList->RSSetViewports(1, &mViewport);
-	mCmdList->RSSetScissorRects(1, &mScissorrect);
-	mCmdList->SetGraphicsRootSignature(mRootsignature);
-
-	mCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	mCmdList->IASetVertexBuffers(0, 1, &mVbView);
-	mCmdList->IASetIndexBuffer(&mIbView);
-	mCmdList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+Microsoft::WRL::ComPtr<ID3D12Device> Dx12Wrapper::Device() {
+	return mDev;
 }
 
 void Dx12Wrapper::EndDraw() {
@@ -210,186 +202,13 @@ void Dx12Wrapper::EndDraw() {
 	mSwapChain->Present(1, 0);
 }
 
-void Dx12Wrapper::DrawSqurePolygon(const int w, const int h) {
-	// 頂点バッファ
-	XMFLOAT3 vertices[] = {
-		{-0.4f,-0.7f,0.0f} ,//左下
-		{-0.4f,0.7f,0.0f} ,//左上
-		{0.4f,-0.7f,0.0f} ,//右下
-		{0.4f,0.7f,0.0f} ,//右上
-	};
-	D3D12_HEAP_PROPERTIES heapprop = {};
-	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
-	heapprop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapprop.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-
-	D3D12_RESOURCE_DESC resdesc = {};
-	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resdesc.Width = sizeof(vertices);
-	resdesc.Height = 1;
-	resdesc.DepthOrArraySize = 1;
-	resdesc.MipLevels = 1;
-	resdesc.Format = DXGI_FORMAT_UNKNOWN;
-	resdesc.SampleDesc.Count = 1;
-	resdesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	ID3D12Resource* vertBuff = nullptr;
-	auto result = mDev->CreateCommittedResource(
-		&heapprop,
-		D3D12_HEAP_FLAG_NONE,
-		&resdesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertBuff)
-	);
-	XMFLOAT3* vertMap = nullptr;
-	result = vertBuff->Map(0, nullptr, (void**)& vertMap);
-	std::copy(std::begin(vertices), std::end(vertices), vertMap);
-	vertBuff->Unmap(0, nullptr);
-
-	mVbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
-	mVbView.SizeInBytes = sizeof(vertices);
-	mVbView.StrideInBytes = sizeof(vertices[0]);
-
-	// インデックスバッファ
-	unsigned short indices[] = { 0,1,2, 2,1,3 };
-
-	ID3D12Resource* idxBuff = nullptr;
-	//設定は、バッファのサイズ以外頂点バッファの設定を使いまわして
-	//OKだと思います。
-	resdesc.Width = sizeof(indices);
-	result = mDev->CreateCommittedResource(
-		&heapprop,
-		D3D12_HEAP_FLAG_NONE,
-		&resdesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&idxBuff));
-
-	//作ったバッファにインデックスデータをコピー
-	unsigned short* mappedIdx = nullptr;
-	idxBuff->Map(0, nullptr, (void**)& mappedIdx);
-	std::copy(std::begin(indices), std::end(indices), mappedIdx);
-	idxBuff->Unmap(0, nullptr);
-
-	//インデックスバッファビューを作成
-	mIbView.BufferLocation = idxBuff->GetGPUVirtualAddress();
-	mIbView.Format = DXGI_FORMAT_R16_UINT;
-	mIbView.SizeInBytes = sizeof(indices);
-
-
-	ID3DBlob* _vsBlob = nullptr;
-	ID3DBlob* _psBlob = nullptr;
-	ID3DBlob* errorBlob = nullptr;
-	result = D3DCompileFromFile(
-		L"Shaders/BasicVertexShader.hlsl",
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"BasicVS", "vs_5_0",
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-		0,
-		&_vsBlob,
-		&errorBlob
-	);
-	if (FAILED(result)) {
-		assert(0);
-	}
-	result = D3DCompileFromFile(
-		L"Shaders/BasicPixelShader.hlsl",
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"BasicPS", "ps_5_0",
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-		0,
-		&_psBlob,
-		&errorBlob
-	);
-	if (FAILED(result)) {
-		assert(0);
-	}
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ "POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 },
-	};
-
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = {};
-	gpipeline.pRootSignature = nullptr;
-	gpipeline.VS.pShaderBytecode = _vsBlob->GetBufferPointer();
-	gpipeline.VS.BytecodeLength = _vsBlob->GetBufferSize();
-	gpipeline.PS.pShaderBytecode = _psBlob->GetBufferPointer();
-	gpipeline.PS.BytecodeLength = _psBlob->GetBufferSize();
-
-	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;//中身は0xffffffff
-
-	//
-	gpipeline.BlendState.AlphaToCoverageEnable = false;
-	gpipeline.BlendState.IndependentBlendEnable = false;
-
-	D3D12_RENDER_TARGET_BLEND_DESC renderTargetBlendDesc = {};
-
-	//ひとまず加算や乗算やαブレンディングは使用しない
-	renderTargetBlendDesc.BlendEnable = false;
-	renderTargetBlendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-	//ひとまず論理演算は使用しない
-	renderTargetBlendDesc.LogicOpEnable = false;
-
-	gpipeline.BlendState.RenderTarget[0] = renderTargetBlendDesc;
-
-
-	gpipeline.RasterizerState.MultisampleEnable = false;//まだアンチェリは使わない
-	gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;//カリングしない
-	gpipeline.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;//中身を塗りつぶす
-	gpipeline.RasterizerState.DepthClipEnable = true;//深度方向のクリッピングは有効に
-
-	//残り
-	gpipeline.RasterizerState.FrontCounterClockwise = false;
-	gpipeline.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-	gpipeline.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-	gpipeline.RasterizerState.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-	gpipeline.RasterizerState.AntialiasedLineEnable = false;
-	gpipeline.RasterizerState.ForcedSampleCount = 0;
-	gpipeline.RasterizerState.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
-
-
-	gpipeline.DepthStencilState.DepthEnable = false;
-	gpipeline.DepthStencilState.StencilEnable = false;
-
-	gpipeline.InputLayout.pInputElementDescs = inputLayout;//レイアウト先頭アドレス
-	gpipeline.InputLayout.NumElements = _countof(inputLayout);//レイアウト配列数
-
-	gpipeline.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;//ストリップ時のカットなし
-	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;//三角形で構成
-
-	gpipeline.NumRenderTargets = 1;//今は１つのみ
-	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;//0～1に正規化されたRGBA
-
-	gpipeline.SampleDesc.Count = 1;//サンプリングは1ピクセルにつき１
-	gpipeline.SampleDesc.Quality = 0;//クオリティは最低
-
-
-
-	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
-	ID3DBlob* rootSigBlob = nullptr;
-	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
-	result = mDev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&mRootsignature));
-	rootSigBlob->Release();
-
-	gpipeline.pRootSignature = mRootsignature;
-
-	result = mDev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&mPipelinestate));
-
-
+void Dx12Wrapper::InitViewport(const int w, const int h) {
 	mViewport.Width = w;//出力先の幅(ピクセル数)
 	mViewport.Height = h;//出力先の高さ(ピクセル数)
 	mViewport.TopLeftX = 0;//出力先の左上座標X
 	mViewport.TopLeftY = 0;//出力先の左上座標Y
 	mViewport.MaxDepth = 1.0f;//深度最大値
 	mViewport.MinDepth = 0.0f;//深度最小値
-
-
 
 	mScissorrect.top = 0;//切り抜き上座標
 	mScissorrect.left = 0;//切り抜き左座標

@@ -126,11 +126,13 @@
     <ClCompile Include="Dx12Wrapper.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dx12Wrapper.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

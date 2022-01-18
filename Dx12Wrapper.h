@@ -20,11 +20,15 @@ public:
 	HRESULT InitRenderTargets();
 	HRESULT InitFence();
 
+	ComPtr<ID3D12Device> Device();
+	ComPtr<ID3D12GraphicsCommandList> CmdList() { return mCmdList; }
+	D3D12_VIEWPORT Viewport() { return mViewport; }
+	D3D12_RECT Scissorrect() { return mScissorrect; }
 	// ウィンドウをクリア
 	void StartDraw();
 	void EndDraw();
 
-	void DrawSqurePolygon(const int w, const int h);
+	void InitViewport(const int w, const int h);
 
 	void ShaderCompile();
 
