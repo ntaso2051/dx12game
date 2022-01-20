@@ -1,19 +1,30 @@
 #include "SpriteRenderer.h"
 #include "Dx12Wrapper.h"
+#include <random>
 
 using namespace DirectX;
 
 
-SpriteRenderer::SpriteRenderer(Dx12Wrapper& dx12Wrapper) :mDx12Wrapper(dx12Wrapper) {}
+SpriteRenderer::SpriteRenderer(Dx12Wrapper& dx12Wrapper) :mDx12Wrapper(dx12Wrapper) {
+	// デバッグ用のノイズテクスチャを作成
+	for (int i = 0; i < 256 * 256; i++) {
+		TexRGBA temp;
+		temp.A = 255;
+		temp.R = rand() % 256;
+		temp.B = rand() % 256;
+		temp.G = rand() % 256;
+		noiseTexData.push_back(temp);
+	}
+}
 SpriteRenderer::~SpriteRenderer() {}
 
 void SpriteRenderer::InitView() {
 	// 頂点バッファ
-	XMFLOAT3 vertices[] = {
-		{-0.4f,-0.7f,0.0f} ,//左下
-		{-0.4f,0.7f,0.0f} ,//左上
-		{0.4f,-0.7f,0.0f} ,//右下
-		{0.4f,0.7f,0.0f} ,//右上
+	Vertex vertices[] = {
+		{{-0.4f,-0.7f,0.0f}, {0.0f, 1.0f}},//左下
+		{{-0.4f,0.7f,0.0f}, {0.0f, 0.0f}} ,//左上
+		{{0.4f,-0.7f,0.0f}, {1.0f, 1.0f}} ,//右下
+		{{0.4f,0.7f,0.0f}, {1.0f, 0.0f}} ,//右上
 	};
 	D3D12_HEAP_PROPERTIES heapprop = {};
 	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -39,7 +50,7 @@ void SpriteRenderer::InitView() {
 		nullptr,
 		IID_PPV_ARGS(mVb.ReleaseAndGetAddressOf())
 	);
-	XMFLOAT3* vertMap = nullptr;
+	Vertex* vertMap = nullptr;
 	result = mVb->Map(0, nullptr, (void**)& vertMap);
 	std::copy(std::begin(vertices), std::end(vertices), vertMap);
 	mVb->Unmap(0, nullptr);
@@ -119,7 +130,8 @@ HRESULT SpriteRenderer::InitRootSignature() {
 
 HRESULT SpriteRenderer::InitGraphicPipeline() {
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-{ "POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 },
+	{ "POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 },
+	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 	};
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = {};
 	gpipeline.pRootSignature = nullptr;

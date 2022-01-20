@@ -18,6 +18,13 @@ public:
 	HRESULT InitGraphicPipeline();
 	HRESULT InitRootSignature();
 private:
+	struct Vertex {
+		DirectX::XMFLOAT3 pos;
+		DirectX::XMFLOAT2 uv;
+	};
+	struct TexRGBA {
+		unsigned char R, G, B, A;
+	};
 	Dx12Wrapper& mDx12Wrapper;
 	template<typename T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -31,4 +38,7 @@ private:
 	ComPtr<ID3D12Resource> mIb = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW mVbView = {};
 	D3D12_INDEX_BUFFER_VIEW mIbView = {};
+
+	// デバッグ用のノイズテクスチャ
+	std::vector<TexRGBA> noiseTexData;
 };
