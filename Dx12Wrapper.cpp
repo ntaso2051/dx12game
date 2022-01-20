@@ -158,8 +158,6 @@ void Dx12Wrapper::StartDraw() {
 	BarrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	mCmdList->ResourceBarrier(1, &BarrierDesc);
 
-
-
 	auto rtvH = mRtvHeaps->GetCPUDescriptorHandleForHeapStart();
 	rtvH.ptr += static_cast<ULONG_PTR>(bbIdx * mDev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 	mCmdList->OMSetRenderTargets(1, &rtvH, false, nullptr);

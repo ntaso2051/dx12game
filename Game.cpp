@@ -57,6 +57,7 @@ void Game::Init() {
 	mSpriteRenderer->CompileShader();
 	mSpriteRenderer->InitRootSignature();
 	mSpriteRenderer->InitGraphicPipeline();
+	mSpriteRenderer->CreateTexture();
 }
 
 void Game::Loop() {

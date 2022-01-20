@@ -1,20 +1,12 @@
 #include "SpriteRenderer.h"
 #include "Dx12Wrapper.h"
 #include <random>
+#include "Texture.h"
 
 using namespace DirectX;
 
 
 SpriteRenderer::SpriteRenderer(Dx12Wrapper& dx12Wrapper) :mDx12Wrapper(dx12Wrapper) {
-	// デバッグ用のノイズテクスチャを作成
-	for (int i = 0; i < 256 * 256; i++) {
-		TexRGBA temp;
-		temp.A = 255;
-		temp.R = rand() % 256;
-		temp.B = rand() % 256;
-		temp.G = rand() % 256;
-		noiseTexData.push_back(temp);
-	}
 }
 SpriteRenderer::~SpriteRenderer() {}
 
@@ -119,6 +111,36 @@ HRESULT SpriteRenderer::InitRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	D3D12_DESCRIPTOR_RANGE descTblRange = {};
+	descTblRange.NumDescriptors = 1;//テクスチャひとつ
+	descTblRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//種別はテクスチャ
+	descTblRange.BaseShaderRegister = 0;//0番スロットから
+	descTblRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+
+	D3D12_ROOT_PARAMETER rootparam = {};
+	rootparam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootparam.DescriptorTable.pDescriptorRanges = &descTblRange;//デスクリプタレンジのアドレス
+	rootparam.DescriptorTable.NumDescriptorRanges = 1;//デスクリプタレンジ数
+	rootparam.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//ピクセルシェーダから見える
+
+	rootSignatureDesc.pParameters = &rootparam;//ルートパラメータの先頭アドレス
+	rootSignatureDesc.NumParameters = 1;//ルートパラメータ数
+
+	D3D12_STATIC_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//横繰り返し
+	samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//縦繰り返し
+	samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//奥行繰り返し
+	samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;//ボーダーの時は黒
+	samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;//補間しない(ニアレストネイバー)
+	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;//ミップマップ最大値
+	samplerDesc.MinLOD = 0.0f;//ミップマップ最小値
+	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//オーバーサンプリングの際リサンプリングしない？
+	samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//ピクセルシェーダからのみ可視
+
+	rootSignatureDesc.pStaticSamplers = &samplerDesc;
+	rootSignatureDesc.NumStaticSamplers = 1;
+
 	ID3DBlob* rootSigBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 	auto result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
@@ -203,5 +225,91 @@ void SpriteRenderer::Draw() {
 	mDx12Wrapper.CmdList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	mDx12Wrapper.CmdList()->IASetVertexBuffers(0, 1, &mVbView);
 	mDx12Wrapper.CmdList()->IASetIndexBuffer(&mIbView);
+	mDx12Wrapper.CmdList()->SetGraphicsRootSignature(mRootSignature.Get());
+	mDx12Wrapper.CmdList()->SetDescriptorHeaps(1, mTexDescHeap.GetAddressOf());
+	mDx12Wrapper.CmdList()->SetGraphicsRootDescriptorTable(0, mTexDescHeap->GetGPUDescriptorHandleForHeapStart());
 	mDx12Wrapper.CmdList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+HRESULT SpriteRenderer::CreateTexture() {
+	mTexture = new Texture(mDx12Wrapper);//WriteToSubresourceで転送する用のヒープ設定
+	D3D12_HEAP_PROPERTIES texHeapProp = {};
+	texHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;//特殊な設定なのでdefaultでもuploadでもなく
+	texHeapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;//ライトバックで
+	texHeapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;//転送がL0つまりCPU側から直で
+	texHeapProp.CreationNodeMask = 0;//単一アダプタのため0
+	texHeapProp.VisibleNodeMask = 0;//単一アダプタのため0
+
+	D3D12_RESOURCE_DESC resDesc = {};
+	resDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT_R8G8B8A8_UNORM;//RGBAフォーマット
+	resDesc.Width = static_cast<UINT>(mTexture->GetWidth());//幅
+	resDesc.Height = static_cast<UINT>(mTexture->GetHeight());//高さ
+	resDesc.DepthOrArraySize = static_cast<uint16_t>(1);//2Dで配列でもないので１
+	resDesc.SampleDesc.Count = 1;//通常テクスチャなのでアンチェリしない
+	resDesc.SampleDesc.Quality = 0;//
+	resDesc.MipLevels = static_cast<uint16_t>(1);//ミップマップしないのでミップ数は１つ
+	resDesc.Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(D3D12_RESOURCE_DIMENSION_TEXTURE2D);//2Dテクスチャ用
+	resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;//レイアウトについては決定しない
+	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;//とくにフラグなし
+
+	auto result = mDx12Wrapper.Device()->CreateCommittedResource(
+		&texHeapProp,
+		D3D12_HEAP_FLAG_NONE,//特に指定なし
+		&resDesc,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,//テクスチャ用(ピクセルシェーダから見る用)
+		nullptr,
+		IID_PPV_ARGS(mTexBuff.ReleaseAndGetAddressOf())
+	);
+
+	result = mTexBuff->WriteToSubresource(0,
+		nullptr,//全領域へコピー
+		mTexture->GetNoiseTexData(),//元データアドレス
+		static_cast<UINT>(mTexture->GetWidth()),//1ラインサイズ
+		static_cast<UINT>(mTexture->GetHeight() * mTexture->GetWidth())//全サイズ
+	);
+	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
+	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
+	descHeapDesc.NodeMask = 0;//マスクは0
+	descHeapDesc.NumDescriptors = 1;//ビューは今のところ１つだけ
+	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;//シェーダリソースビュー(および定数、UAVも)
+	result = mDx12Wrapper.Device()->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(mTexDescHeap.ReleaseAndGetAddressOf()));//生成
+
+	//通常テクスチャビュー作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT_R8G8B8A8_UNORM;//RGBA(0.0f～1.0fに正規化)
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;//後述
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
+	srvDesc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
+
+	mDx12Wrapper.Device()->CreateShaderResourceView(mTexBuff.Get(), //ビューと関連付けるバッファ
+		&srvDesc, //先ほど設定したテクスチャ設定情報
+		mTexDescHeap->GetCPUDescriptorHandleForHeapStart()//ヒープのどこに割り当てるか
+	);
+
+	return result;
+}
+
+D3D12_HEAP_PROPERTIES SpriteRenderer::GetHeapPropForTex() {
+	D3D12_HEAP_PROPERTIES heapprop = {};
+	heapprop.Type = D3D12_HEAP_TYPE_CUSTOM;
+	heapprop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
+	heapprop.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+	heapprop.CreationNodeMask = 0;
+	heapprop.VisibleNodeMask = 0;
+	return heapprop;
+}
+
+D3D12_RESOURCE_DESC SpriteRenderer::GetResourseDescForTex() {
+	D3D12_RESOURCE_DESC resDesc = {};
+	resDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	resDesc.Width = 256;
+	resDesc.Height = 256;
+	resDesc.DepthOrArraySize = 1;
+	resDesc.SampleDesc.Count = 1;
+	resDesc.SampleDesc.Quality = 0;
+	resDesc.MipLevels = 1;
+	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+	return resDesc;
 }

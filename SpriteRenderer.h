@@ -6,13 +6,15 @@
 #include <DirectXMath.h>
 
 class Dx12Wrapper;
+class Texture;
+
 class SpriteRenderer {
 public:
 	SpriteRenderer(Dx12Wrapper& dx12Wrapper);
 	~SpriteRenderer();
 
 	void Draw();
-
+	HRESULT CreateTexture();
 	void InitView();
 	void CompileShader();
 	HRESULT InitGraphicPipeline();
@@ -21,9 +23,6 @@ private:
 	struct Vertex {
 		DirectX::XMFLOAT3 pos;
 		DirectX::XMFLOAT2 uv;
-	};
-	struct TexRGBA {
-		unsigned char R, G, B, A;
 	};
 	Dx12Wrapper& mDx12Wrapper;
 	template<typename T>
@@ -39,6 +38,10 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW mVbView = {};
 	D3D12_INDEX_BUFFER_VIEW mIbView = {};
 
-	// デバッグ用のノイズテクスチャ
-	std::vector<TexRGBA> noiseTexData;
+	Texture* mTexture;
+	ComPtr<ID3D12Resource> mTexBuff = nullptr;
+	ComPtr<ID3D12DescriptorHeap> mTexDescHeap = nullptr;
+	D3D12_HEAP_PROPERTIES GetHeapPropForTex();
+	D3D12_RESOURCE_DESC GetResourseDescForTex();
+
 };
