@@ -53,7 +53,7 @@ void Game::Init() {
 	mDx12Wrapper->InitViewport(mWindow->GetWidth(), mWindow->GetHeight());
 
 	mSpriteRenderer = new SpriteRenderer(*mDx12Wrapper);
-	mSpriteRenderer->InitView();
+	mSpriteRenderer->InitView(mWindow->GetWidth(), mWindow->GetHeight());
 	mSpriteRenderer->CompileShader();
 	mSpriteRenderer->InitRootSignature();
 	mSpriteRenderer->InitGraphicPipeline();

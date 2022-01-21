@@ -10,13 +10,20 @@ SpriteRenderer::SpriteRenderer(Dx12Wrapper& dx12Wrapper) :mDx12Wrapper(dx12Wrapp
 }
 SpriteRenderer::~SpriteRenderer() {}
 
-void SpriteRenderer::InitView() {
+void SpriteRenderer::InitView(float windowWidth, float windowHeight) {
+	mTexture = new Texture();
+	if (FAILED(mTexture->LoadImgFile(L"Resources/Images/myicon.png"))) {
+		assert(0);
+	}
+	// 1ピクセルにつき一マスで表示
+	float w = mTexture->GetImgData()->width / windowWidth;
+	float h = mTexture->GetImgData()->height / windowHeight;
 	// 頂点バッファ
 	Vertex vertices[] = {
-		{{-0.4f,-0.7f,0.0f}, {0.0f, 1.0f}},//左下
-		{{-0.4f,0.7f,0.0f}, {0.0f, 0.0f}} ,//左上
-		{{0.4f,-0.7f,0.0f}, {1.0f, 1.0f}} ,//右下
-		{{0.4f,0.7f,0.0f}, {1.0f, 0.0f}} ,//右上
+		{{-w,-h,0.0f}, {0.0f, 1.0f}},//左下
+		{{-w,h,0.0f}, {0.0f, 0.0f}} ,//左上
+		{{w,-h,0.0f}, {1.0f, 1.0f}} ,//右下
+		{{w,h,0.0f}, {1.0f, 0.0f}} ,//右上
 	};
 	D3D12_HEAP_PROPERTIES heapprop = {};
 	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -232,10 +239,6 @@ void SpriteRenderer::Draw() {
 }
 
 HRESULT SpriteRenderer::CreateTexture() {
-	mTexture = new Texture(mDx12Wrapper);//WriteToSubresourceで転送する用のヒープ設定
-	if (FAILED(mTexture->LoadImgFile(L"Resources/Images/myicon.png"))) {
-		assert(0);
-	}
 	auto metadata = mTexture->GetMetadata();
 	auto img = mTexture->GetImgData();
 	D3D12_HEAP_PROPERTIES texHeapProp = {};

@@ -8,10 +8,9 @@
 
 using namespace DirectX;
 
-class Dx12Wrapper;
 class Texture {
 public:
-	Texture(Dx12Wrapper& dx12);
+	Texture();
 	struct TexRGBA {
 		unsigned char R, G, B, A;
 	};
@@ -24,7 +23,6 @@ public:
 
 	HRESULT LoadImgFile(const wchar_t* filename);
 private:
-	Dx12Wrapper& mDx12Wrapper;
 	// デバッグ用のノイズテクスチャ
 	std::vector<TexRGBA> mNoiseTexData;
 	int mHeight;
