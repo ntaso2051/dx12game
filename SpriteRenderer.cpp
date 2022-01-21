@@ -233,6 +233,11 @@ void SpriteRenderer::Draw() {
 
 HRESULT SpriteRenderer::CreateTexture() {
 	mTexture = new Texture(mDx12Wrapper);//WriteToSubresourceで転送する用のヒープ設定
+	if (FAILED(mTexture->LoadImgFile(L"Resources/Images/myicon.png"))) {
+		assert(0);
+	}
+	auto metadata = mTexture->GetMetadata();
+	auto img = mTexture->GetImgData();
 	D3D12_HEAP_PROPERTIES texHeapProp = {};
 	texHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;//特殊な設定なのでdefaultでもuploadでもなく
 	texHeapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;//ライトバックで
@@ -241,14 +246,14 @@ HRESULT SpriteRenderer::CreateTexture() {
 	texHeapProp.VisibleNodeMask = 0;//単一アダプタのため0
 
 	D3D12_RESOURCE_DESC resDesc = {};
-	resDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT_R8G8B8A8_UNORM;//RGBAフォーマット
-	resDesc.Width = static_cast<UINT>(mTexture->GetWidth());//幅
-	resDesc.Height = static_cast<UINT>(mTexture->GetHeight());//高さ
-	resDesc.DepthOrArraySize = static_cast<uint16_t>(1);//2Dで配列でもないので１
+	resDesc.Format = metadata.format;//DXGI_FORMAT_R8G8B8A8_UNORM;//RGBAフォーマット
+	resDesc.Width = static_cast<UINT>(metadata.width);//幅
+	resDesc.Height = static_cast<UINT>(metadata.height);//高さ
+	resDesc.DepthOrArraySize = static_cast<uint16_t>(metadata.arraySize);//2Dで配列でもないので１
 	resDesc.SampleDesc.Count = 1;//通常テクスチャなのでアンチェリしない
 	resDesc.SampleDesc.Quality = 0;//
-	resDesc.MipLevels = static_cast<uint16_t>(1);//ミップマップしないのでミップ数は１つ
-	resDesc.Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(D3D12_RESOURCE_DIMENSION_TEXTURE2D);//2Dテクスチャ用
+	resDesc.MipLevels = static_cast<uint16_t>(metadata.mipLevels);//ミップマップしないのでミップ数は１つ
+	resDesc.Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(metadata.dimension);//2Dテクスチャ用
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;//レイアウトについては決定しない
 	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;//とくにフラグなし
 
@@ -261,11 +266,12 @@ HRESULT SpriteRenderer::CreateTexture() {
 		IID_PPV_ARGS(mTexBuff.ReleaseAndGetAddressOf())
 	);
 
-	result = mTexBuff->WriteToSubresource(0,
+	result = mTexBuff->WriteToSubresource(
+		0,
 		nullptr,//全領域へコピー
-		mTexture->GetNoiseTexData(),//元データアドレス
-		static_cast<UINT>(mTexture->GetWidth()),//1ラインサイズ
-		static_cast<UINT>(mTexture->GetHeight() * mTexture->GetWidth())//全サイズ
+		img->pixels,//元データアドレス
+		static_cast<UINT>(img->rowPitch),//1ラインサイズ
+		static_cast<UINT>(img->slicePitch)//全サイズ
 	);
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
 	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
@@ -276,7 +282,7 @@ HRESULT SpriteRenderer::CreateTexture() {
 
 	//通常テクスチャビュー作成
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT_R8G8B8A8_UNORM;//RGBA(0.0f～1.0fに正規化)
+	srvDesc.Format = metadata.format;//DXGI_FORMAT_R8G8B8A8_UNORM;//RGBA(0.0f～1.0fに正規化)
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;//後述
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1

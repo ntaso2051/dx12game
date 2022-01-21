@@ -1,9 +1,6 @@
 #include "Texture.h"
 #include "Dx12Wrapper.h"
 #include <cassert>
-#include "DirectXTex.h"
-
-#pragma comment (lib, "DirectXTex.lib")
 
 Texture::Texture(Dx12Wrapper& dx12) :mDx12Wrapper(dx12), mHeight(256), mWidth(256) {
 	// デバッグ用のノイズテクスチャを作成
@@ -17,4 +14,8 @@ Texture::Texture(Dx12Wrapper& dx12) :mDx12Wrapper(dx12), mHeight(256), mWidth(25
 	}
 }
 
+HRESULT Texture::LoadImgFile(const wchar_t* filename) {
+	auto result = LoadFromWICFile(filename, WIC_FLAGS_NONE, &mMetadata, mScratchImg);
+	return result;
+}
 
