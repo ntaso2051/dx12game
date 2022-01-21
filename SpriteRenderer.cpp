@@ -2,6 +2,7 @@
 #include "Dx12Wrapper.h"
 #include <random>
 #include "Texture.h"
+#include "d3dx12.h"
 
 using namespace DirectX;
 
@@ -20,10 +21,10 @@ void SpriteRenderer::InitView(float windowWidth, float windowHeight) {
 	float h = mTexture->GetImgData()->height / windowHeight;
 	// 頂点バッファ
 	Vertex vertices[] = {
-		{{-w,-h,0.0f}, {0.0f, 1.0f}},//左下
-		{{-w,h,0.0f}, {0.0f, 0.0f}} ,//左上
-		{{w,-h,0.0f}, {1.0f, 1.0f}} ,//右下
-		{{w,h,0.0f}, {1.0f, 0.0f}} ,//右上
+		{{-1.0f,-1.0f,0.0f}, {0.0f, 1.0f}},//左下
+		{{-1.0f,1.0f,0.0f}, {0.0f, 0.0f}} ,//左上
+		{{1.0f,-1.0f,0.0f}, {1.0f, 1.0f}} ,//右下
+		{{1.0f,1.0f,0.0f}, {1.0f, 0.0f}} ,//右上
 	};
 	D3D12_HEAP_PROPERTIES heapprop = {};
 	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -118,18 +119,21 @@ HRESULT SpriteRenderer::InitRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-	D3D12_DESCRIPTOR_RANGE descTblRange = {};
-	descTblRange.NumDescriptors = 1;//テクスチャひとつ
-	descTblRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//種別はテクスチャ
-	descTblRange.BaseShaderRegister = 0;//0番スロットから
-	descTblRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
+	D3D12_DESCRIPTOR_RANGE descTblRange[2] = {};
+	descTblRange[0].NumDescriptors = 1;//テクスチャひとつ
+	descTblRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//種別はテクスチャ
+	descTblRange[0].BaseShaderRegister = 0;//0番スロットから
+	descTblRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+	descTblRange[1].NumDescriptors = 1;//定数ひとつ
+	descTblRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;//種別は定数
+	descTblRange[1].BaseShaderRegister = 0;//0番スロットから
+	descTblRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_ROOT_PARAMETER rootparam = {};
 	rootparam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootparam.DescriptorTable.pDescriptorRanges = &descTblRange;//デスクリプタレンジのアドレス
-	rootparam.DescriptorTable.NumDescriptorRanges = 1;//デスクリプタレンジ数
-	rootparam.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//ピクセルシェーダから見える
+	rootparam.DescriptorTable.pDescriptorRanges = &descTblRange[0];//デスクリプタレンジのアドレス
+	rootparam.DescriptorTable.NumDescriptorRanges = 2;//デスクリプタレンジ数
+	rootparam.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;//ピクセルシェーダから見える
 
 	rootSignatureDesc.pParameters = &rootparam;//ルートパラメータの先頭アドレス
 	rootSignatureDesc.NumParameters = 1;//ルートパラメータ数
@@ -225,6 +229,11 @@ HRESULT SpriteRenderer::InitGraphicPipeline() {
 }
 
 void SpriteRenderer::Draw() {
+	// テスト用 TODO:Rotate関数とか用意する？
+	angle += 0.1f;
+	mWorldMat = XMMatrixRotationY(angle);
+	*mMapMatrix = mWorldMat * mViewMat * mProjMat;
+
 	mDx12Wrapper.CmdList()->SetPipelineState(mPipeline.Get());
 	mDx12Wrapper.CmdList()->RSSetViewports(1, &mDx12Wrapper.Viewport());
 	mDx12Wrapper.CmdList()->RSSetScissorRects(1, &mDx12Wrapper.Scissorrect());
@@ -238,7 +247,7 @@ void SpriteRenderer::Draw() {
 	mDx12Wrapper.CmdList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-HRESULT SpriteRenderer::CreateTexture() {
+HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 	auto metadata = mTexture->GetMetadata();
 	auto img = mTexture->GetImgData();
 	D3D12_HEAP_PROPERTIES texHeapProp = {};
@@ -279,9 +288,36 @@ HRESULT SpriteRenderer::CreateTexture() {
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
 	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
 	descHeapDesc.NodeMask = 0;//マスクは0
-	descHeapDesc.NumDescriptors = 1;//ビューは今のところ１つだけ
+	descHeapDesc.NumDescriptors = 2;//ビューは今のところ１つだけ
 	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;//シェーダリソースビュー(および定数、UAVも)
 	result = mDx12Wrapper.Device()->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(mTexDescHeap.ReleaseAndGetAddressOf()));//生成
+
+
+	// 定数バッファ作成 TODO：プレイヤーから座標を渡されるようにする．今はテスト用に固定値．
+	mWorldMat = XMMatrixRotationY(XM_PIDIV4);
+	XMFLOAT3 eye(0, 0, -5);
+	XMFLOAT3 target(0, 0, 0);
+	XMFLOAT3 up(0, 1, 0);
+	mViewMat = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+	mProjMat = XMMatrixPerspectiveFovLH(XM_PIDIV2,
+		static_cast<float>(windowWidth) / static_cast<float>(windowHeight),
+		1.0f,//近い方
+		10.0f//遠い方
+	);
+	ID3D12Resource * constBuff = nullptr;
+	auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	resDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(XMMATRIX) + 0xff) & ~0xff);
+	result = mDx12Wrapper.Device()->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuff)
+	);
+
+	result = constBuff->Map(0, nullptr, (void**)& mMapMatrix);//マップ
+	*mMapMatrix = mWorldMat * mViewMat * mProjMat;
 
 	//通常テクスチャビュー作成
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -290,10 +326,17 @@ HRESULT SpriteRenderer::CreateTexture() {
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
 
+	auto texHeapHandle = mTexDescHeap->GetCPUDescriptorHandleForHeapStart();
+
 	mDx12Wrapper.Device()->CreateShaderResourceView(mTexBuff.Get(), //ビューと関連付けるバッファ
 		&srvDesc, //先ほど設定したテクスチャ設定情報
-		mTexDescHeap->GetCPUDescriptorHandleForHeapStart()//ヒープのどこに割り当てるか
+		texHeapHandle//ヒープのどこに割り当てるか
 	);
+	texHeapHandle.ptr += mDx12Wrapper.Device()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+	cbvDesc.BufferLocation = constBuff->GetGPUVirtualAddress();
+	cbvDesc.SizeInBytes = static_cast<UINT>(constBuff->GetDesc().Width);
+	mDx12Wrapper.Device()->CreateConstantBufferView(&cbvDesc, texHeapHandle);
 
 	return result;
 }
