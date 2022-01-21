@@ -15,7 +15,7 @@ public:
 
 	void Draw();
 	HRESULT CreateTexture();
-	void InitView();
+	void InitView(float windowWidth, float windowHeight);
 	void CompileShader();
 	HRESULT InitGraphicPipeline();
 	HRESULT InitRootSignature();
