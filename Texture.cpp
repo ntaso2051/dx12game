@@ -1,6 +1,9 @@
 #include "Texture.h"
 #include "Dx12Wrapper.h"
 #include <cassert>
+#include "DirectXTex.h"
+
+#pragma comment (lib, "DirectXTex.lib")
 
 Texture::Texture(Dx12Wrapper& dx12) :mDx12Wrapper(dx12), mHeight(256), mWidth(256) {
 	// デバッグ用のノイズテクスチャを作成
