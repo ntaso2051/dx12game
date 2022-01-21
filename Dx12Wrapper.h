@@ -3,9 +3,11 @@
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <vector>
+#include <d3dcompiler.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3dcompiler.lib")
 
 class Dx12Wrapper {
 	template<typename T>
@@ -18,9 +20,17 @@ public:
 	HRESULT InitRenderTargets();
 	HRESULT InitFence();
 
+	ComPtr<ID3D12Device> Device();
+	ComPtr<ID3D12GraphicsCommandList> CmdList() { return mCmdList; }
+	D3D12_VIEWPORT Viewport() { return mViewport; }
+	D3D12_RECT Scissorrect() { return mScissorrect; }
 	// ウィンドウをクリア
 	void StartDraw();
 	void EndDraw();
+
+	void InitViewport(const int w, const int h);
+
+	void ShaderCompile();
 
 	// デバッグ用
 	void EnableDebugLayer();
@@ -40,6 +50,19 @@ private:
 	// フェンス
 	ComPtr<ID3D12Fence> mFence = nullptr;
 	UINT mFenceVal = 0;
+
+	// 頂点バッファビュー 
+	D3D12_VERTEX_BUFFER_VIEW mVbView = {};
+	// インデックスバッファビュー
+	D3D12_INDEX_BUFFER_VIEW mIbView = {};
+	// ビューポート
+	D3D12_VIEWPORT mViewport = {};
+	// シザー短径
+	D3D12_RECT mScissorrect = {};
+	// ルートシグニチャ
+	ID3D12RootSignature* mRootsignature = nullptr;
+	// パイプラインステート
+	ID3D12PipelineState* mPipelinestate = nullptr;
 
 	// デバッグ用
 	ComPtr<ID3D12Debug> mDebugLayer = nullptr;

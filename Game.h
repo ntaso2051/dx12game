@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "Dx12Wrapper.h"
+#include "SpriteRenderer.h"
 
 class Game {
 public:
@@ -11,4 +12,7 @@ public:
 private:
 	Window* mWindow;
 	Dx12Wrapper* mDx12Wrapper;
+
+	// ‚Æ‚è‚ ‚¦‚¸
+	SpriteRenderer* mSpriteRenderer;
 };

@@ -2,6 +2,9 @@
 #include <vector>
 #include <string>
 #include <cassert>
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 Dx12Wrapper::Dx12Wrapper() {
 
@@ -68,11 +71,11 @@ HRESULT Dx12Wrapper::InitCommand() {
 		return result;
 	}
 	D3D12_COMMAND_QUEUE_DESC cmdQueueDesc = {};
-	cmdQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;//タイムアウトなし
+	cmdQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	cmdQueueDesc.NodeMask = 0;
-	cmdQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;//プライオリティ特に指定なし
-	cmdQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;//ここはコマンドリストと合わせてください
-	result = mDev->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(mCmdQueue.ReleaseAndGetAddressOf()));//コマンドキュー生成
+	cmdQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+	cmdQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	result = mDev->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(mCmdQueue.ReleaseAndGetAddressOf()));
 	assert(SUCCEEDED(result));
 	return result;
 }
@@ -125,7 +128,7 @@ HRESULT Dx12Wrapper::InitRenderTargets() {
 
 	//SRGBレンダーターゲットビュー設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // ガンマ補正をつける
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
 	for (int i = 0; i < swcDesc.BufferCount; ++i) {
@@ -158,9 +161,12 @@ void Dx12Wrapper::StartDraw() {
 	auto rtvH = mRtvHeaps->GetCPUDescriptorHandleForHeapStart();
 	rtvH.ptr += static_cast<ULONG_PTR>(bbIdx * mDev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 	mCmdList->OMSetRenderTargets(1, &rtvH, false, nullptr);
-
 	float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 	mCmdList->ClearRenderTargetView(rtvH, clearColor, 0, nullptr);
+}
+
+Microsoft::WRL::ComPtr<ID3D12Device> Dx12Wrapper::Device() {
+	return mDev;
 }
 
 void Dx12Wrapper::EndDraw() {
@@ -192,4 +198,22 @@ void Dx12Wrapper::EndDraw() {
 	mCmdList->Reset(mCmdAllocator.Get(), nullptr);
 
 	mSwapChain->Present(1, 0);
+}
+
+void Dx12Wrapper::InitViewport(const int w, const int h) {
+	mViewport.Width = w;//出力先の幅(ピクセル数)
+	mViewport.Height = h;//出力先の高さ(ピクセル数)
+	mViewport.TopLeftX = 0;//出力先の左上座標X
+	mViewport.TopLeftY = 0;//出力先の左上座標Y
+	mViewport.MaxDepth = 1.0f;//深度最大値
+	mViewport.MinDepth = 0.0f;//深度最小値
+
+	mScissorrect.top = 0;//切り抜き上座標
+	mScissorrect.left = 0;//切り抜き左座標
+	mScissorrect.right = mScissorrect.left + w;//切り抜き右座標
+	mScissorrect.bottom = mScissorrect.top + h;//切り抜き下座標
+}
+
+void Dx12Wrapper::ShaderCompile() {
+
 }
