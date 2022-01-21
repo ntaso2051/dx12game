@@ -14,7 +14,7 @@ public:
 	~SpriteRenderer();
 
 	void Draw();
-	HRESULT CreateTexture();
+	HRESULT CreateTexture(float windowWidth, float windowHeight);
 	void InitView(float windowWidth, float windowHeight);
 	void CompileShader();
 	HRESULT InitGraphicPipeline();
@@ -44,4 +44,13 @@ private:
 	D3D12_HEAP_PROPERTIES GetHeapPropForTex();
 	D3D12_RESOURCE_DESC GetResourseDescForTex();
 
+
+	// 座標関連
+	DirectX::XMMATRIX mWorldMat;
+	DirectX::XMMATRIX mViewMat;
+	DirectX::XMMATRIX mProjMat;
+	DirectX::XMMATRIX* mMapMatrix;
+
+	// テスト用
+	float angle = 0.0f;
 };
