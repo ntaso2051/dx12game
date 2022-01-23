@@ -24,6 +24,7 @@ private:
 	void UpdateGame();
 	Window* mWindow;
 	Dx12Wrapper* mDx12Wrapper;
+	class ImguiWrapper* mImguiWrapper;
 
 	bool mUpdatingEntities;
 	std::vector<class Entity*> mEntities;
