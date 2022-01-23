@@ -17,7 +17,7 @@ public:
 
 	void Draw();
 	HRESULT CreateTexture(float windowWidth, float windowHeight);
-	void InitView(float windowWidth, float windowHeight);
+	void InitView(float windowWidth, float windowHeight, const wchar_t* filename);
 	void CompileShader();
 	HRESULT InitGraphicPipeline();
 	HRESULT InitRootSignature();
@@ -54,7 +54,7 @@ private:
 	XMMATRIX mViewMat;
 	XMMATRIX mProjMat;
 	XMMATRIX* mMapMatrix;
-	
+
 
 	// テスト用
 	float angle = 0.0f;

@@ -32,4 +32,5 @@ private:
 	int64_t mLastTime;
 
 	class Hero* mHero;
+	class Wall* mWall;
 };

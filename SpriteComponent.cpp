@@ -4,12 +4,12 @@
 #include "Game.h"
 #include "Window.h"
 
-SpriteComponent::SpriteComponent(Entity* owner, int drawOrder) :Component(owner), mDrawOrder(drawOrder) {
+SpriteComponent::SpriteComponent(Entity* owner, const wchar_t* filename, int drawOrder) :Component(owner), mDrawOrder(drawOrder) {
 	mOwner->AddComponent(this);
 	// init SpriteRenderer
 	mSpriteRenderer = new SpriteRenderer(mOwner->GetGame()->GetDx12());
 	Window* window = mOwner->GetGame()->GetWindow();
-	mSpriteRenderer->InitView(window->GetWidth(), window->GetHeight());
+	mSpriteRenderer->InitView(window->GetWidth(), window->GetHeight(), filename);
 	mSpriteRenderer->CompileShader();
 	mSpriteRenderer->InitRootSignature();
 	mSpriteRenderer->InitGraphicPipeline();

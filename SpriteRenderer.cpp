@@ -21,9 +21,9 @@ void SpriteRenderer::InitMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX pr
 
 }
 
-void SpriteRenderer::InitView(float windowWidth, float windowHeight) {
+void SpriteRenderer::InitView(float windowWidth, float windowHeight, const wchar_t* filename) {
 	mTexture = new Texture();
-	if (FAILED(mTexture->LoadImgFile(L"Resources/Images/myicon.png"))) {
+	if (FAILED(mTexture->LoadImgFile(filename))) {
 		assert(0);
 	}
 	// 頂点バッファ

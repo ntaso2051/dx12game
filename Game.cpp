@@ -3,6 +3,7 @@
 #include <cassert>
 #include "Entity.h"
 #include "Hero.h"
+#include "Wall.h"
 
 #ifdef _DEBUG
 #include <iostream>
@@ -59,6 +60,7 @@ void Game::Init() {
 
 	mDx12Wrapper->InitViewport(mWindow->GetWidth(), mWindow->GetHeight());
 	mHero = new Hero(this);
+	mWall = new Wall(this);
 	/*
 	mSpriteRenderer = new SpriteRenderer(*mDx12Wrapper);
 	mSpriteRenderer->InitView(mWindow->GetWidth(), mWindow->GetHeight());
