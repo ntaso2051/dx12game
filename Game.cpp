@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Hero.h"
 #include "Wall.h"
+#include "ImguiWrapper.h"
 
 #ifdef _DEBUG
 #include <iostream>
@@ -59,6 +60,7 @@ void Game::Init() {
 	}
 
 	mDx12Wrapper->InitViewport(mWindow->GetWidth(), mWindow->GetHeight());
+	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper);
 	mHero = new Hero(this);
 	mWall = new Wall(this);
 	/*
@@ -82,6 +84,7 @@ void Game::Loop() {
 			break;
 		}
 		mDx12Wrapper->StartDraw();
+		mImguiWrapper->Draw();
 		UpdateGame();
 		mDx12Wrapper->EndDraw();
 	}

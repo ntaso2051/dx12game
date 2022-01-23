@@ -22,6 +22,8 @@ public:
 
 	ComPtr<ID3D12Device> Device();
 	ComPtr<ID3D12GraphicsCommandList> CmdList() { return mCmdList; }
+	ComPtr<ID3D12CommandAllocator> CmdAllocator() { return mCmdAllocator; }
+
 	D3D12_VIEWPORT Viewport() { return mViewport; }
 	D3D12_RECT Scissorrect() { return mScissorrect; }
 	// ウィンドウをクリア
