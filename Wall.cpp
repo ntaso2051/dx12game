@@ -1,15 +1,14 @@
-#include "Hero.h"
+#include "Wall.h"
 #include "Game.h"
 #include "SpriteComponent.h"
 #include "SpriteRenderer.h"
 #include "Texture.h"
 
-using namespace DirectX;
-
-Hero::Hero(Game* game) :Entity(game) {
-	SpriteComponent* sc = new SpriteComponent(this, L"Resources/Images/myicon.png");
+Wall::Wall(Game* game) :Entity(game) {
+	SpriteComponent* sc = new SpriteComponent(this, L"Resources/Images/Wall.png");
 	auto img = sc->GetSpriteRenderer()->GetTexture()->GetImgData();
 	mWorldMat = XMMatrixScaling(1.0f / img->width, 1.0f / img->height, 1.0f);
+	mWorldMat *= XMMatrixTranslation(2.0f / img->width, 0.0f, 0.0f);
 	XMFLOAT3 eye(0, 0, -1);
 	XMFLOAT3 target(0, 0, 0);
 	XMFLOAT3 up(0, 1, 0);
@@ -21,9 +20,3 @@ Hero::Hero(Game* game) :Entity(game) {
 		10.0f//‰“‚¢•û
 	);
 }
-
-void Hero::UpdateEntity(float deltaTime) {
-	// ‚Æ‚è‚ ‚¦‚¸Rotate‚·‚é
-	mWorldMat *= XMMatrixRotationZ(deltaTime);
-}
-

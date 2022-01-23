@@ -3,7 +3,7 @@
 
 class SpriteComponent : public Component {
 public:
-	SpriteComponent(class Entity* owner, int drawOrder = 100);
+	SpriteComponent(class Entity* owner, const wchar_t* filename, int drawOrder = 100);
 	~SpriteComponent();
 
 	virtual void Draw();
