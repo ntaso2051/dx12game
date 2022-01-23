@@ -25,5 +25,6 @@ void SpriteComponent::Draw() {
 }
 
 void SpriteComponent::Update(float deltaTime) {
+	mSpriteRenderer->ReComputeMatrix(mOwner->GetWorldMat(), mOwner->GetViewMat(), mOwner->GetProjMat());
 	mSpriteRenderer->Draw();
 }

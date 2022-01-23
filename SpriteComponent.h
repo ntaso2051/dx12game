@@ -9,6 +9,7 @@ public:
 	virtual void Draw();
 	void Update(float deltaTime) override;
 	int GetDrawOrder() { return mDrawOrder; };
+	class SpriteRenderer* GetSpriteRenderer() { return mSpriteRenderer; }
 protected:
 	class SpriteRenderer* mSpriteRenderer;
 	int mDrawOrder;

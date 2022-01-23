@@ -4,21 +4,28 @@
 #include "Texture.h"
 #include "d3dx12.h"
 
-using namespace DirectX;
+
 
 
 SpriteRenderer::SpriteRenderer(Dx12Wrapper& dx12Wrapper) :mDx12Wrapper(dx12Wrapper) {
 }
 SpriteRenderer::~SpriteRenderer() {}
 
+void SpriteRenderer::ReComputeMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX projMat) {
+	mWorldMat = worldMat;
+	mViewMat = viewMat;
+	mProjMat = projMat;
+}
+
+void SpriteRenderer::InitMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX projMat) {
+
+}
+
 void SpriteRenderer::InitView(float windowWidth, float windowHeight) {
 	mTexture = new Texture();
 	if (FAILED(mTexture->LoadImgFile(L"Resources/Images/myicon.png"))) {
 		assert(0);
 	}
-	// 1ピクセルにつき一マスで表示
-	float w = mTexture->GetImgData()->width / windowWidth;
-	float h = mTexture->GetImgData()->height / windowHeight;
 	// 頂点バッファ
 	Vertex vertices[] = {
 		{{-1.0f,-1.0f,0.0f}, {0.0f, 1.0f}},//左下
@@ -229,11 +236,7 @@ HRESULT SpriteRenderer::InitGraphicPipeline() {
 }
 
 void SpriteRenderer::Draw() {
-	// テスト用 TODO:Rotate関数とか用意する？
-	angle += 0.1f;
-	mWorldMat = XMMatrixRotationY(angle);
 	*mMapMatrix = mWorldMat * mViewMat * mProjMat;
-
 	mDx12Wrapper.CmdList()->SetPipelineState(mPipeline.Get());
 	mDx12Wrapper.CmdList()->RSSetViewports(1, &mDx12Wrapper.Viewport());
 	mDx12Wrapper.CmdList()->RSSetScissorRects(1, &mDx12Wrapper.Scissorrect());
@@ -294,13 +297,14 @@ HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 
 
 	// 定数バッファ作成 TODO：プレイヤーから座標を渡されるようにする．今はテスト用に固定値．
-	mWorldMat = XMMatrixRotationY(XM_PIDIV4);
-	XMFLOAT3 eye(0, 0, -5);
+	mWorldMat = XMMatrixScaling(1.0f / img->width, 1.0f / img->height, 1.0f);
+	XMFLOAT3 eye(0, 0, -1);
 	XMFLOAT3 target(0, 0, 0);
 	XMFLOAT3 up(0, 1, 0);
 	mViewMat = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-	mProjMat = XMMatrixPerspectiveFovLH(XM_PIDIV2,
-		static_cast<float>(windowWidth) / static_cast<float>(windowHeight),
+	mProjMat = XMMatrixPerspectiveFovLH(
+		XM_PIDIV4,
+		static_cast<double>(windowWidth) / static_cast<double>(windowHeight),
 		1.0f,//近い方
 		10.0f//遠い方
 	);

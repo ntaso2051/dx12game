@@ -5,6 +5,8 @@
 #include <vector>
 #include <DirectXMath.h>
 
+using namespace DirectX;
+
 class Dx12Wrapper;
 class Texture;
 
@@ -19,6 +21,9 @@ public:
 	void CompileShader();
 	HRESULT InitGraphicPipeline();
 	HRESULT InitRootSignature();
+	Texture* GetTexture() { return mTexture; }
+	void ReComputeMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX projMat);
+	void InitMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX projMat);
 private:
 	struct Vertex {
 		DirectX::XMFLOAT3 pos;
@@ -37,19 +42,19 @@ private:
 	ComPtr<ID3D12Resource> mIb = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW mVbView = {};
 	D3D12_INDEX_BUFFER_VIEW mIbView = {};
-
+	// テクスチャ関連
 	Texture* mTexture;
 	ComPtr<ID3D12Resource> mTexBuff = nullptr;
 	ComPtr<ID3D12DescriptorHeap> mTexDescHeap = nullptr;
 	D3D12_HEAP_PROPERTIES GetHeapPropForTex();
 	D3D12_RESOURCE_DESC GetResourseDescForTex();
 
-
 	// 座標関連
-	DirectX::XMMATRIX mWorldMat;
-	DirectX::XMMATRIX mViewMat;
-	DirectX::XMMATRIX mProjMat;
-	DirectX::XMMATRIX* mMapMatrix;
+	XMMATRIX mWorldMat;
+	XMMATRIX mViewMat;
+	XMMATRIX mProjMat;
+	XMMATRIX* mMapMatrix;
+	
 
 	// テスト用
 	float angle = 0.0f;
