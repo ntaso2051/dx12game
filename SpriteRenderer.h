@@ -18,7 +18,6 @@ public:
 	void Draw();
 	HRESULT CreateTexture(float windowWidth, float windowHeight);
 	void InitView(float windowWidth, float windowHeight, const wchar_t* filename);
-	void CompileShader();
 	HRESULT InitGraphicPipeline();
 	HRESULT InitRootSignature();
 	Texture* GetTexture() { return mTexture; }
@@ -34,9 +33,6 @@ private:
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 	ComPtr<ID3D12PipelineState> mPipeline = nullptr;
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
-	// シェーダー関連 TODO: 消してよい
-	ComPtr<ID3DBlob> mVsBlob = nullptr;
-	ComPtr<ID3DBlob> mPsBlob = nullptr;
 	//頂点関連
 	ComPtr<ID3D12Resource> mVb = nullptr;
 	ComPtr<ID3D12Resource> mIb = nullptr;

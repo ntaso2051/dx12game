@@ -19,10 +19,15 @@ public:
 	HRESULT InitSwapChain(const HWND& hwnd, const unsigned int w, const unsigned int h);
 	HRESULT InitRenderTargets();
 	HRESULT InitFence();
+	HRESULT InitGraphicPipelineForSprite();
+	HRESULT InitRootsignatureForSprite();
 
 	ComPtr<ID3D12Device> Device();
 	ComPtr<ID3D12GraphicsCommandList> CmdList() { return mCmdList; }
 	ComPtr<ID3D12CommandAllocator> CmdAllocator() { return mCmdAllocator; }
+
+	ComPtr<ID3D12RootSignature> GetRootsignatureForSprite() { return mRootsignatureForSprite; }
+	ComPtr<ID3D12PipelineState> GetPipelinestateForSprite() { return mPipelinestateForSprite; }
 
 	D3D12_VIEWPORT Viewport() { return mViewport; }
 	D3D12_RECT Scissorrect() { return mScissorrect; }
@@ -69,11 +74,11 @@ private:
 	// シザー短径
 	D3D12_RECT mScissorrect = {};
 	// ルートシグニチャ
-	ID3D12RootSignature* mRootsignature = nullptr;
+	ComPtr<ID3D12RootSignature> mRootsignatureForSprite = nullptr;
 	// パイプラインステート
-	ID3D12PipelineState* mPipelinestate = nullptr;
+	ComPtr<ID3D12PipelineState> mPipelinestateForSprite = nullptr;
 
-	
+
 
 	// デバッグ用
 	ComPtr<ID3D12Debug> mDebugLayer = nullptr;

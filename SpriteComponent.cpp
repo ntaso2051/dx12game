@@ -11,8 +11,8 @@ SpriteComponent::SpriteComponent(Entity* owner, const wchar_t* filename, int dra
 	Window* window = mOwner->GetGame()->GetWindow();
 	mSpriteRenderer->InitView(window->GetWidth(), window->GetHeight(), filename);
 	// mSpriteRenderer->CompileShader();
-	mSpriteRenderer->InitRootSignature();
-	mSpriteRenderer->InitGraphicPipeline();
+	// mSpriteRenderer->InitRootSignature();
+	// mSpriteRenderer->InitGraphicPipeline();
 	mSpriteRenderer->CreateTexture(window->GetWidth(), window->GetHeight());
 }
 
