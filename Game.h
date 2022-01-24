@@ -25,6 +25,7 @@ private:
 	Window* mWindow;
 	Dx12Wrapper* mDx12Wrapper;
 	class ImguiWrapper* mImguiWrapper;
+	class DungeonGenerator* mDgGen;
 
 	bool mUpdatingEntities;
 	std::vector<class Entity*> mEntities;
@@ -33,5 +34,5 @@ private:
 	int64_t mLastTime;
 
 	class Hero* mHero;
-	class Wall* mWall;
+	std::vector<class Wall*> mWalls;
 };

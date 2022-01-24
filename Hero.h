@@ -4,6 +4,7 @@
 class Hero :public Entity {
 public:
 	Hero(class Game* game);
+	Hero(class Game* game, XMFLOAT3 pos);
 	void UpdateEntity(float deltaTime) override;
 private:
 	// ‚Æ‚è‚ ‚¦‚¸
