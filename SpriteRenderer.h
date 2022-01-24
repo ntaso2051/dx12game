@@ -12,7 +12,7 @@ class Texture;
 
 class SpriteRenderer {
 public:
-	SpriteRenderer(Dx12Wrapper& dx12Wrapper);
+	SpriteRenderer(Dx12Wrapper& dx12Wrapper, Texture* tex);
 	~SpriteRenderer();
 
 	void Draw();

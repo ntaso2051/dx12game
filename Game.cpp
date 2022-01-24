@@ -7,6 +7,8 @@
 #include "ImguiWrapper.h"
 #include "DungeonGenerator.h"
 #include "Const.h"
+#include "Texture.h"
+
 
 #ifdef _DEBUG
 #include <iostream>
@@ -22,6 +24,11 @@ Game::Game() :mUpdatingEntities(false) {
 Game::~Game() {
 	mWindow->~Window();
 	mDx12Wrapper->~Dx12Wrapper();
+}
+
+void Game::LoadImgFile() {
+	mTexture = new Texture();
+	mTexture->LoadImgFile(L"Resources/Images/myicon.png");
 }
 
 void Game::Init() {
@@ -79,15 +86,17 @@ void Game::Init() {
 		std::cout << "Failed to initialize gpipeline" << std::endl;
 #endif
 	}
+	LoadImgFile();
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper);
 	mHero = new Hero(this, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	mDgGen = new DungeonGenerator();
 	mDgGen->createDg();
 	mDgGen->draw();
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 10; j++) {
-			Wall* wall = new Wall(this, XMFLOAT3(i, j, 0));
+	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
+		for (int j = 0; j < mDgGen->getFloor()->data[0].size(); j++) {
+			if (mDgGen->getFloor()->data[i][j] == Const::Cell::Wall)
+				Wall * wall = new Wall(this, XMFLOAT3(j - 10, i - 10, 0));
 #ifdef _DEBUG
 			std::cout << (i + 1) * (j + 1) << "walls" << i << "," << j << "created" << std::endl;
 #endif

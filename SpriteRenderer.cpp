@@ -7,7 +7,7 @@
 
 
 
-SpriteRenderer::SpriteRenderer(Dx12Wrapper& dx12Wrapper) :mDx12Wrapper(dx12Wrapper) {
+SpriteRenderer::SpriteRenderer(Dx12Wrapper& dx12Wrapper, Texture* tex) :mDx12Wrapper(dx12Wrapper), mTexture(tex) {
 }
 SpriteRenderer::~SpriteRenderer() {}
 
@@ -37,8 +37,6 @@ void SpriteRenderer::Draw() {
 }
 
 HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
-	mTexture = new Texture();
-	mTexture->LoadImgFile(L"Resources/Images/myicon.png");
 	auto metadata = mTexture->GetMetadata();
 	auto img = mTexture->GetImgData();
 	D3D12_HEAP_PROPERTIES texHeapProp = {};

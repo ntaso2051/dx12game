@@ -22,6 +22,8 @@ void Dx12Wrapper::CompileShader() {
 	mShader->CompileShader();
 }
 
+
+
 HRESULT Dx12Wrapper::InitVbIbForSprite() {
 	// 頂点バッファ
 	Vertex vertices[] = {
