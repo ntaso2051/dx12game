@@ -9,7 +9,7 @@ SpriteComponent::SpriteComponent(Entity* owner, const wchar_t* filename, int dra
 	// init SpriteRenderer
 	mSpriteRenderer = new SpriteRenderer(mOwner->GetGame()->GetDx12());
 	Window* window = mOwner->GetGame()->GetWindow();
-	mSpriteRenderer->InitView(window->GetWidth(), window->GetHeight(), filename);
+	// mSpriteRenderer->InitView(window->GetWidth(), window->GetHeight(), filename);
 	// mSpriteRenderer->CompileShader();
 	// mSpriteRenderer->InitRootSignature();
 	// mSpriteRenderer->InitGraphicPipeline();

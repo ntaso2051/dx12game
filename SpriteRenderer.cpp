@@ -21,79 +21,6 @@ void SpriteRenderer::InitMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX pr
 
 }
 
-void SpriteRenderer::InitView(float windowWidth, float windowHeight, const wchar_t* filename) {
-	mTexture = new Texture();
-	if (FAILED(mTexture->LoadImgFile(filename))) {
-		assert(0);
-	}
-	// 頂点バッファ
-	Vertex vertices[] = {
-		{{-1.0f,-1.0f,0.0f}, {0.0f, 1.0f}},//左下
-		{{-1.0f,1.0f,0.0f}, {0.0f, 0.0f}} ,//左上
-		{{1.0f,-1.0f,0.0f}, {1.0f, 1.0f}} ,//右下
-		{{1.0f,1.0f,0.0f}, {1.0f, 0.0f}} ,//右上
-	};
-	D3D12_HEAP_PROPERTIES heapprop = {};
-	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
-	heapprop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapprop.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-
-	D3D12_RESOURCE_DESC resdesc = {};
-	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resdesc.Width = sizeof(vertices);
-	resdesc.Height = 1;
-	resdesc.DepthOrArraySize = 1;
-	resdesc.MipLevels = 1;
-	resdesc.Format = DXGI_FORMAT_UNKNOWN;
-	resdesc.SampleDesc.Count = 1;
-	resdesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	auto result = mDx12Wrapper.Device()->CreateCommittedResource(
-		&heapprop,
-		D3D12_HEAP_FLAG_NONE,
-		&resdesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(mVb.ReleaseAndGetAddressOf())
-	);
-	Vertex* vertMap = nullptr;
-	result = mVb->Map(0, nullptr, (void**)& vertMap);
-	std::copy(std::begin(vertices), std::end(vertices), vertMap);
-	mVb->Unmap(0, nullptr);
-
-	mVbView.BufferLocation = mVb->GetGPUVirtualAddress();
-	mVbView.SizeInBytes = sizeof(vertices);
-	mVbView.StrideInBytes = sizeof(vertices[0]);
-
-	// インデックスバッファ
-	unsigned short indices[] = { 0,1,2, 2,1,3 };
-
-	//設定は、バッファのサイズ以外頂点バッファの設定を使いまわして
-	//OKだと思います。
-	resdesc.Width = sizeof(indices);
-	result = mDx12Wrapper.Device()->CreateCommittedResource(
-		&heapprop,
-		D3D12_HEAP_FLAG_NONE,
-		&resdesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(mIb.ReleaseAndGetAddressOf()));
-
-	//作ったバッファにインデックスデータをコピー
-	unsigned short* mappedIdx = nullptr;
-	mIb->Map(0, nullptr, (void**)& mappedIdx);
-	std::copy(std::begin(indices), std::end(indices), mappedIdx);
-	mIb->Unmap(0, nullptr);
-
-	//インデックスバッファビューを作成
-	mIbView.BufferLocation = mIb->GetGPUVirtualAddress();
-	mIbView.Format = DXGI_FORMAT_R16_UINT;
-	mIbView.SizeInBytes = sizeof(indices);
-}
-
-
-
 void SpriteRenderer::Draw() {
 	*mMapMatrix = mWorldMat * mViewMat * mProjMat;
 	mDx12Wrapper.CmdList()->SetPipelineState(mDx12Wrapper.GetPipelinestateForSprite().Get());
@@ -101,8 +28,8 @@ void SpriteRenderer::Draw() {
 	mDx12Wrapper.CmdList()->RSSetScissorRects(1, &mDx12Wrapper.Scissorrect());
 	mDx12Wrapper.CmdList()->SetGraphicsRootSignature(mDx12Wrapper.GetRootsignatureForSprite().Get());
 	mDx12Wrapper.CmdList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	mDx12Wrapper.CmdList()->IASetVertexBuffers(0, 1, &mVbView);
-	mDx12Wrapper.CmdList()->IASetIndexBuffer(&mIbView);
+	mDx12Wrapper.CmdList()->IASetVertexBuffers(0, 1, &mDx12Wrapper.GetVbView());
+	mDx12Wrapper.CmdList()->IASetIndexBuffer(&mDx12Wrapper.GetIbView());
 	mDx12Wrapper.CmdList()->SetGraphicsRootSignature(mDx12Wrapper.GetRootsignatureForSprite().Get());
 	mDx12Wrapper.CmdList()->SetDescriptorHeaps(1, mTexDescHeap.GetAddressOf());
 	mDx12Wrapper.CmdList()->SetGraphicsRootDescriptorTable(0, mTexDescHeap->GetGPUDescriptorHandleForHeapStart());
@@ -110,6 +37,8 @@ void SpriteRenderer::Draw() {
 }
 
 HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
+	mTexture = new Texture();
+	mTexture->LoadImgFile(L"Resources/Images/myicon.png");
 	auto metadata = mTexture->GetMetadata();
 	auto img = mTexture->GetImgData();
 	D3D12_HEAP_PROPERTIES texHeapProp = {};
@@ -202,29 +131,4 @@ HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 	mDx12Wrapper.Device()->CreateConstantBufferView(&cbvDesc, texHeapHandle);
 
 	return result;
-}
-
-D3D12_HEAP_PROPERTIES SpriteRenderer::GetHeapPropForTex() {
-	D3D12_HEAP_PROPERTIES heapprop = {};
-	heapprop.Type = D3D12_HEAP_TYPE_CUSTOM;
-	heapprop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-	heapprop.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-	heapprop.CreationNodeMask = 0;
-	heapprop.VisibleNodeMask = 0;
-	return heapprop;
-}
-
-D3D12_RESOURCE_DESC SpriteRenderer::GetResourseDescForTex() {
-	D3D12_RESOURCE_DESC resDesc = {};
-	resDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	resDesc.Width = 256;
-	resDesc.Height = 256;
-	resDesc.DepthOrArraySize = 1;
-	resDesc.SampleDesc.Count = 1;
-	resDesc.SampleDesc.Quality = 0;
-	resDesc.MipLevels = 1;
-	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-	return resDesc;
 }

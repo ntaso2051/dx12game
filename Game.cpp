@@ -60,6 +60,11 @@ void Game::Init() {
 		std::cout << "Failed to initialize fence" << std::endl;
 #endif
 	}
+	if (FAILED(mDx12Wrapper->InitVbIbForSprite())) {
+#ifdef _DEBUG
+		std::cout << "Failed to initialize Vertex buffer and Index buffer" << std::endl;
+#endif
+	}
 
 	mDx12Wrapper->InitViewport(mWindow->GetWidth(), mWindow->GetHeight());
 	mDx12Wrapper->CompileShader();
