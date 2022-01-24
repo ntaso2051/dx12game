@@ -14,8 +14,8 @@ namespace Const {
 	const int ROOM_MAX_WIDTH = 12;
 	const int ROOM_MAX_HEIGHT = 12;
 
-	const int WINDOW_WIDTH = 640;
-	const int WINDOW_HEIGHT = 480;
+	const int WINDOW_WIDTH = 1280;
+	const int WINDOW_HEIGHT = 720;
 
 	const float CHARACTER_MOVE_TIME = 0.5f;
 
@@ -24,6 +24,13 @@ namespace Const {
 			None,
 			Floor,
 			Aisle,
+			Wall,
+		};
+	};
+
+	namespace TexId {
+		enum Type {
+			Hero,
 			Wall,
 		};
 	};

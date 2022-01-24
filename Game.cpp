@@ -26,9 +26,10 @@ Game::~Game() {
 	mDx12Wrapper->~Dx12Wrapper();
 }
 
-void Game::LoadImgFile() {
-	mTexture = new Texture();
-	mTexture->LoadImgFile(L"Resources/Images/myicon.png");
+void Game::LoadImgFile(const wchar_t* filename) {
+	Texture* texture = new Texture();
+	texture->LoadImgFile(filename);
+	mTextures.push_back(texture);
 }
 
 void Game::Init() {
@@ -86,7 +87,9 @@ void Game::Init() {
 		std::cout << "Failed to initialize gpipeline" << std::endl;
 #endif
 	}
-	LoadImgFile();
+
+	LoadImgFile(L"Resources/Images/myicon.png");
+	LoadImgFile(L"Resources/Images/Wall.png");
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper);
 	mHero = new Hero(this, XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -96,10 +99,7 @@ void Game::Init() {
 	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
 		for (int j = 0; j < mDgGen->getFloor()->data[0].size(); j++) {
 			if (mDgGen->getFloor()->data[i][j] == Const::Cell::Wall)
-				Wall * wall = new Wall(this, XMFLOAT3(j - 10, i - 10, 0));
-#ifdef _DEBUG
-			std::cout << (i + 1) * (j + 1) << "walls" << i << "," << j << "created" << std::endl;
-#endif
+				Wall * wall = new Wall(this, XMFLOAT3(j, i, 0));
 		}
 	}
 }
@@ -165,14 +165,14 @@ void Game::AddEntity(Entity * entity) {
 }
 
 void Game::RemoveEntity(Entity * entity) {
-	// if is in pending actors
+	// if is in pending entities
 	auto iter = std::find(mPendingEntities.begin(), mPendingEntities.end(), entity);
 	if (iter != mPendingEntities.end()) {
 		std::iter_swap(iter, mPendingEntities.end() - 1);
 		mPendingEntities.pop_back();
 	}
 
-	// if is in actors
+	// if is in entities
 	iter = std::find(mEntities.begin(), mEntities.end(), entity);
 	if (iter != mEntities.end()) {
 		std::iter_swap(iter, mEntities.end() - 1);
