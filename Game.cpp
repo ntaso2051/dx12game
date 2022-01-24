@@ -5,6 +5,8 @@
 #include "Hero.h"
 #include "Wall.h"
 #include "ImguiWrapper.h"
+#include "DungeonGenerator.h"
+#include "Const.h"
 
 #ifdef _DEBUG
 #include <iostream>
@@ -61,16 +63,15 @@ void Game::Init() {
 
 	mDx12Wrapper->InitViewport(mWindow->GetWidth(), mWindow->GetHeight());
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper);
-	mHero = new Hero(this);
-	mWall = new Wall(this);
-	/*
-	mSpriteRenderer = new SpriteRenderer(*mDx12Wrapper);
-	mSpriteRenderer->InitView(mWindow->GetWidth(), mWindow->GetHeight());
-	mSpriteRenderer->CompileShader();
-	mSpriteRenderer->InitRootSignature();
-	mSpriteRenderer->InitGraphicPipeline();
-	mSpriteRenderer->CreateTexture(mWindow->GetWidth(), mWindow->GetHeight());
-	*/
+	mHero = new Hero(this, XMFLOAT3(1.0f, 1.0f, 1.0f));
+	mDgGen = new DungeonGenerator();
+	mDgGen->createDg();
+	mDgGen->draw();
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 5; j++) {
+			Wall* wall = new Wall(this, XMFLOAT3(i - 5, j - 5, 0));
+		}
+	}
 }
 
 void Game::Loop() {
@@ -84,8 +85,8 @@ void Game::Loop() {
 			break;
 		}
 		mDx12Wrapper->StartDraw();
-		mImguiWrapper->Draw();
 		UpdateGame();
+		mImguiWrapper->Draw();
 		mDx12Wrapper->EndDraw();
 	}
 }
