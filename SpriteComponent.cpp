@@ -7,12 +7,12 @@
 SpriteComponent::SpriteComponent(Entity* owner, const wchar_t* filename, int drawOrder) :Component(owner), mDrawOrder(drawOrder) {
 	mOwner->AddComponent(this);
 	// init SpriteRenderer
-	mSpriteRenderer = new SpriteRenderer(mOwner->GetGame()->GetDx12());
+	mSpriteRenderer = new SpriteRenderer(mOwner->GetGame()->GetDx12(), owner->GetGame()->GetTexture());
 	Window* window = mOwner->GetGame()->GetWindow();
-	mSpriteRenderer->InitView(window->GetWidth(), window->GetHeight(), filename);
-	mSpriteRenderer->CompileShader();
-	mSpriteRenderer->InitRootSignature();
-	mSpriteRenderer->InitGraphicPipeline();
+	// mSpriteRenderer->InitView(window->GetWidth(), window->GetHeight(), filename);
+	// mSpriteRenderer->CompileShader();
+	// mSpriteRenderer->InitRootSignature();
+	// mSpriteRenderer->InitGraphicPipeline();
 	mSpriteRenderer->CreateTexture(window->GetWidth(), window->GetHeight());
 }
 

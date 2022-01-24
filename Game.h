@@ -20,6 +20,8 @@ public:
 	void RemoveEntity(class Entity* entity);
 	Dx12Wrapper& GetDx12() { return *mDx12Wrapper; }
 	Window* GetWindow() { return mWindow; }
+	void LoadImgFile();
+	class Texture* GetTexture() { return mTexture; }
 private:
 	void UpdateGame();
 	Window* mWindow;
@@ -33,6 +35,7 @@ private:
 
 	int64_t mLastTime;
 
+	class Texture* mTexture;
 	class Hero* mHero;
-	std::vector<class Wall*> mWalls;
+	class Wall* mWall;
 };
