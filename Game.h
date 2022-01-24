@@ -34,5 +34,5 @@ private:
 	int64_t mLastTime;
 
 	class Hero* mHero;
-	std::vector<class Wall*> mWalls;
+	class Wall* mWall;
 };

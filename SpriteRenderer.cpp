@@ -3,7 +3,7 @@
 #include <random>
 #include "Texture.h"
 #include "d3dx12.h"
-
+#include "Shader.h"
 
 
 
@@ -175,10 +175,10 @@ HRESULT SpriteRenderer::InitGraphicPipeline() {
 	};
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = {};
 	gpipeline.pRootSignature = nullptr;
-	gpipeline.VS.pShaderBytecode = mVsBlob->GetBufferPointer();
-	gpipeline.VS.BytecodeLength = mVsBlob->GetBufferSize();
-	gpipeline.PS.pShaderBytecode = mPsBlob->GetBufferPointer();
-	gpipeline.PS.BytecodeLength = mPsBlob->GetBufferSize();
+	gpipeline.VS.pShaderBytecode = mDx12Wrapper.GetShader()->GetVsBlob()->GetBufferPointer();
+	gpipeline.VS.BytecodeLength = mDx12Wrapper.GetShader()->GetVsBlob()->GetBufferSize();
+	gpipeline.PS.pShaderBytecode = mDx12Wrapper.GetShader()->GetPsBlob()->GetBufferPointer();
+	gpipeline.PS.BytecodeLength = mDx12Wrapper.GetShader()->GetPsBlob()->GetBufferSize();
 
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;//’†g‚Í0xffffffff
 

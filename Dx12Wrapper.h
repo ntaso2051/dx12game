@@ -30,6 +30,10 @@ public:
 	void StartDraw();
 	void EndDraw();
 
+	// シェーダー関連
+	void CompileShader();
+	class Shader* GetShader() { return mShader; }
+
 	void InitViewport(const int w, const int h);
 
 	void ShaderCompile();
@@ -53,6 +57,9 @@ private:
 	ComPtr<ID3D12Fence> mFence = nullptr;
 	UINT mFenceVal = 0;
 
+	// シェーダー
+	class Shader* mShader;
+
 	// 頂点バッファビュー 
 	D3D12_VERTEX_BUFFER_VIEW mVbView = {};
 	// インデックスバッファビュー
@@ -65,6 +72,8 @@ private:
 	ID3D12RootSignature* mRootsignature = nullptr;
 	// パイプラインステート
 	ID3D12PipelineState* mPipelinestate = nullptr;
+
+	
 
 	// デバッグ用
 	ComPtr<ID3D12Debug> mDebugLayer = nullptr;

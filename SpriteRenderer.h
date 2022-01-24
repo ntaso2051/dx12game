@@ -34,7 +34,7 @@ private:
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 	ComPtr<ID3D12PipelineState> mPipeline = nullptr;
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
-	// シェーダー関連
+	// シェーダー関連 TODO: 消してよい
 	ComPtr<ID3DBlob> mVsBlob = nullptr;
 	ComPtr<ID3DBlob> mPsBlob = nullptr;
 	//頂点関連

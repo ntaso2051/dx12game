@@ -3,6 +3,7 @@
 #include <string>
 #include <cassert>
 #include <DirectXMath.h>
+#include "Shader.h"
 
 using namespace DirectX;
 
@@ -13,6 +14,11 @@ Dx12Wrapper::Dx12Wrapper() {
 void Dx12Wrapper::EnableDebugLayer() {
 	auto result = D3D12GetDebugInterface(IID_PPV_ARGS(&mDebugLayer));
 	mDebugLayer->EnableDebugLayer();
+}
+
+void Dx12Wrapper::CompileShader() {
+	mShader = new Shader();
+	mShader->CompileShader();
 }
 
 HRESULT Dx12Wrapper::InitDXGIDevice() {
