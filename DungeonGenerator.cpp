@@ -1,7 +1,4 @@
 #include "DungeonGenerator.h"
-#ifdef _DEBUG
-#include <iostream>
-#endif
 #include "Random.h"
 
 Area::Area() { this->room = new Room(); }
@@ -52,14 +49,6 @@ void DungeonGenerator::createDg() {
 }
 
 void DungeonGenerator::draw() {
-#ifdef _DEBUG
-	for (auto& vh : mFloor->data) {
-		for (auto& vw : vh) {
-			std::cout << vw << " ";
-		}
-		std::cout << std::endl;
-	}
-#endif
 }
 
 void DungeonGenerator::splitArea(Area * area, int id, bool isVertical) {
@@ -90,19 +79,8 @@ void DungeonGenerator::splitArea(Area * area, int id, bool isVertical) {
 		return;
 	mAreas.push_back(newArea);
 
-#ifdef _DEBUG
-	std::cout << id << ":"
-		<< "p = " << p << std::endl;
-	for (auto a : mAreas) {
-		std::cout << "(x, y, w, h) = (" << a->x << ", " << a->y << ", " << a->w
-			<< ", " << a->h << ")" << std::endl;
-	}
-#endif
 	bool next = (!isVertical);
 
-#ifdef _DEBUG
-	std::cout << "next: " << next << std::endl;
-#endif 
 	DungeonGenerator::splitArea(newArea, id + 1, next);
 }
 
@@ -114,14 +92,6 @@ void DungeonGenerator::createRoom() {
 			a->h - 2 <= Const::ROOM_MAX_HEIGHT ? a->h - 2 : Const::ROOM_MAX_HEIGHT;
 		int rw = rand->randInt(Const::ROOM_MIN_WIDTH, rwmax);
 		int rh = rand->randInt(Const::ROOM_MIN_HEIGHT, rhmax);
-#ifdef _DEBUG
-		std::cout << "rw, rh = " << rw << ", " << rh << std::endl;
-
-		std::cout << "x:min, max= " << a->x + 1 << ", " << a->x + a->w - 1 - rw
-			<< std::endl;
-		std::cout << "y:min, max= " << a->y + 1 << ", " << a->y + a->h - 1 - rh
-			<< std::endl;
-#endif
 		int ix = rand->randInt(a->x + 1, a->x + a->w - 1 - rw);
 		int iy = rand->randInt(a->y + 1, a->y + a->h - 1 - rh);
 		a->room->set(ix, iy, rw, rh);
@@ -182,9 +152,6 @@ void DungeonGenerator::connectRooms() {
 			int fin = mAreas[i]->aisle->east < mAreas[i + 1]->aisle->west
 				? mAreas[i + 1]->aisle->west
 				: mAreas[i]->aisle->east;
-#ifdef _DEBUG
-			std::cout << start << ", " << fin << std::endl;
-#endif
 			for (int j = start; j <= fin; j++) {
 				mFloor->data[j][mAreas[i]->x + mAreas[i]->w] = Const::Cell::Aisle;
 			}

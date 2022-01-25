@@ -11,7 +11,7 @@ using std::chrono::milliseconds;
 
 class Game {
 public:
-	Game();
+	Game(HINSTANCE hinst);
 	~Game();
 	void Init();
 	void Loop();
@@ -27,6 +27,7 @@ private:
 	void UpdateGame();
 	Window* mWindow;
 	Dx12Wrapper* mDx12Wrapper;
+	class Input* mInput;
 	class ImguiWrapper* mImguiWrapper;
 	class DungeonGenerator* mDgGen;
 
