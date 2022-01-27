@@ -3,11 +3,12 @@
 #include "SpriteComponent.h"
 #include "SpriteRenderer.h"
 #include "Texture.h"
+#include "Const.h"
 
 using namespace DirectX;
 
 Hero::Hero(Game* game) :Entity(game) {
-	SpriteComponent* sc = new SpriteComponent(this, L"Resources/Images/myicon.png");
+	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	auto img = sc->GetSpriteRenderer()->GetTexture()->GetImgData();
 	mWorldMat = XMMatrixScaling(1.0f / img->width, 1.0f / img->height, 1.0f);
 	XMFLOAT3 eye(0, 0, -1);
@@ -23,7 +24,7 @@ Hero::Hero(Game* game) :Entity(game) {
 }
 
 Hero::Hero(Game * game, XMFLOAT3 pos) :Entity(game) {
-	SpriteComponent* sc = new SpriteComponent(this, L"Resources/Images/myicon.png");
+	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	auto img = sc->GetSpriteRenderer()->GetTexture()->GetImgData();
 	mWorldMat = XMMatrixScaling(1.0f / img->width, 1.0f / img->height, 1.0f);
 	mWorldMat *= XMMatrixTranslation(pos.x * 2 / img->width, pos.y * 2 / img->height, 0.0f);

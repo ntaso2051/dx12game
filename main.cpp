@@ -1,14 +1,11 @@
 #include <Windows.h>
 #include "Game.h"
+#include "Input.h"
 
 using namespace std;
 
-#ifdef _DEBUG
-int main() {
-#else
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-#endif
-	Game* game = new Game();
+int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int) {
+	Game* game = new Game(hinst);
 	game->Init();
 	game->Loop();
 	game->~Game();

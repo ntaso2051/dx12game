@@ -11,7 +11,7 @@ using std::chrono::milliseconds;
 
 class Game {
 public:
-	Game();
+	Game(HINSTANCE hinst);
 	~Game();
 	void Init();
 	void Loop();
@@ -20,12 +20,14 @@ public:
 	void RemoveEntity(class Entity* entity);
 	Dx12Wrapper& GetDx12() { return *mDx12Wrapper; }
 	Window* GetWindow() { return mWindow; }
-	void LoadImgFile();
-	class Texture* GetTexture() { return mTexture; }
+	void LoadImgFile(const wchar_t* filename);
+	class Texture* GetTexture() { return mTextures[0]; }
+	class Texture* GetTextureById(int id) { return mTextures[id]; }
 private:
 	void UpdateGame();
 	Window* mWindow;
 	Dx12Wrapper* mDx12Wrapper;
+	class Input* mInput;
 	class ImguiWrapper* mImguiWrapper;
 	class DungeonGenerator* mDgGen;
 
@@ -35,7 +37,7 @@ private:
 
 	int64_t mLastTime;
 
-	class Texture* mTexture;
+	std::vector<class Texture*> mTextures;
 	class Hero* mHero;
 	class Wall* mWall;
 };

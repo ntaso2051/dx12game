@@ -1,9 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "Windows.h"
-#ifdef _DEBUG
-#include <iostream>
-#endif
+
 
 class Window {
 public:
