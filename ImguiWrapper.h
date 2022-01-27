@@ -12,11 +12,12 @@ class ImguiWrapper {
 	template<typename T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
-	ImguiWrapper(HWND hwnd, class Dx12Wrapper* dx12);
+	ImguiWrapper(HWND hwnd, class Dx12Wrapper* dx12, class Input* input);
 	~ImguiWrapper();
 	void Draw();
 private:
 	class Dx12Wrapper* mDx12Wrapper;
+	class Input* mInput;
 	ComPtr<ID3D12DescriptorHeap>mDescHeap;
 	ImVec4 mClear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 };

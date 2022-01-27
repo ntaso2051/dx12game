@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <dinput.h>
+#include <vector>
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
@@ -25,13 +26,16 @@ public:
 private:
 	LPDIRECTINPUT8 mInterface;
 	LPDIRECTINPUTDEVICE8A mDev;
-	BYTE mKeyState[256];
+	std::vector<BYTE> mKeyState;
+	std::vector<BYTE> mLastKeyState;
 	enum STATE {
 		NONE,
 		ENTER,
 		PUSH,
 		EXIT,
 	};
+
+	std::vector<STATE> mState;
 
 	int mKeyInfo[KEY_INFO::MAX_KEY_INFO] = {
 		DIK_W,

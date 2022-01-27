@@ -1,7 +1,8 @@
 #include "ImguiWrapper.h"
 #include "Dx12Wrapper.h"
+#include "Input.h"
 
-ImguiWrapper::ImguiWrapper(HWND hwnd, Dx12Wrapper* dx12) :mDx12Wrapper(dx12) {
+ImguiWrapper::ImguiWrapper(HWND hwnd, Dx12Wrapper* dx12, Input* input) :mDx12Wrapper(dx12), mInput(input) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -42,16 +43,33 @@ void ImguiWrapper::Draw() {
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	bool pushW = mInput->GetKey(Input::KEY_INFO::W_KEY);
+	bool enterW = mInput->GetKeyEnter(Input::KEY_INFO::W_KEY);
+	bool exitW = mInput->GetKeyExit(Input::KEY_INFO::W_KEY);
+	bool pushA = mInput->GetKey(Input::KEY_INFO::A_KEY);
+	bool enterA = mInput->GetKeyEnter(Input::KEY_INFO::A_KEY);
+	bool exitA = mInput->GetKeyExit(Input::KEY_INFO::A_KEY);
+	bool pushS = mInput->GetKey(Input::KEY_INFO::S_KEY);
+	bool enterS = mInput->GetKeyEnter(Input::KEY_INFO::S_KEY);
+	bool exitS = mInput->GetKeyExit(Input::KEY_INFO::S_KEY);
+	bool pushD = mInput->GetKey(Input::KEY_INFO::D_KEY);
+	bool enterD = mInput->GetKeyEnter(Input::KEY_INFO::D_KEY);
+	bool exitD = mInput->GetKeyExit(Input::KEY_INFO::D_KEY);
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	{
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::ColorEdit3("clear color", (float*)& mClear_color); // Edit 3 floats representing a color
-
-		ImGui::SameLine();
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Begin("KeyState");                          // Create a window called "Hello, world!" and append into it.
+		ImGui::Checkbox("GetKey(w)", &pushW);
+		ImGui::Checkbox("GetKeyEnter(w)", &enterW);
+		ImGui::Checkbox("GetKeyExit(w)", &exitW);
+		ImGui::Checkbox("GetKey(a)", &pushA);
+		ImGui::Checkbox("GetKeyEnter(a)", &enterA);
+		ImGui::Checkbox("GetKeyExit(a)", &exitA);
+		ImGui::Checkbox("GetKey(S)", &pushS);
+		ImGui::Checkbox("GetKeyEnter(S)", &enterS);
+		ImGui::Checkbox("GetKeyExit(S)", &exitS);
+		ImGui::Checkbox("GetKey(D)", &pushD);
+		ImGui::Checkbox("GetKeyEnter(D)", &enterD);
+		ImGui::Checkbox("GetKeyExit(D)", &exitD);
 		ImGui::End();
 	}
 	ImGui::Render();

@@ -62,7 +62,7 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/myicon.png");
 	LoadImgFile(L"Resources/Images/Wall.png");
 
-	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper);
+	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput);
 	mHero = new Hero(this, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	mDgGen = new DungeonGenerator();
 	mDgGen->createDg();
