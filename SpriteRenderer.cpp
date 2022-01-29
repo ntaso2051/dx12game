@@ -12,9 +12,7 @@ SpriteRenderer::SpriteRenderer(Dx12Wrapper& dx12Wrapper, Texture* tex) :mDx12Wra
 SpriteRenderer::~SpriteRenderer() {}
 
 void SpriteRenderer::ReComputeMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX projMat) {
-	mWorldMat = worldMat;
-	mViewMat = viewMat;
-	mProjMat = projMat;
+	*mMapMatrix = worldMat * viewMat * projMat;
 }
 
 void SpriteRenderer::InitMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX projMat) {
@@ -22,7 +20,7 @@ void SpriteRenderer::InitMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX pr
 }
 
 void SpriteRenderer::Draw() {
-	*mMapMatrix = mWorldMat * mViewMat * mProjMat;
+	// *mMapMatrix = mWorldMat * mViewMat * mProjMat;
 	mDx12Wrapper.CmdList()->SetPipelineState(mDx12Wrapper.GetPipelinestateForSprite().Get());
 	mDx12Wrapper.CmdList()->RSSetViewports(1, &mDx12Wrapper.Viewport());
 	mDx12Wrapper.CmdList()->RSSetScissorRects(1, &mDx12Wrapper.Scissorrect());
@@ -83,12 +81,12 @@ HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 
 
 	// 定数バッファ作成 TODO：プレイヤーから座標を渡されるようにする．今はテスト用に固定値．
-	mWorldMat = XMMatrixScaling(1.0f / img->width, 1.0f / img->height, 1.0f);
+	XMMATRIX worldMat = XMMatrixScaling(1.0f / img->width, 1.0f / img->height, 1.0f);
 	XMFLOAT3 eye(0, 0, -1);
 	XMFLOAT3 target(0, 0, 0);
 	XMFLOAT3 up(0, 1, 0);
-	mViewMat = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-	mProjMat = XMMatrixPerspectiveFovLH(
+	XMMATRIX viewMat = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+	XMMATRIX projMat = XMMatrixPerspectiveFovLH(
 		XM_PIDIV4,
 		static_cast<double>(windowWidth) / static_cast<double>(windowHeight),
 		1.0f,//近い方
@@ -107,7 +105,7 @@ HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 	);
 
 	result = constBuff->Map(0, nullptr, (void**)& mMapMatrix);//マップ
-	*mMapMatrix = mWorldMat * mViewMat * mProjMat;
+	*mMapMatrix = worldMat * viewMat * projMat;
 
 	//通常テクスチャビュー作成
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};

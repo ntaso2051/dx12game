@@ -20,14 +20,10 @@ public:
 	void UpdateComponents(float deltaTime);
 
 	XMMATRIX GetWorldMat() { return mWorldMat; }
-	XMMATRIX GetViewMat() { return mViewMat; }
-	XMMATRIX GetProjMat() { return mProjMat; }
 	class Game* GetGame();
 protected:
 	class Game* mGame;
 	std::vector<class Component*>mComponents;
 	// ç¿ïWä÷òA
 	XMMATRIX mWorldMat;
-	XMMATRIX mViewMat;
-	XMMATRIX mProjMat;
 };

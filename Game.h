@@ -3,6 +3,7 @@
 #include "Dx12Wrapper.h"
 #include "SpriteRenderer.h"
 #include <vector>
+#include <DirectXMath.h>
 // éûçèä÷òA
 #include <chrono>
 #include <ctime>
@@ -20,9 +21,12 @@ public:
 	void RemoveEntity(class Entity* entity);
 	Dx12Wrapper& GetDx12() { return *mDx12Wrapper; }
 	Window* GetWindow() { return mWindow; }
+	class Input* GetInput() { return mInput; }
 	void LoadImgFile(const wchar_t* filename);
 	class Texture* GetTexture() { return mTextures[0]; }
 	class Texture* GetTextureById(int id) { return mTextures[id]; }
+	XMMATRIX GetViewMat() { return mViewMat; }
+	XMMATRIX GetProjMat() { return mProjMat; }
 private:
 	void UpdateGame();
 	Window* mWindow;
@@ -40,4 +44,7 @@ private:
 	std::vector<class Texture*> mTextures;
 	class Hero* mHero;
 	class Wall* mWall;
+
+	XMMATRIX mViewMat;
+	XMMATRIX mProjMat;
 };

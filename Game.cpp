@@ -19,11 +19,21 @@ Game::Game(HINSTANCE hinst) :mUpdatingEntities(false) {
 	mWindow->Init();
 	mWindow->Run();
 	mInput = new Input(hinst, mWindow->GetHwnd());
+	XMFLOAT3 eye(0, 0, -1);
+	XMFLOAT3 target(0, 0, 0);
+	XMFLOAT3 up(0, 1, 0);
+	mViewMat = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+	mProjMat = XMMatrixPerspectiveFovLH(
+		XM_PIDIV4,
+		static_cast<double>(mWindow->GetWidth()) / static_cast<double>(mWindow->GetHeight()),
+		1.0f,//‹ß‚¢•û
+		10.0f//‰“‚¢•û
+	);
 }
 
 Game::~Game() {
-	mWindow->~Window();
-	mDx12Wrapper->~Dx12Wrapper();
+	delete mWindow;
+	delete mDx12Wrapper;
 }
 
 void Game::LoadImgFile(const wchar_t* filename) {
@@ -66,13 +76,13 @@ void Game::Init() {
 	mHero = new Hero(this, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	mDgGen = new DungeonGenerator();
 	mDgGen->createDg();
-	mDgGen->draw();
 	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
 		for (int j = 0; j < mDgGen->getFloor()->data[0].size(); j++) {
 			if (mDgGen->getFloor()->data[i][j] == Const::Cell::Wall)
 				Wall * wall = new Wall(this, XMFLOAT3(j - 15, i - 15, 0));
 		}
 	}
+	delete mDgGen;
 }
 
 void Game::Loop() {
@@ -111,15 +121,14 @@ void Game::UpdateGame() {
 	mPendingEntities.clear();
 
 	// update dead entities
-	std::vector<Entity*> deadActors;
+	std::vector<Entity*> deadEntities;
 	for (auto entity : mEntities) {
 		/*TODO:Entity‚ÉState‚ð’Ç‰Á
-			deadActors.emplace_back(actor);
 		*/
 	}
 
-	for (auto actor : deadActors) {
-		delete actor;
+	for (auto entity : deadEntities) {
+		delete entity;
 	}
 	mLastTime = now;
 }

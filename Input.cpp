@@ -48,6 +48,7 @@ Input::~Input() {
 	mInterface->Release();
 }
 
+
 void Input::UpdateKeyState() {
 	for (int i = 0; i < 256; i++) {
 		mLastKeyState[i] = mKeyState[i];

@@ -2,7 +2,10 @@
 #include "Random.h"
 
 Area::Area() { this->room = new Room(); }
-Area::~Area() { delete this->room; }
+Area::~Area() {
+	delete this->room;
+	delete this->aisle;
+}
 
 void Area::set(int x, int y, int w, int h, int id) {
 	this->x = x;
@@ -27,10 +30,17 @@ void Aisle::set(int north, int south, int west, int east) {
 }
 
 Aisle::Aisle() { this->set(-1, -1, -1, -1); }
+Aisle::~Aisle() {}
 
-DungeonGenerator::DungeonGenerator() { rand = new Random(); }
+DungeonGenerator::DungeonGenerator() { mRand = new Random(); }
 
-DungeonGenerator::~DungeonGenerator() { delete mFloor; }
+DungeonGenerator::~DungeonGenerator() {
+	delete mFloor;
+	delete mRand;
+	for (auto area : mAreas) {
+		delete area;
+	}
+}
 
 void DungeonGenerator::createDg() {
 	mFloor = new Floor();
@@ -61,7 +71,7 @@ void DungeonGenerator::splitArea(Area * area, int id, bool isVertical) {
 
 	if (randmax - 2 - (randmin) <= 0) return;
 
-	int p = rand->randInt(randmin, randmax - 2);
+	int p = mRand->randInt(randmin, randmax - 2);
 	Area * newArea = new Area();
 	if (isVertical) {
 		newArea->set(area->x + p, area->y, Const::FLOOR_MAX_WIDTH - (p + area->x),
@@ -90,10 +100,10 @@ void DungeonGenerator::createRoom() {
 			a->w - 2 <= Const::ROOM_MAX_WIDTH ? a->w - 2 : Const::ROOM_MAX_WIDTH;
 		int rhmax =
 			a->h - 2 <= Const::ROOM_MAX_HEIGHT ? a->h - 2 : Const::ROOM_MAX_HEIGHT;
-		int rw = rand->randInt(Const::ROOM_MIN_WIDTH, rwmax);
-		int rh = rand->randInt(Const::ROOM_MIN_HEIGHT, rhmax);
-		int ix = rand->randInt(a->x + 1, a->x + a->w - 1 - rw);
-		int iy = rand->randInt(a->y + 1, a->y + a->h - 1 - rh);
+		int rw = mRand->randInt(Const::ROOM_MIN_WIDTH, rwmax);
+		int rh = mRand->randInt(Const::ROOM_MIN_HEIGHT, rhmax);
+		int ix = mRand->randInt(a->x + 1, a->x + a->w - 1 - rw);
+		int iy = mRand->randInt(a->y + 1, a->y + a->h - 1 - rh);
 		a->room->set(ix, iy, rw, rh);
 	}
 }
@@ -103,7 +113,7 @@ void DungeonGenerator::connectRooms() {
 		mAreas[i]->aisle = new Aisle();
 		// if y==0 then there is not north area.
 		if (mAreas[i]->y) {
-			int north = rand->randInt(mAreas[i]->room->x,
+			int north = mRand->randInt(mAreas[i]->room->x,
 				mAreas[i]->room->x + mAreas[i]->room->w - 1);
 			for (int j = mAreas[i]->y; j < mAreas[i]->room->y; j++) {
 				mFloor->data[j][north] = Const::Cell::Aisle;
@@ -113,7 +123,7 @@ void DungeonGenerator::connectRooms() {
 
 		// if y+h==FLOOR_MAX_HEIGHT, there is not south area.
 		if (mAreas[i]->y + mAreas[i]->h != Const::FLOOR_MAX_HEIGHT) {
-			int south = rand->randInt(mAreas[i]->room->x,
+			int south = mRand->randInt(mAreas[i]->room->x,
 				mAreas[i]->room->x + mAreas[i]->room->w - 1);
 			for (int j = mAreas[i]->room->y + mAreas[i]->room->h;
 				j < mAreas[i]->y + mAreas[i]->h; j++) {
@@ -124,7 +134,7 @@ void DungeonGenerator::connectRooms() {
 
 		// if x==0, there is not west area.
 		if (mAreas[i]->x) {
-			int west = rand->randInt(mAreas[i]->room->y,
+			int west = mRand->randInt(mAreas[i]->room->y,
 				mAreas[i]->room->y + mAreas[i]->room->h - 1);
 			for (int j = mAreas[i]->x; j < mAreas[i]->room->x; j++) {
 				mFloor->data[west][j] = Const::Cell::Aisle;
@@ -134,7 +144,7 @@ void DungeonGenerator::connectRooms() {
 
 		// if x+w==FLOOR_MAX_WIDTH, there is not east area.
 		if (mAreas[i]->x + mAreas[i]->w != Const::FLOOR_MAX_WIDTH) {
-			int east = rand->randInt(mAreas[i]->room->y,
+			int east = mRand->randInt(mAreas[i]->room->y,
 				mAreas[i]->room->y + mAreas[i]->room->h - 1);
 			for (int j = mAreas[i]->room->x + mAreas[i]->room->w;
 				j < mAreas[i]->x + mAreas[i]->w; j++) {
@@ -185,11 +195,11 @@ void DungeonGenerator::setFloor() {
 }
 
 XMFLOAT2 DungeonGenerator::getRandomPosInRoom() {
-	int id = rand->randInt(0, mAreas.size() - 1);
+	int id = mRand->randInt(0, mAreas.size() - 1);
 	XMFLOAT2 res;
-	res.x = rand->randInt(mAreas[id]->room->x,
+	res.x = mRand->randInt(mAreas[id]->room->x,
 		mAreas[id]->room->x + mAreas[id]->room->w - 1);
-	res.y = rand->randInt(mAreas[id]->room->y,
+	res.y = mRand->randInt(mAreas[id]->room->y,
 		mAreas[id]->room->y + mAreas[id]->room->h - 1);
 	res.x *= Const::CELL_SIZE;
 	res.y *= Const::CELL_SIZE;
