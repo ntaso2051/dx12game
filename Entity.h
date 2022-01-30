@@ -19,11 +19,11 @@ public:
 	void RemoveComponent(class Component* component);
 	void UpdateComponents(float deltaTime);
 
-	XMMATRIX GetWorldMat() { return mWorldMat; }
+	XMINT2 GetPosition() { return mPosition; }
 	class Game* GetGame();
 protected:
 	class Game* mGame;
 	std::vector<class Component*>mComponents;
 	// ç¿ïWä÷òA
-	XMMATRIX mWorldMat;
+	XMINT2 mPosition;
 };

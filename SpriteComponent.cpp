@@ -3,6 +3,8 @@
 #include "Entity.h"
 #include "Game.h"
 #include "Window.h"
+#include "Hero.h"
+#include "Const.h"
 
 SpriteComponent::SpriteComponent(Entity* owner, int textureId, int drawOrder) :Component(owner), mDrawOrder(drawOrder) {
 	mOwner->AddComponent(this);
@@ -14,6 +16,7 @@ SpriteComponent::SpriteComponent(Entity* owner, int textureId, int drawOrder) :C
 	// mSpriteRenderer->InitRootSignature();
 	// mSpriteRenderer->InitGraphicPipeline();
 	mSpriteRenderer->CreateTexture(window->GetWidth(), window->GetHeight());
+
 }
 
 SpriteComponent::~SpriteComponent() {
@@ -25,6 +28,10 @@ void SpriteComponent::Draw() {
 }
 
 void SpriteComponent::Update(float deltaTime) {
-	mSpriteRenderer->ReComputeMatrix(mOwner->GetWorldMat(), mOwner->GetGame()->GetViewMat(), mOwner->GetGame()->GetProjMat());
+	XMMATRIX worldMat = XMMatrixScaling(1.0f / Const::CELL_SIZE, 1.0f / Const::CELL_SIZE, 1.0f);
+	XMINT2 heroPos = mOwner->GetGame()->GetHero()->GetPosition();
+	XMINT2 ownerPos = mOwner->GetPosition();
+	worldMat *= XMMatrixTranslation(2.0f * (ownerPos.x - heroPos.x) / Const::CELL_SIZE, 2.0f * (ownerPos.y - heroPos.y) / Const::CELL_SIZE, 1.0f);
+	mSpriteRenderer->ReComputeMatrix(worldMat, mOwner->GetGame()->GetViewMat(), mOwner->GetGame()->GetProjMat());
 	mSpriteRenderer->Draw();
 }

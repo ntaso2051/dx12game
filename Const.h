@@ -1,6 +1,6 @@
 #pragma once
 namespace Const {
-	const int CELL_SIZE = 32;
+	const int CELL_SIZE = 16;
 
 	const int MINI_MAP_CELL_SIZE = 12;
 

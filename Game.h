@@ -27,6 +27,7 @@ public:
 	class Texture* GetTextureById(int id) { return mTextures[id]; }
 	XMMATRIX GetViewMat() { return mViewMat; }
 	XMMATRIX GetProjMat() { return mProjMat; }
+	class Hero* GetHero() { return mHero; }
 private:
 	void UpdateGame();
 	Window* mWindow;

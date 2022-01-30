@@ -72,17 +72,16 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/myicon.png");
 	LoadImgFile(L"Resources/Images/Wall.png");
 
-	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput);
+	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput, this);
 	mHero = new Hero(this, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	mDgGen = new DungeonGenerator();
 	mDgGen->createDg();
 	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
 		for (int j = 0; j < mDgGen->getFloor()->data[0].size(); j++) {
 			if (mDgGen->getFloor()->data[i][j] == Const::Cell::Wall)
-				Wall * wall = new Wall(this, XMFLOAT3(j - 15, i - 15, 0));
+				Wall * wall = new Wall(this, XMFLOAT3(j, i, 0));
 		}
 	}
-	delete mDgGen;
 }
 
 void Game::Loop() {
