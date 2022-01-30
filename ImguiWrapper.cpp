@@ -4,6 +4,8 @@
 #include "Game.h"
 #include "Hero.h"
 #include <DirectXMath.h>
+#include "Const.h"
+#include "DungeonGenerator.h"
 
 using namespace ImGui;
 using namespace DirectX;
@@ -14,7 +16,7 @@ ImguiWrapper::ImguiWrapper(HWND hwnd, Dx12Wrapper* dx12, Input* input, Game* gam
 	ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 
-	ImGui::StyleColorsClassic();
+	ImGui::StyleColorsDark();
 
 	int NUM_FRAMES_IN_FLIGHT = 3;
 
@@ -83,6 +85,27 @@ void ImguiWrapper::Draw() {
 		XMINT2 heroPos = mGame->GetHero()->GetPosition();
 		Begin("Hero State");
 		Text("Position(%3d, %3d)", heroPos.x, heroPos.y);
+		End();
+	}
+	// Render minimap
+	{
+		Begin("MiniMap");
+		auto data = mGame->GetDgGen()->getFloor()->data;
+		for (int i = data.size() - 1; i >= 0; i--) {
+			std::string colStr = "";
+			for (int j = 0; j < data[0].size(); j++) {
+				if (data[i][j] == Const::Cell::Wall) {
+					colStr += "  ";
+				}
+				else if (data[i][j] == Const::Cell::Actor) {
+					colStr += "X ";
+				}
+				else {
+					colStr += "O ";
+				}
+			}
+			Text("%s\n\r", colStr.c_str());
+		}
 		End();
 	}
 	Render();
