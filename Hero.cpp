@@ -18,7 +18,7 @@ Hero::Hero(Game* game) :Entity(game) {
 Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	auto img = sc->GetSpriteRenderer()->GetTexture()->GetImgData();
-
+	mPosition = XMINT2(pos.x, pos.y);
 }
 
 void Hero::UpdateEntity(float deltaTime) {

@@ -73,7 +73,7 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/Wall.png");
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput, this);
-	mHero = new Hero(this, XMFLOAT3(1.0f, 1.0f, 1.0f));
+
 	mDgGen = new DungeonGenerator();
 	mDgGen->createDg();
 	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
@@ -82,6 +82,9 @@ void Game::Init() {
 				Wall * wall = new Wall(this, XMFLOAT3(j, i, 0));
 		}
 	}
+
+	XMFLOAT2 initPos = mDgGen->getRandomPosInRoom();
+	mHero = new Hero(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 }
 
 void Game::Loop() {
