@@ -22,6 +22,7 @@ public:
 	Dx12Wrapper& GetDx12() { return *mDx12Wrapper; }
 	Window* GetWindow() { return mWindow; }
 	class Input* GetInput() { return mInput; }
+	class DungeonGenerator* GetDgGen() { return mDgGen; }
 	void LoadImgFile(const wchar_t* filename);
 	class Texture* GetTexture() { return mTextures[0]; }
 	class Texture* GetTextureById(int id) { return mTextures[id]; }
