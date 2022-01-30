@@ -13,12 +13,14 @@ Hero::Hero(Game* game) :Entity(game) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	auto img = sc->GetSpriteRenderer()->GetTexture()->GetImgData();
 	mPosition = XMINT2(0, 0);
+	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Actor);
 }
 
 Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	auto img = sc->GetSpriteRenderer()->GetTexture()->GetImgData();
 	mPosition = XMINT2(pos.x, pos.y);
+	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Actor);
 }
 
 void Hero::UpdateEntity(float deltaTime) {
