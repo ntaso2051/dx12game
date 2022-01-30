@@ -34,9 +34,9 @@ private:
 	ComPtr<ID3D12DescriptorHeap> mTexDescHeap = nullptr;
 
 	// ç¿ïWä÷òA
-	XMMATRIX mWorldMat;
-	XMMATRIX mViewMat;
-	XMMATRIX mProjMat;
+	// XMMATRIX mWorldMat;
+	// XMMATRIX mViewMat;
+	// XMMATRIX mProjMat;
 	XMMATRIX* mMapMatrix;
 
 

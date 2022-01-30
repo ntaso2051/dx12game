@@ -67,6 +67,5 @@ public:
 private:
 	Floor* mFloor;
 	std::vector<Area*> mAreas;
-	std::vector<class Wall*> mWalls;
-	class Random* rand;
+	class Random* mRand;
 };

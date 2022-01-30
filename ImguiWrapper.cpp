@@ -1,8 +1,14 @@
 #include "ImguiWrapper.h"
 #include "Dx12Wrapper.h"
 #include "Input.h"
+#include "Game.h"
+#include "Hero.h"
+#include <DirectXMath.h>
 
-ImguiWrapper::ImguiWrapper(HWND hwnd, Dx12Wrapper* dx12, Input* input) :mDx12Wrapper(dx12), mInput(input) {
+using namespace ImGui;
+using namespace DirectX;
+
+ImguiWrapper::ImguiWrapper(HWND hwnd, Dx12Wrapper* dx12, Input* input, Game* game) :mDx12Wrapper(dx12), mInput(input), mGame(game) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -43,36 +49,43 @@ void ImguiWrapper::Draw() {
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	bool pushW = mInput->GetKey(Input::KEY_INFO::W_KEY);
-	bool enterW = mInput->GetKeyEnter(Input::KEY_INFO::W_KEY);
-	bool exitW = mInput->GetKeyExit(Input::KEY_INFO::W_KEY);
-	bool pushA = mInput->GetKey(Input::KEY_INFO::A_KEY);
-	bool enterA = mInput->GetKeyEnter(Input::KEY_INFO::A_KEY);
-	bool exitA = mInput->GetKeyExit(Input::KEY_INFO::A_KEY);
-	bool pushS = mInput->GetKey(Input::KEY_INFO::S_KEY);
-	bool enterS = mInput->GetKeyEnter(Input::KEY_INFO::S_KEY);
-	bool exitS = mInput->GetKeyExit(Input::KEY_INFO::S_KEY);
-	bool pushD = mInput->GetKey(Input::KEY_INFO::D_KEY);
-	bool enterD = mInput->GetKeyEnter(Input::KEY_INFO::D_KEY);
-	bool exitD = mInput->GetKeyExit(Input::KEY_INFO::D_KEY);
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+	// KeyState debug imgui
 	{
-		ImGui::Begin("KeyState");                          // Create a window called "Hello, world!" and append into it.
-		ImGui::Checkbox("GetKey(w)", &pushW);
-		ImGui::Checkbox("GetKeyEnter(w)", &enterW);
-		ImGui::Checkbox("GetKeyExit(w)", &exitW);
-		ImGui::Checkbox("GetKey(a)", &pushA);
-		ImGui::Checkbox("GetKeyEnter(a)", &enterA);
-		ImGui::Checkbox("GetKeyExit(a)", &exitA);
-		ImGui::Checkbox("GetKey(S)", &pushS);
-		ImGui::Checkbox("GetKeyEnter(S)", &enterS);
-		ImGui::Checkbox("GetKeyExit(S)", &exitS);
-		ImGui::Checkbox("GetKey(D)", &pushD);
-		ImGui::Checkbox("GetKeyEnter(D)", &enterD);
-		ImGui::Checkbox("GetKeyExit(D)", &exitD);
-		ImGui::End();
+		bool pushW = mInput->GetKey(Input::KEY_INFO::W_KEY);
+		bool enterW = mInput->GetKeyEnter(Input::KEY_INFO::W_KEY);
+		bool exitW = mInput->GetKeyExit(Input::KEY_INFO::W_KEY);
+		bool pushA = mInput->GetKey(Input::KEY_INFO::A_KEY);
+		bool enterA = mInput->GetKeyEnter(Input::KEY_INFO::A_KEY);
+		bool exitA = mInput->GetKeyExit(Input::KEY_INFO::A_KEY);
+		bool pushS = mInput->GetKey(Input::KEY_INFO::S_KEY);
+		bool enterS = mInput->GetKeyEnter(Input::KEY_INFO::S_KEY);
+		bool exitS = mInput->GetKeyExit(Input::KEY_INFO::S_KEY);
+		bool pushD = mInput->GetKey(Input::KEY_INFO::D_KEY);
+		bool enterD = mInput->GetKeyEnter(Input::KEY_INFO::D_KEY);
+		bool exitD = mInput->GetKeyExit(Input::KEY_INFO::D_KEY);
+		Begin("KeyState");
+		Checkbox("GetKey(w)", &pushW);
+		Checkbox("GetKeyEnter(w)", &enterW);
+		Checkbox("GetKeyExit(w)", &exitW);
+		Checkbox("GetKey(a)", &pushA);
+		Checkbox("GetKeyEnter(a)", &enterA);
+		Checkbox("GetKeyExit(a)", &exitA);
+		Checkbox("GetKey(S)", &pushS);
+		Checkbox("GetKeyEnter(S)", &enterS);
+		Checkbox("GetKeyExit(S)", &exitS);
+		Checkbox("GetKey(D)", &pushD);
+		Checkbox("GetKeyEnter(D)", &enterD);
+		Checkbox("GetKeyExit(D)", &exitD);
+		End();
 	}
-	ImGui::Render();
+	// Hero info debug imgui
+	{
+		XMINT2 heroPos = mGame->GetHero()->GetPosition();
+		Begin("Hero State");
+		Text("Position(%3d, %3d)", heroPos.x, heroPos.y);
+		End();
+	}
+	Render();
 	mDx12Wrapper->CmdList()->SetDescriptorHeaps(1, mDescHeap.GetAddressOf());
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), mDx12Wrapper->CmdList().Get());
 }
