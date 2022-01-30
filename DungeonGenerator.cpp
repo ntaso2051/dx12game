@@ -201,8 +201,8 @@ XMFLOAT2 DungeonGenerator::getRandomPosInRoom() {
 		mAreas[id]->room->x + mAreas[id]->room->w - 1);
 	res.y = mRand->randInt(mAreas[id]->room->y,
 		mAreas[id]->room->y + mAreas[id]->room->h - 1);
-	res.x *= Const::CELL_SIZE;
-	res.y *= Const::CELL_SIZE;
+	res.x;
+	res.y;
 	return res;
 }
 
