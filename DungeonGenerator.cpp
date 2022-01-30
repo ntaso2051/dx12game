@@ -194,6 +194,10 @@ void DungeonGenerator::setFloor() {
 	}
 }
 
+void DungeonGenerator::SetCellType(int x, int y, Const::Cell::Type cellType) {
+	mFloor->data[y][x] = cellType;
+}
+
 XMFLOAT2 DungeonGenerator::getRandomPosInRoom() {
 	int id = mRand->randInt(0, mAreas.size() - 1);
 	XMFLOAT2 res;

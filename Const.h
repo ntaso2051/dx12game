@@ -25,6 +25,9 @@ namespace Const {
 			Floor,
 			Aisle,
 			Wall,
+			Actor,
+			Stair,
+			Item,
 		};
 	};
 

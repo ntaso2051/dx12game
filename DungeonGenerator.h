@@ -61,6 +61,8 @@ public:
 
 	void setFloor();
 
+	void SetCellType(int x, int y, Const::Cell::Type cellType);
+
 	Floor* getFloor() { return mFloor; }
 	Const::Cell::Type getCellType(int x, int y) { return mFloor->data[y][x]; }
 
