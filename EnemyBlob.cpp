@@ -12,6 +12,7 @@ EnemyBlob::EnemyBlob(Game* game, XMFLOAT3 pos) : Entity(game) {
 	mPosition.y = pos.y;
 	game->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Enemy);
 }
+
 EnemyBlob::~EnemyBlob() {
 
 }

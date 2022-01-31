@@ -7,6 +7,8 @@
 #include "Const.h"
 #include "DungeonGenerator.h"
 #include "ParameterComponent.h"
+#include "CharacterManager.h"
+#include "EnemyBlob.h"
 
 using namespace ImGui;
 using namespace DirectX;
@@ -131,6 +133,17 @@ void ImguiWrapper::Draw() {
 				}
 			}
 			Text("%s\n\r", colStr.c_str());
+		}
+		End();
+	}
+	{
+		Begin("Enemy State");
+		auto enemyBlobs = mGame->GetChrManager()->GetEnemyBlobs();
+		for (auto e : enemyBlobs) {
+			auto epc = static_cast<ParameterComponent*>(e->GetParam());
+			Text("EnemyState");
+			Text("HP EXP LEVEL ATTACK (%d, %d, %d, %d)", epc->GetHp(), epc->GetExp(), epc->GetLevel(), epc->GetAttack());
+			Text("Pos (%d, %d)", e->GetPosition().x, e->GetPosition().y);
 		}
 		End();
 	}

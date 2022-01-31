@@ -3,6 +3,9 @@
 
 #include "Game.h"
 #include "DungeonGenerator.h"
+#include "CharacterManager.h"
+#include "EnemyBlob.h"
+#include "SpriteComponent.h"
 
 ParameterComponent::ParameterComponent(Entity* owner, int hp, int exp, int level, int attack) : Component(owner), mHp(hp), mExp(exp), mLevel(level), mAttack(attack) {
 
@@ -16,6 +19,7 @@ void ParameterComponent::Damaged(ParameterComponent* pc) {
 	if (mHp < 0) {
 		XMINT2 pos = mOwner->GetPosition();
 		mOwner->GetGame()->GetDgGen()->SetCellType(pos.x, pos.y, Const::Cell::Floor);
-		delete mOwner;
+		mOwner->GetGame()->GetChrManager()->RemoveEnemyBlob(static_cast<EnemyBlob*>(mOwner));
+		static_cast<SpriteComponent*> (static_cast<EnemyBlob*>(mOwner)->GetSpriteComponent())->SetActive(false);
 	}
 }

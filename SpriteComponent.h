@@ -7,10 +7,12 @@ public:
 	~SpriteComponent();
 
 	virtual void Draw();
+	void SetActive(bool active);
 	void Update(float deltaTime) override;
 	int GetDrawOrder() { return mDrawOrder; };
 	class SpriteRenderer* GetSpriteRenderer() { return mSpriteRenderer; }
 protected:
 	class SpriteRenderer* mSpriteRenderer;
 	int mDrawOrder;
+	bool mActiveSelf;
 };

@@ -20,6 +20,7 @@ public:
 	void RemoveEnemyBlob(class EnemyBlob* enemyBlob);
 	void DamageCalc(class ParameterComponent* attack, class ParameterComponent* damaged);
 	void AttackRequest(XMINT2 pos, XMINT2 dir);
+	std::vector<class EnemyBlob*> GetEnemyBlobs() { return mEnemyBlobs; }
 
 private:
 	class Hero* mHero;
