@@ -1,5 +1,9 @@
 #pragma once
 #include <vector>
+#include <DirectXMath.h>
+#include "Const.h"
+
+using namespace DirectX;
 
 class CharacterManager {
 public:
@@ -10,10 +14,12 @@ public:
 		EnemiesPhase,
 	};
 	void ChangePhase();
+	class Entity* FindEnemyByPos(XMINT2 pos);
 	Phase GetPhase() { return mPhase; }
 	void AddEnemyBlob(class EnemyBlob* enemyBlob);
 	void RemoveEnemyBlob(class EnemyBlob* enemyBlob);
 	void DamageCalc(class ParameterComponent* attack, class ParameterComponent* damaged);
+	void AttackRequest(XMINT2 pos, XMINT2 dir);
 
 private:
 	class Hero* mHero;

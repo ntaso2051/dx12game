@@ -8,6 +8,9 @@ Entity::Entity(Game* game) :mGame(game) {
 
 Entity::~Entity() {
 	mGame->RemoveEntity(this);
+	for (auto comp : mComponents) {
+		delete comp;
+	}
 }
 
 Game* Entity::GetGame() { return mGame; }

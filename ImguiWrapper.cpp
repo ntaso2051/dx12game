@@ -66,6 +66,13 @@ void ImguiWrapper::Draw() {
 		bool pushD = mInput->GetKey(Input::KEY_INFO::D_KEY);
 		bool enterD = mInput->GetKeyEnter(Input::KEY_INFO::D_KEY);
 		bool exitD = mInput->GetKeyExit(Input::KEY_INFO::D_KEY);
+		bool pushSpace = mInput->GetKey(Input::KEY_INFO::SPACE_KEY);
+		bool enterSpace = mInput->GetKeyEnter(Input::KEY_INFO::SPACE_KEY);
+		bool exitSpace = mInput->GetKeyExit(Input::KEY_INFO::SPACE_KEY);
+		bool pushZ = mInput->GetKey(Input::KEY_INFO::Z_KEY);
+		bool enterZ = mInput->GetKeyEnter(Input::KEY_INFO::Z_KEY);
+		bool exitZ = mInput->GetKeyExit(Input::KEY_INFO::Z_KEY);
+
 		Begin("KeyState");
 		Checkbox("GetKey(w)", &pushW);
 		Checkbox("GetKeyEnter(w)", &enterW);
@@ -79,11 +86,18 @@ void ImguiWrapper::Draw() {
 		Checkbox("GetKey(D)", &pushD);
 		Checkbox("GetKeyEnter(D)", &enterD);
 		Checkbox("GetKeyExit(D)", &exitD);
+		Checkbox("GetKey(SPACE)", &pushSpace);
+		Checkbox("GetKeyEnter(SPACE)", &enterSpace);
+		Checkbox("GetKeyExit(SPACE)", &exitSpace);
+		Checkbox("GetKey(Z)", &pushZ);
+		Checkbox("GetKeyEnter(Z)", &enterZ);
+		Checkbox("GetKeyExit(Z)", &exitZ);
 		End();
 	}
 	// Hero info debug imgui
 	{
 		XMINT2 heroPos = mGame->GetHero()->GetPosition();
+		XMINT2 heroDir = mGame->GetHero()->GetDir();
 		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetHeroParam());
 
 		Begin("Hero State");
@@ -92,6 +106,7 @@ void ImguiWrapper::Draw() {
 		Text("EXP: %d", pc->GetExp());
 		Text("LEVEL: %d", pc->GetLevel());
 		Text("ATTACK: %d", pc->GetAttack());
+		Text("mDirection: %d, %d", heroDir.x, heroDir.y);
 
 		End();
 	}

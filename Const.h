@@ -49,4 +49,15 @@ namespace Const {
 			Blob,
 		};
 	};
+
+	enum Dir {
+		N,
+		NE,
+		E,
+		SE,
+		S,
+		SW,
+		W,
+		NW,
+	};
 };  // namespace Const
