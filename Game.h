@@ -23,6 +23,8 @@ public:
 	Window* GetWindow() { return mWindow; }
 	class Input* GetInput() { return mInput; }
 	class DungeonGenerator* GetDgGen() { return mDgGen; }
+	class CharacterManager* GetChrManager() { return mCharacterManager; }
+
 	void LoadImgFile(const wchar_t* filename);
 	class Texture* GetTexture() { return mTextures[0]; }
 	class Texture* GetTextureById(int id) { return mTextures[id]; }
@@ -44,8 +46,9 @@ private:
 	int64_t mLastTime;
 
 	std::vector<class Texture*> mTextures;
+
+	class CharacterManager* mCharacterManager;
 	class Hero* mHero;
-	class Wall* mWall;
 
 	XMMATRIX mViewMat;
 	XMMATRIX mProjMat;

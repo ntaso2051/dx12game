@@ -15,7 +15,8 @@ public:
 		A_KEY,
 		S_KEY,
 		D_KEY,
-		SPECE_KEY,
+		SPACE_KEY,
+		Z_KEY,
 		MAX_KEY_INFO,
 	};
 
@@ -43,5 +44,6 @@ private:
 		DIK_S,
 		DIK_D,
 		DIK_SPACE,
+		DIK_Z,
 	};
 };

@@ -16,4 +16,6 @@ Wall::Wall(Game* game, XMFLOAT3 pos) : Entity(game) {
 	mPosition = XMINT2(pos.x, pos.y);
 }
 
-Wall::~Wall() {}
+Wall::~Wall() {
+
+}

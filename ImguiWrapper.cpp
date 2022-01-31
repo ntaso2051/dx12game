@@ -6,6 +6,9 @@
 #include <DirectXMath.h>
 #include "Const.h"
 #include "DungeonGenerator.h"
+#include "ParameterComponent.h"
+#include "CharacterManager.h"
+#include "EnemyBlob.h"
 
 using namespace ImGui;
 using namespace DirectX;
@@ -65,6 +68,13 @@ void ImguiWrapper::Draw() {
 		bool pushD = mInput->GetKey(Input::KEY_INFO::D_KEY);
 		bool enterD = mInput->GetKeyEnter(Input::KEY_INFO::D_KEY);
 		bool exitD = mInput->GetKeyExit(Input::KEY_INFO::D_KEY);
+		bool pushSpace = mInput->GetKey(Input::KEY_INFO::SPACE_KEY);
+		bool enterSpace = mInput->GetKeyEnter(Input::KEY_INFO::SPACE_KEY);
+		bool exitSpace = mInput->GetKeyExit(Input::KEY_INFO::SPACE_KEY);
+		bool pushZ = mInput->GetKey(Input::KEY_INFO::Z_KEY);
+		bool enterZ = mInput->GetKeyEnter(Input::KEY_INFO::Z_KEY);
+		bool exitZ = mInput->GetKeyExit(Input::KEY_INFO::Z_KEY);
+
 		Begin("KeyState");
 		Checkbox("GetKey(w)", &pushW);
 		Checkbox("GetKeyEnter(w)", &enterW);
@@ -78,13 +88,28 @@ void ImguiWrapper::Draw() {
 		Checkbox("GetKey(D)", &pushD);
 		Checkbox("GetKeyEnter(D)", &enterD);
 		Checkbox("GetKeyExit(D)", &exitD);
+		Checkbox("GetKey(SPACE)", &pushSpace);
+		Checkbox("GetKeyEnter(SPACE)", &enterSpace);
+		Checkbox("GetKeyExit(SPACE)", &exitSpace);
+		Checkbox("GetKey(Z)", &pushZ);
+		Checkbox("GetKeyEnter(Z)", &enterZ);
+		Checkbox("GetKeyExit(Z)", &exitZ);
 		End();
 	}
 	// Hero info debug imgui
 	{
 		XMINT2 heroPos = mGame->GetHero()->GetPosition();
+		XMINT2 heroDir = mGame->GetHero()->GetDir();
+		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetHeroParam());
+
 		Begin("Hero State");
 		Text("Position(%3d, %3d)", heroPos.x, heroPos.y);
+		Text("HP: %d", pc->GetHp());
+		Text("EXP: %d", pc->GetExp());
+		Text("LEVEL: %d", pc->GetLevel());
+		Text("ATTACK: %d", pc->GetAttack());
+		Text("mDirection: %d, %d", heroDir.x, heroDir.y);
+
 		End();
 	}
 	// Render minimap
@@ -97,14 +122,28 @@ void ImguiWrapper::Draw() {
 				if (data[i][j] == Const::Cell::Wall) {
 					colStr += "  ";
 				}
-				else if (data[i][j] == Const::Cell::Actor) {
-					colStr += "X ";
+				else if (data[i][j] == Const::Cell::Hero) {
+					colStr += "HR";
+				}
+				else if (data[i][j] == Const::Cell::Enemy) {
+					colStr += "EM";
 				}
 				else {
-					colStr += "O ";
+					colStr += "[]";
 				}
 			}
 			Text("%s\n\r", colStr.c_str());
+		}
+		End();
+	}
+	{
+		Begin("Enemy State");
+		auto enemyBlobs = mGame->GetChrManager()->GetEnemyBlobs();
+		for (auto e : enemyBlobs) {
+			auto epc = static_cast<ParameterComponent*>(e->GetParam());
+			Text("EnemyState");
+			Text("HP EXP LEVEL ATTACK (%d, %d, %d, %d)", epc->GetHp(), epc->GetExp(), epc->GetLevel(), epc->GetAttack());
+			Text("Pos (%d, %d)", e->GetPosition().x, e->GetPosition().y);
 		}
 		End();
 	}

@@ -152,7 +152,7 @@ HRESULT Dx12Wrapper::InitGraphicPipelineForSprite() {
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;//íÜêgÇÕ0xffffffff
 
 	//
-	gpipeline.BlendState.AlphaToCoverageEnable = false;
+	gpipeline.BlendState.AlphaToCoverageEnable = true;
 	gpipeline.BlendState.IndependentBlendEnable = false;
 
 	D3D12_RENDER_TARGET_BLEND_DESC renderTargetBlendDesc = {};
