@@ -44,8 +44,9 @@ private:
 	int64_t mLastTime;
 
 	std::vector<class Texture*> mTextures;
+
+	class CharacterManager* mCharacterManager;
 	class Hero* mHero;
-	class Wall* mWall;
 
 	XMMATRIX mViewMat;
 	XMMATRIX mProjMat;

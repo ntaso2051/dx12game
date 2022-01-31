@@ -207,6 +207,9 @@ XMFLOAT2 DungeonGenerator::getRandomPosInRoom() {
 		mAreas[id]->room->y + mAreas[id]->room->h - 1);
 	res.x;
 	res.y;
+	if (mFloor->data[res.y][res.x] != Const::Cell::Floor) {
+		res = getRandomPosInRoom();
+	}
 	return res;
 }
 

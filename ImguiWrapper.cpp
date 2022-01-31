@@ -6,6 +6,7 @@
 #include <DirectXMath.h>
 #include "Const.h"
 #include "DungeonGenerator.h"
+#include "ParameterComponent.h"
 
 using namespace ImGui;
 using namespace DirectX;
@@ -83,8 +84,15 @@ void ImguiWrapper::Draw() {
 	// Hero info debug imgui
 	{
 		XMINT2 heroPos = mGame->GetHero()->GetPosition();
+		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetHeroParam());
+
 		Begin("Hero State");
 		Text("Position(%3d, %3d)", heroPos.x, heroPos.y);
+		Text("HP: %d", pc->GetHp());
+		Text("EXP: %d", pc->GetExp());
+		Text("LEVEL: %d", pc->GetLevel());
+		Text("ATTACK: %d", pc->GetAttack());
+
 		End();
 	}
 	// Render minimap
@@ -97,11 +105,14 @@ void ImguiWrapper::Draw() {
 				if (data[i][j] == Const::Cell::Wall) {
 					colStr += "  ";
 				}
-				else if (data[i][j] == Const::Cell::Actor) {
-					colStr += "X ";
+				else if (data[i][j] == Const::Cell::Hero) {
+					colStr += "HR";
+				}
+				else if (data[i][j] == Const::Cell::Enemy) {
+					colStr += "EM";
 				}
 				else {
-					colStr += "O ";
+					colStr += "[]";
 				}
 			}
 			Text("%s\n\r", colStr.c_str());

@@ -17,6 +17,16 @@ namespace Const {
 	const int WINDOW_WIDTH = 1280;
 	const int WINDOW_HEIGHT = 720;
 
+	const int HERO_INIT_HP = 100;
+	const int HERO_INIT_EXP = 0;
+	const int HERO_INIT_LEVEL = 1;
+	const int HERO_INIT_ATTACK = 3;
+
+	const int BLOB_INIT_HP = 5;
+	const int BLOB_INIT_EXP = 2;
+	const int BLOB_INIT_LEVEL = 1;
+	const int BLOB_INIT_ATTACK = 1;
+
 	const float CHARACTER_MOVE_TIME = 0.5f;
 
 	namespace Cell {
@@ -25,7 +35,8 @@ namespace Const {
 			Floor,
 			Aisle,
 			Wall,
-			Actor,
+			Hero,
+			Enemy,
 			Stair,
 			Item,
 		};
@@ -35,6 +46,7 @@ namespace Const {
 		enum Type {
 			Hero,
 			Wall,
+			Blob,
 		};
 	};
 };  // namespace Const

@@ -7,7 +7,6 @@
 #include "Const.h"
 
 SpriteComponent::SpriteComponent(Entity* owner, int textureId, int drawOrder) :Component(owner), mDrawOrder(drawOrder) {
-	mOwner->AddComponent(this);
 	// init SpriteRenderer
 	mSpriteRenderer = new SpriteRenderer(mOwner->GetGame()->GetDx12(), owner->GetGame()->GetTextureById(textureId));
 	Window* window = mOwner->GetGame()->GetWindow();

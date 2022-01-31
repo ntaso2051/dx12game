@@ -3,12 +3,14 @@
 #include <cassert>
 #include "Entity.h"
 #include "Hero.h"
+#include "EnemyBlob.h"
 #include "Wall.h"
 #include "ImguiWrapper.h"
 #include "DungeonGenerator.h"
 #include "Const.h"
 #include "Texture.h"
 #include "Input.h"
+#include "CharacterManager.h"
 
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
@@ -71,6 +73,7 @@ void Game::Init() {
 
 	LoadImgFile(L"Resources/Images/myicon.png");
 	LoadImgFile(L"Resources/Images/Wall.png");
+	LoadImgFile(L"Resources/Images/blob.png");
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput, this);
 
@@ -85,6 +88,14 @@ void Game::Init() {
 
 	XMFLOAT2 initPos = mDgGen->getRandomPosInRoom();
 	mHero = new Hero(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
+
+	mCharacterManager = new CharacterManager(mHero);
+
+	for (int i = 0; i < 10; i++) {
+		initPos = mDgGen->getRandomPosInRoom();
+		EnemyBlob* blob = new EnemyBlob(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
+		mCharacterManager->AddEnemyBlob(blob);
+	}
 }
 
 void Game::Loop() {

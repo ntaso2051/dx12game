@@ -6,21 +6,16 @@
 #include "Const.h"
 #include "Input.h"
 #include "DungeonGenerator.h"
+#include "ParameterComponent.h"
 
 using namespace DirectX;
 
-Hero::Hero(Game* game) :Entity(game) {
-	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
-	auto img = sc->GetSpriteRenderer()->GetTexture()->GetImgData();
-	mPosition = XMINT2(0, 0);
-	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Actor);
-}
 
 Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
-	auto img = sc->GetSpriteRenderer()->GetTexture()->GetImgData();
+	ParameterComponent* pc = new ParameterComponent(this, Const::HERO_INIT_HP, Const::HERO_INIT_EXP, Const::HERO_INIT_LEVEL, Const::HERO_INIT_ATTACK);
 	mPosition = XMINT2(pos.x, pos.y);
-	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Actor);
+	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 }
 
 void Hero::UpdateEntity(float deltaTime) {
@@ -50,8 +45,8 @@ void Hero::UpdateEntity(float deltaTime) {
 		) {
 		mPosition.x--;
 	}
-	// ˆÚ“®æ‚ðActor‚É•ÏX
-	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Actor);
+	// ˆÚ“®æ‚ðHero‚É•ÏX
+	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 	// ‚Æ‚è‚ ‚¦‚¸Rotate‚·‚é
 	// mWorldMat *= XMMatrixRotationZ(deltaTime);
 }
