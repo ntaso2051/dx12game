@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CharacterManager.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBlob.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Const.h" />

@@ -32,6 +32,16 @@ void Entity::EntityInput() {
 
 }
 
+Component* Entity::GetComponent(std::string compName) {
+	std::string cn = "class " + compName;
+	for (auto comp : mComponents) {
+		if (typeid(*comp).name() == cn) {
+			return comp;
+		}
+	}
+	return nullptr;
+}
+
 void Entity::AddComponent(Component* component) {
 	int myOrder = component->GetUpdateOrder();
 	auto iter = mComponents.begin();

@@ -37,7 +37,7 @@ Entity* CharacterManager::FindEnemyByPos(XMINT2 pos) {
 void CharacterManager::AttackRequest(XMINT2 pos, XMINT2 dir) {
 	Entity* enemy = FindEnemyByPos(XMINT2(pos.x + dir.x, pos.y + dir.y));
 	if (enemy != nullptr) {
-		DamageCalc(static_cast<ParameterComponent*>(mHero->GetHeroParam()), static_cast<ParameterComponent*>(static_cast<EnemyBlob*>(enemy)->GetParam()));
+		DamageCalc(static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent")), static_cast<ParameterComponent*>(static_cast<EnemyBlob*>(enemy)->GetComponent("ParameterComponent")));
 	}
 }
 

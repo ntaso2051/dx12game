@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <DirectXMath.h>
+#include <typeinfo>
+#include <string>
 
 using namespace DirectX;
 
@@ -15,6 +17,7 @@ public:
 	void Input();
 	virtual void EntityInput();
 
+	class Component* GetComponent(std::string compName);
 	void AddComponent(class Component* component);
 	void RemoveComponent(class Component* component);
 	void UpdateComponents(float deltaTime);

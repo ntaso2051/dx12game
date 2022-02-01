@@ -27,37 +27,30 @@ void Hero::Attack() {
 void Hero::UpdateEntity(float deltaTime) {
 	// ˆÚ“®Œ³‚ðFloor‚É•ÏX
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Floor);
-	if (
-		mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::W_KEY) &&
-		mGame->GetDgGen()->getCellType(mPosition.x, mPosition.y + 1) != Const::Cell::Wall &&
-		mGame->GetDgGen()->getCellType(mPosition.x, mPosition.y + 1) != Const::Cell::Enemy
-		) {
-		mPosition.y++;
+	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::W_KEY)) {
 		mDirection = XMINT2(0, 1);
 	}
-	if (
-		mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::S_KEY) &&
-		mGame->GetDgGen()->getCellType(mPosition.x, mPosition.y - 1) != Const::Cell::Wall &&
-		mGame->GetDgGen()->getCellType(mPosition.x, mPosition.y - 1) != Const::Cell::Enemy
-		) {
-		mPosition.y--;
+	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::S_KEY)) {
 		mDirection = XMINT2(0, -1);
 	}
-	if (
-		mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::D_KEY) &&
-		mGame->GetDgGen()->getCellType(mPosition.x + 1, mPosition.y) != Const::Cell::Wall &&
-		mGame->GetDgGen()->getCellType(mPosition.x + 1, mPosition.y) != Const::Cell::Enemy
-		) {
-		mPosition.x++;
+	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::D_KEY)) {
 		mDirection = XMINT2(1, 0);
 	}
-	if (
-		mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::A_KEY) &&
-		mGame->GetDgGen()->getCellType(mPosition.x - 1, mPosition.y) != Const::Cell::Wall &&
-		mGame->GetDgGen()->getCellType(mPosition.x - 1, mPosition.y) != Const::Cell::Enemy
-		) {
-		mPosition.x--;
+	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::A_KEY)) {
 		mDirection = XMINT2(-1, 0);
+	}
+
+	if ((
+		mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::W_KEY) ||
+		mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::A_KEY) ||
+		mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::S_KEY) ||
+		mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::D_KEY)
+		) &&
+		mGame->GetDgGen()->getCellType(mPosition.x + mDirection.x, mPosition.y + mDirection.y) != Const::Cell::Wall &&
+		mGame->GetDgGen()->getCellType(mPosition.x + mDirection.x, mPosition.y + mDirection.y) != Const::Cell::Enemy
+		) {
+		mPosition.x += mDirection.x;
+		mPosition.y += mDirection.y;
 	}
 
 	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::SPACE_KEY)) {
@@ -65,6 +58,7 @@ void Hero::UpdateEntity(float deltaTime) {
 	}
 	// ˆÚ“®æ‚ðHero‚É•ÏX
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
+	// Component* sc = this->GetComponent("SpriteComponent");
 	// ‚Æ‚è‚ ‚¦‚¸Rotate‚·‚é
 	// mWorldMat *= XMMatrixRotationZ(deltaTime);
 }
