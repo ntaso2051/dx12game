@@ -132,7 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CharacterManager.cpp" />
-    <ClCompile Include="EnemyBlob.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DungeonGenerator.cpp" />
     <ClCompile Include="Dx12Wrapper.cpp" />
@@ -161,7 +161,6 @@
   <ItemGroup>
     <ClInclude Include="CharacterManager.h" />
     <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyBlob.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="DungeonGenerator.h" />

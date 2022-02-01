@@ -1,9 +1,14 @@
 #include "CharacterManager.h"
 #include "Entity.h"
-#include "EnemyBlob.h"
+#include "Enemy.h"
 #include "Hero.h"
 #include "ParameterComponent.h"
 #include <algorithm>
+#include <typeinfo>
+#include "Game.h"
+#include "DungeonGenerator.h"
+#include "SpriteComponent.h"
+#include <string>
 
 CharacterManager::CharacterManager(Hero* hero) : mHero(hero) {
 	mPhase = Phase::HeroPhase;
@@ -11,7 +16,7 @@ CharacterManager::CharacterManager(Hero* hero) : mHero(hero) {
 
 CharacterManager::~CharacterManager() {
 	delete mHero;
-	for (auto e : mEnemyBlobs) {
+	for (auto e : mEnemies) {
 		delete e;
 	}
 }
@@ -26,7 +31,7 @@ void CharacterManager::ChangePhase() {
 }
 
 Entity* CharacterManager::FindEnemyByPos(XMINT2 pos) {
-	for (auto e : mEnemyBlobs) {
+	for (auto e : mEnemies) {
 		if (e->GetPosition().x == pos.x && e->GetPosition().y == pos.y) {
 			return static_cast<Entity*>(e);
 		}
@@ -37,7 +42,7 @@ Entity* CharacterManager::FindEnemyByPos(XMINT2 pos) {
 void CharacterManager::AttackRequest(XMINT2 pos, XMINT2 dir) {
 	Entity* enemy = FindEnemyByPos(XMINT2(pos.x + dir.x, pos.y + dir.y));
 	if (enemy != nullptr) {
-		DamageCalc(static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent")), static_cast<ParameterComponent*>(static_cast<EnemyBlob*>(enemy)->GetComponent("ParameterComponent")));
+		DamageCalc(static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent")), static_cast<ParameterComponent*>(static_cast<Enemy*>(enemy)->GetComponent("ParameterComponent")));
 	}
 }
 
@@ -46,15 +51,21 @@ void CharacterManager::DamageCalc(ParameterComponent* attack, ParameterComponent
 	damaged->Damaged(attack);
 }
 
-void CharacterManager::AddEnemyBlob(EnemyBlob* enemyBlob) {
-	mEnemyBlobs.push_back(enemyBlob);
+void CharacterManager::AddEnemy(Enemy* enemy) {
+	mEnemies.push_back(enemy);
 }
 
-void CharacterManager::RemoveEnemyBlob(EnemyBlob* enemyBlob) {
+// éÄñSí ímÇPrameterComponentÇ©ÇÁëóÇÈÇÃÇ≈ÅCEntity->EnemyÇÃïœä∑ÇÇ±Ç±Ç≈Ç‚ÇÈÅD
+void CharacterManager::RemoveEnemy(Entity* enemy) {
 	// if is in entities
-	auto iter = std::find(mEnemyBlobs.begin(), mEnemyBlobs.end(), enemyBlob);
-	if (iter != mEnemyBlobs.end()) {
-		std::iter_swap(iter, mEnemyBlobs.end() - 1);
-		mEnemyBlobs.pop_back();
+	Enemy* en = static_cast<Enemy*>(enemy);
+	XMINT2 pos = en->GetPosition();
+	en->GetGame()->GetDgGen()->SetCellType(pos.x, pos.y, Const::Cell::Floor);
+	static_cast<SpriteComponent*>(en->GetComponent("SpriteComponent"))->SetActive(false);
+
+	auto iter = std::find(mEnemies.begin(), mEnemies.end(), en);
+	if (iter != mEnemies.end()) {
+		std::iter_swap(iter, mEnemies.end() - 1);
+		mEnemies.pop_back();
 	}
 }

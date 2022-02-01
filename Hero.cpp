@@ -27,6 +27,7 @@ void Hero::Attack() {
 void Hero::UpdateEntity(float deltaTime) {
 	// ˆÚ“®Œ³‚ðFloor‚É•ÏX
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Floor);
+	// “ü—Íˆ—
 	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::W_KEY)) {
 		mDirection = XMINT2(0, 1);
 	}

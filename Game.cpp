@@ -3,7 +3,7 @@
 #include <cassert>
 #include "Entity.h"
 #include "Hero.h"
-#include "EnemyBlob.h"
+#include "Enemy.h"
 #include "Wall.h"
 #include "ImguiWrapper.h"
 #include "DungeonGenerator.h"
@@ -93,8 +93,8 @@ void Game::Init() {
 
 	for (int i = 0; i < 10; i++) {
 		initPos = mDgGen->getRandomPosInRoom();
-		EnemyBlob* blob = new EnemyBlob(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
-		mCharacterManager->AddEnemyBlob(blob);
+		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
+		mCharacterManager->AddEnemy(blob);
 	}
 }
 
