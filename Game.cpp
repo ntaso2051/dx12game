@@ -11,11 +11,13 @@
 #include "Texture.h"
 #include "Input.h"
 #include "CharacterManager.h"
+#include "Stair.h"
+#include "SpriteRenderer.h"
 
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
 
-Game::Game(HINSTANCE hinst) :mUpdatingEntities(false) {
+Game::Game(HINSTANCE hinst) :mUpdatingEntities(false), mIsUpdateGame(true) {
 	mLastTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();// Window‚Ìì¬
 	mWindow = new Window();
 	mWindow->Init();
@@ -39,8 +41,9 @@ Game::~Game() {
 }
 
 void Game::LoadImgFile(const wchar_t* filename) {
-	Texture* texture = new Texture();
+	Texture* texture = new Texture(this);
 	texture->LoadImgFile(filename);
+	// texture->CreateTexture(mWindow->GetWidth(), mWindow->GetHeight());
 	mTextures.push_back(texture);
 }
 
@@ -74,6 +77,7 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/myicon.png");
 	LoadImgFile(L"Resources/Images/Wall.png");
 	LoadImgFile(L"Resources/Images/blob.png");
+	LoadImgFile(L"Resources/Images/stairs.png");
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput, this);
 
@@ -81,12 +85,15 @@ void Game::Init() {
 	mDgGen->createDg();
 	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
 		for (int j = 0; j < mDgGen->getFloor()->data[0].size(); j++) {
-			if (mDgGen->getFloor()->data[i][j] == Const::Cell::Wall)
-				Wall * wall = new Wall(this, XMFLOAT3(j, i, 0));
+			if (mDgGen->getFloor()->data[i][j] != Const::Cell::Wall) {
+				mWalls.push_back(new Wall(this, XMFLOAT3(j, i, 0)));
+			}
 		}
 	}
-
 	XMFLOAT2 initPos = mDgGen->getRandomPosInRoom();
+	mStair = new Stair(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
+
+	initPos = mDgGen->getRandomPosInRoom();
 	mHero = new Hero(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 
 	mCharacterManager = new CharacterManager(mHero);
@@ -96,6 +103,44 @@ void Game::Init() {
 		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 		mCharacterManager->AddEnemy(blob);
 	}
+}
+
+void Game::InitDungeon() {
+	delete mCharacterManager;
+	for (auto wall : mWalls) {
+		delete wall;
+	}
+	delete mStair;
+	mEntities.clear();
+	mWalls.clear();
+	delete mDgGen;
+	mDgGen = nullptr;
+	mDgGen = new DungeonGenerator();
+	mDgGen->createDg();
+
+	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
+		for (int j = 0; j < mDgGen->getFloor()->data[0].size(); j++) {
+			if (mDgGen->getFloor()->data[i][j] != Const::Cell::Wall) {
+				Wall* wall = new Wall(this, XMFLOAT3(j, i, 0));
+				mWalls.push_back(wall);
+			}
+		}
+	}
+	XMFLOAT2 initPos = mDgGen->getRandomPosInRoom();
+	mStair = new Stair(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
+
+	initPos = mDgGen->getRandomPosInRoom();
+	mHero = new Hero(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
+
+	mCharacterManager = new CharacterManager(mHero);
+
+	for (int i = 0; i < 10; i++) {
+		initPos = mDgGen->getRandomPosInRoom();
+		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
+		mCharacterManager->AddEnemy(blob);
+	}
+
+	mIsUpdateGame = true;
 }
 
 void Game::Loop() {
@@ -110,9 +155,19 @@ void Game::Loop() {
 		}
 		mInput->UpdateKeyState();
 		mDx12Wrapper->StartDraw();
-		UpdateGame();
+		if (mIsUpdateGame) {
+			UpdateGame();
+		}
 		mImguiWrapper->Draw();
 		mDx12Wrapper->EndDraw();
+
+		// ‚Æ‚è‚ ‚¦‚¸
+		mDgGen->SetCellType(mStair->GetPosition().x, mStair->GetPosition().y, Const::Cell::Stair);
+
+		if (mDgGen->getCellType(mHero->GetPosition().x, mHero->GetPosition().y) == Const::Cell::Stair) {
+			mIsUpdateGame = false;
+			InitDungeon();
+		}
 	}
 }
 

@@ -37,7 +37,12 @@ private:
 	// XMMATRIX mWorldMat;
 	// XMMATRIX mViewMat;
 	// XMMATRIX mProjMat;
-	XMMATRIX* mMapMatrix;
+	struct Transform {
+		void* operator new(size_t size);
+		XMMATRIX world;
+	};
+	Transform* mMapMatrix;
+	ComPtr<ID3D12Resource> mConstBuff = nullptr;
 
 
 	// テスト用

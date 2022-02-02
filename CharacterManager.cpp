@@ -19,6 +19,7 @@ CharacterManager::~CharacterManager() {
 	for (auto e : mEnemies) {
 		delete e;
 	}
+	mEnemies.clear();
 }
 
 void CharacterManager::ChangePhase() {

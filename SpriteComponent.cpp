@@ -19,6 +19,7 @@ SpriteComponent::SpriteComponent(Entity* owner, int textureId, int drawOrder) :C
 }
 
 SpriteComponent::~SpriteComponent() {
+	delete mSpriteRenderer;
 	mOwner->RemoveComponent(this);
 }
 

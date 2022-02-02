@@ -8,6 +8,8 @@
 #include <chrono>
 #include <ctime>
 
+#include "Const.h"
+
 using std::chrono::milliseconds;
 
 class Game {
@@ -15,6 +17,7 @@ public:
 	Game(HINSTANCE hinst);
 	~Game();
 	void Init();
+	void InitDungeon();
 	void Loop();
 
 	void AddEntity(class Entity* entity);
@@ -40,6 +43,7 @@ private:
 	class DungeonGenerator* mDgGen;
 
 	bool mUpdatingEntities;
+	bool mIsUpdateGame;
 	std::vector<class Entity*> mEntities;
 	std::vector<class Entity*> mPendingEntities;
 
@@ -49,6 +53,8 @@ private:
 
 	class CharacterManager* mCharacterManager;
 	class Hero* mHero;
+	class Stair* mStair;
+	std::vector<class Wall*> mWalls;
 
 	XMMATRIX mViewMat;
 	XMMATRIX mProjMat;

@@ -54,7 +54,7 @@ void Hero::UpdateEntity(float deltaTime) {
 		mPosition.y += mDirection.y;
 	}
 
-	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::SPACE_KEY)) {
+	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::Z_KEY)) {
 		mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
 	}
 	// ˆÚ“®æ‚ğHero‚É•ÏX

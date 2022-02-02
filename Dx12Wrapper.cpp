@@ -352,6 +352,14 @@ void Dx12Wrapper::StartDraw() {
 	mCmdList->OMSetRenderTargets(1, &rtvH, false, nullptr);
 	float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 	mCmdList->ClearRenderTargetView(rtvH, clearColor, 0, nullptr);
+	mCmdList->SetPipelineState(GetPipelinestateForSprite().Get());
+	mCmdList->RSSetViewports(1, &Viewport());
+	mCmdList->RSSetScissorRects(1, &Scissorrect());
+	mCmdList->SetGraphicsRootSignature(GetRootsignatureForSprite().Get());
+	mCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	mCmdList->IASetVertexBuffers(0, 1, &GetVbView());
+	mCmdList->IASetIndexBuffer(&GetIbView());
+	mCmdList->SetGraphicsRootSignature(GetRootsignatureForSprite().Get());
 }
 
 Microsoft::WRL::ComPtr<ID3D12Device> Dx12Wrapper::Device() {
