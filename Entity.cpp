@@ -11,6 +11,7 @@ Entity::~Entity() {
 	for (auto comp : mComponents) {
 		delete comp;
 	}
+	mComponents.clear();
 }
 
 Game* Entity::GetGame() { return mGame; }

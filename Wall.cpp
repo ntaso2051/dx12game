@@ -8,8 +8,8 @@
 Wall::Wall(Game* game, XMFLOAT3 pos) : Entity(game) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Wall);
 	mPosition = XMINT2(pos.x, pos.y);
+	mUpdateOrder = 90;
 }
 
 Wall::~Wall() {
-
 }

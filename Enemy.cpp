@@ -11,6 +11,7 @@ Enemy::Enemy(Game* game, XMFLOAT3 pos) : Entity(game) {
 	mPosition.x = pos.x;
 	mPosition.y = pos.y;
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Enemy);
+	mUpdateOrder = 110;
 }
 
 Enemy::~Enemy() {

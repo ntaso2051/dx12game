@@ -22,6 +22,10 @@ public:
 	void RemoveComponent(class Component* component);
 	void UpdateComponents(float deltaTime);
 
+	const int GetUpdateOrder() { return mUpdateOrder; }
+
+	bool Comp(const Entity* l, const Entity* r) { return (l->mUpdateOrder < r->mUpdateOrder); }
+
 	XMINT2 GetPosition() { return mPosition; }
 	class Game* GetGame();
 protected:
@@ -29,4 +33,5 @@ protected:
 	std::vector<class Component*>mComponents;
 	// ç¿ïWä÷òA
 	XMINT2 mPosition;
+	int mUpdateOrder;
 };

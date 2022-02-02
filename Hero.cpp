@@ -16,12 +16,26 @@ Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	ParameterComponent* pc = new ParameterComponent(this, Const::HERO_INIT_HP, Const::HERO_INIT_EXP, Const::HERO_INIT_LEVEL, Const::HERO_INIT_ATTACK);
 	mPosition = XMINT2(pos.x, pos.y);
-	mDirection = XMINT2(1, 0);
+	mDirection = XMINT2(0, -1);
+	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
+	mUpdateOrder = 100;
+}
+
+Hero::Hero(Game * game, XMFLOAT3 pos, ParameterComponent * param) : Entity(game) {
+	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
+	AddComponent(param);
+	mPosition = XMINT2(pos.x, pos.y);
+	mDirection = XMINT2(0, -1);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 }
 
 void Hero::Attack() {
 	mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
+}
+
+void Hero::SetPosition(XMINT2 pos) {
+	mPosition = pos;
+	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 }
 
 void Hero::UpdateEntity(float deltaTime) {
@@ -59,8 +73,5 @@ void Hero::UpdateEntity(float deltaTime) {
 	}
 	// ˆÚ“®æ‚ðHero‚É•ÏX
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
-	// Component* sc = this->GetComponent("SpriteComponent");
-	// ‚Æ‚è‚ ‚¦‚¸Rotate‚·‚é
-	// mWorldMat *= XMMatrixRotationZ(deltaTime);
 }
 

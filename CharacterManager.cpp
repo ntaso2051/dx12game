@@ -15,8 +15,8 @@ CharacterManager::CharacterManager(Hero* hero) : mHero(hero) {
 }
 
 CharacterManager::~CharacterManager() {
-	delete mHero;
 	for (auto e : mEnemies) {
+		mHero->GetGame()->RemoveEntity(static_cast<Entity*>(e));
 		delete e;
 	}
 	mEnemies.clear();
