@@ -1,6 +1,7 @@
 #include "Game.h"
 // ÉGÉâÅ[èàóù
 #include <cassert>
+#include <algorithm>
 #include "Entity.h"
 #include "Hero.h"
 #include "Enemy.h"
@@ -13,6 +14,7 @@
 #include "CharacterManager.h"
 #include "Stair.h"
 #include "SpriteRenderer.h"
+#include "ParameterComponent.h"
 
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
@@ -106,31 +108,25 @@ void Game::Init() {
 }
 
 void Game::InitDungeon() {
+	ParameterComponent* heroParam = static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent"));
 	delete mCharacterManager;
 	for (auto wall : mWalls) {
 		delete wall;
 	}
 	delete mStair;
-	mEntities.clear();
 	mWalls.clear();
 	delete mDgGen;
 	mDgGen = nullptr;
 	mDgGen = new DungeonGenerator();
 	mDgGen->createDg();
 
-	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
-		for (int j = 0; j < mDgGen->getFloor()->data[0].size(); j++) {
-			if (mDgGen->getFloor()->data[i][j] != Const::Cell::Wall) {
-				Wall* wall = new Wall(this, XMFLOAT3(j, i, 0));
-				mWalls.push_back(wall);
-			}
-		}
-	}
+	NewFloors();
+
 	XMFLOAT2 initPos = mDgGen->getRandomPosInRoom();
 	mStair = new Stair(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 
 	initPos = mDgGen->getRandomPosInRoom();
-	mHero = new Hero(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
+	mHero->SetPosition(XMINT2(initPos.x, initPos.y));
 
 	mCharacterManager = new CharacterManager(mHero);
 
@@ -140,8 +136,24 @@ void Game::InitDungeon() {
 		mCharacterManager->AddEnemy(blob);
 	}
 
+	SortEntitiesByUpdateOrder();
+
 	mIsUpdateGame = true;
 }
+
+
+void Game::NewFloors() {
+	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
+		for (int j = 0; j < mDgGen->getFloor()->data[0].size(); j++) {
+			if (mDgGen->getFloor()->data[i][j] != Const::Cell::Wall) {
+				Wall* wall = new Wall(this, XMFLOAT3(j, i, 0));
+				mWalls.push_back(wall);
+			}
+		}
+	}
+}
+
+
 
 void Game::Loop() {
 	MSG msg = {};
@@ -211,17 +223,15 @@ void Game::AddEntity(Entity * entity) {
 }
 
 void Game::RemoveEntity(Entity * entity) {
-	// if is in pending entities
-	auto iter = std::find(mPendingEntities.begin(), mPendingEntities.end(), entity);
-	if (iter != mPendingEntities.end()) {
-		std::iter_swap(iter, mPendingEntities.end() - 1);
-		mPendingEntities.pop_back();
-	}
-
 	// if is in entities
-	iter = std::find(mEntities.begin(), mEntities.end(), entity);
+	auto iter = std::find(mEntities.begin(), mEntities.end(), entity);
 	if (iter != mEntities.end()) {
 		std::iter_swap(iter, mEntities.end() - 1);
 		mEntities.pop_back();
 	}
+}
+
+
+void Game::SortEntitiesByUpdateOrder() {
+	std::sort(mEntities.begin(), mEntities.end(), [](Entity * l, Entity * r) {return l->GetUpdateOrder() < r->GetUpdateOrder(); });
 }

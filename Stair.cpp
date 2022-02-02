@@ -10,6 +10,7 @@ Stair::Stair(Game* game, XMFLOAT3 pos) : Entity(game) {
 	mPosition.x = pos.x;
 	mPosition.y = pos.y;
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Stair);
+	mUpdateOrder = 95;
 }
 
 Stair::~Stair() {

@@ -18,10 +18,12 @@ public:
 	~Game();
 	void Init();
 	void InitDungeon();
+	void NewFloors();
 	void Loop();
 
 	void AddEntity(class Entity* entity);
 	void RemoveEntity(class Entity* entity);
+	void SortEntitiesByUpdateOrder();
 	Dx12Wrapper& GetDx12() { return *mDx12Wrapper; }
 	Window* GetWindow() { return mWindow; }
 	class Input* GetInput() { return mInput; }
