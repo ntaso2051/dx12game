@@ -4,15 +4,21 @@
 #include "Texture.h"
 #include "d3dx12.h"
 #include "Shader.h"
-
+#include "Const.h"
 
 
 SpriteRenderer::SpriteRenderer(Dx12Wrapper& dx12Wrapper, Texture* tex) :mDx12Wrapper(dx12Wrapper), mTexture(tex) {
 }
-SpriteRenderer::~SpriteRenderer() {}
+SpriteRenderer::~SpriteRenderer() {
+	// mTexDescHeap.Reset();
+	// mTexBuff.Reset();
+	// mConstBuff->Unmap(0, nullptr);
+	// mConstBuff.Reset();
+	// delete mMapMatrix;
+}
 
 void SpriteRenderer::ReComputeMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX projMat) {
-	*mMapMatrix = worldMat * viewMat * projMat;
+	mMapMatrix->world = worldMat * viewMat * projMat;
 }
 
 void SpriteRenderer::InitMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX projMat) {
@@ -21,14 +27,15 @@ void SpriteRenderer::InitMatrix(XMMATRIX worldMat, XMMATRIX viewMat, XMMATRIX pr
 
 void SpriteRenderer::Draw() {
 	// *mMapMatrix = mWorldMat * mViewMat * mProjMat;
-	mDx12Wrapper.CmdList()->SetPipelineState(mDx12Wrapper.GetPipelinestateForSprite().Get());
-	mDx12Wrapper.CmdList()->RSSetViewports(1, &mDx12Wrapper.Viewport());
-	mDx12Wrapper.CmdList()->RSSetScissorRects(1, &mDx12Wrapper.Scissorrect());
-	mDx12Wrapper.CmdList()->SetGraphicsRootSignature(mDx12Wrapper.GetRootsignatureForSprite().Get());
-	mDx12Wrapper.CmdList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	mDx12Wrapper.CmdList()->IASetVertexBuffers(0, 1, &mDx12Wrapper.GetVbView());
-	mDx12Wrapper.CmdList()->IASetIndexBuffer(&mDx12Wrapper.GetIbView());
-	mDx12Wrapper.CmdList()->SetGraphicsRootSignature(mDx12Wrapper.GetRootsignatureForSprite().Get());
+	// Dx12Wrapper に移行
+	// mDx12Wrapper.CmdList()->SetPipelineState(mDx12Wrapper.GetPipelinestateForSprite().Get());
+	// mDx12Wrapper.CmdList()->RSSetViewports(1, &mDx12Wrapper.Viewport());
+	// mDx12Wrapper.CmdList()->RSSetScissorRects(1, &mDx12Wrapper.Scissorrect());
+	// mDx12Wrapper.CmdList()->SetGraphicsRootSignature(mDx12Wrapper.GetRootsignatureForSprite().Get());
+	// mDx12Wrapper.CmdList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// mDx12Wrapper.CmdList()->IASetVertexBuffers(0, 1, &mDx12Wrapper.GetVbView());
+	// mDx12Wrapper.CmdList()->IASetIndexBuffer(&mDx12Wrapper.GetIbView());
+	// mDx12Wrapper.CmdList()->SetGraphicsRootSignature(mDx12Wrapper.GetRootsignatureForSprite().Get());
 	mDx12Wrapper.CmdList()->SetDescriptorHeaps(1, mTexDescHeap.GetAddressOf());
 	mDx12Wrapper.CmdList()->SetGraphicsRootDescriptorTable(0, mTexDescHeap->GetGPUDescriptorHandleForHeapStart());
 	mDx12Wrapper.CmdList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
@@ -65,6 +72,8 @@ HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 		IID_PPV_ARGS(mTexBuff.ReleaseAndGetAddressOf())
 	);
 
+
+
 	result = mTexBuff->WriteToSubresource(
 		0,
 		nullptr,//全領域へコピー
@@ -72,6 +81,7 @@ HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 		static_cast<UINT>(img->rowPitch),//1ラインサイズ
 		static_cast<UINT>(img->slicePitch)//全サイズ
 	);
+
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
 	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
 	descHeapDesc.NodeMask = 0;//マスクは0
@@ -81,18 +91,17 @@ HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 
 
 	// 定数バッファ作成 TODO：プレイヤーから座標を渡されるようにする．今はテスト用に固定値．
-	XMMATRIX worldMat = XMMatrixScaling(1.0f / img->width, 1.0f / img->height, 1.0f);
+	XMMATRIX worldMat = XMMatrixScaling(1.0f / (Const::CELL_SIZE * 2), 1.0f / (Const::CELL_SIZE * 2), 1.0f);
 	XMFLOAT3 eye(0, 0, -1);
 	XMFLOAT3 target(0, 0, 0);
 	XMFLOAT3 up(0, 1, 0);
 	XMMATRIX viewMat = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 	XMMATRIX projMat = XMMatrixPerspectiveFovLH(
 		XM_PIDIV4,
-		static_cast<double>(windowWidth) / static_cast<double>(windowHeight),
+		static_cast<double>(Const::WINDOW_WIDTH) / static_cast<double>(Const::WINDOW_HEIGHT),
 		1.0f,//近い方
 		10.0f//遠い方
 	);
-	ID3D12Resource * constBuff = nullptr;
 	auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	resDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(XMMATRIX) + 0xff) & ~0xff);
 	result = mDx12Wrapper.Device()->CreateCommittedResource(
@@ -101,11 +110,11 @@ HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 		&resDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&constBuff)
+		IID_PPV_ARGS(&mConstBuff)
 	);
 
-	result = constBuff->Map(0, nullptr, (void**)& mMapMatrix);//マップ
-	*mMapMatrix = worldMat * viewMat * projMat;
+	result = mConstBuff->Map(0, nullptr, (void**)& mMapMatrix);//マップ
+	mMapMatrix->world = worldMat * viewMat * projMat;
 
 	//通常テクスチャビュー作成
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -116,14 +125,15 @@ HRESULT SpriteRenderer::CreateTexture(float windowWidth, float windowHeight) {
 
 	auto texHeapHandle = mTexDescHeap->GetCPUDescriptorHandleForHeapStart();
 
-	mDx12Wrapper.Device()->CreateShaderResourceView(mTexBuff.Get(), //ビューと関連付けるバッファ
+	mDx12Wrapper.Device()->CreateShaderResourceView(
+		mTexBuff.Get(), //ビューと関連付けるバッファ
 		&srvDesc, //先ほど設定したテクスチャ設定情報
 		texHeapHandle//ヒープのどこに割り当てるか
 	);
 	texHeapHandle.ptr += mDx12Wrapper.Device()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-	cbvDesc.BufferLocation = constBuff->GetGPUVirtualAddress();
-	cbvDesc.SizeInBytes = static_cast<UINT>(constBuff->GetDesc().Width);
+	cbvDesc.BufferLocation = mConstBuff->GetGPUVirtualAddress();
+	cbvDesc.SizeInBytes = static_cast<UINT>(mConstBuff->GetDesc().Width);
 	mDx12Wrapper.Device()->CreateConstantBufferView(&cbvDesc, texHeapHandle);
 
 	return result;

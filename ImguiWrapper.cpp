@@ -128,6 +128,9 @@ void ImguiWrapper::Draw() {
 				else if (data[i][j] == Const::Cell::Enemy) {
 					colStr += "EM";
 				}
+				else if (data[i][j] == Const::Cell::Stair) {
+					colStr += "xx";
+				}
 				else {
 					colStr += "[]";
 				}

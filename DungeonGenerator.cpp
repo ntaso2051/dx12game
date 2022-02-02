@@ -43,6 +43,7 @@ DungeonGenerator::~DungeonGenerator() {
 }
 
 void DungeonGenerator::createDg() {
+	delete mFloor;
 	mFloor = new Floor();
 
 	Area* area = new Area();
@@ -226,4 +227,9 @@ Floor::Floor() {
 	}
 }
 
-Floor::~Floor() {};
+Floor::~Floor() {
+	for (auto row : data) {
+		row.clear();
+	}
+	data.clear();
+};
