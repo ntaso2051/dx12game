@@ -9,6 +9,7 @@ class CharacterManager {
 public:
 	CharacterManager(class Hero* hero);
 	~CharacterManager();
+	void Update();
 	enum Phase {
 		HeroPhase,
 		EnemiesPhase,
@@ -18,12 +19,19 @@ public:
 	void AttackRequest(XMFLOAT3 pos, XMINT2 dir);
 	Phase GetPhase() { return mPhase; }
 	void AddEnemy(class Enemy* enemy);
+	void EraseEnemy(Enemy* en);
 	void RemoveEnemy(class Entity* enemy);
 	void DamageCalc(class ParameterComponent* attack, class ParameterComponent* damaged);
 	std::vector<class Enemy*> GetEnemies() { return mEnemies; }
+	void IncEnemyCnt() { mEnemiesCount++; }
+	int EnemiesCnt() { return mEnemies.size(); }
+	int EnemiesCntByEnemy() { return mEnemiesCount; }
+	bool IsEndEnemyTurn() { return (mEnemiesCount == mEnemies.size()); }
 
 private:
 	class Hero* mHero;
 	std::vector<class Enemy*> mEnemies;
 	Phase mPhase;
+	int mEnemiesCount;
+	std::vector<class Enemy*>mDeadEnemies;
 };

@@ -100,7 +100,7 @@ void Game::Init() {
 
 	mCharacterManager = new CharacterManager(mHero);
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 50; i++) {
 		initPos = mDgGen->getRandomPosInRoom();
 		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 		mCharacterManager->AddEnemy(blob);
@@ -130,7 +130,7 @@ void Game::InitDungeon() {
 
 	mCharacterManager = new CharacterManager(mHero);
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 50; i++) {
 		initPos = mDgGen->getRandomPosInRoom();
 		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 		mCharacterManager->AddEnemy(blob);
@@ -176,10 +176,13 @@ void Game::Loop() {
 		// ‚Æ‚è‚ ‚¦‚¸
 		mDgGen->SetCellType(mStair->GetPosition().x, mStair->GetPosition().y, Const::Cell::Stair);
 
+		mCharacterManager->Update();
+
 		if (mDgGen->getCellType(mHero->GetPosition().x, mHero->GetPosition().y) == Const::Cell::Stair) {
 			mIsUpdateGame = false;
 			InitDungeon();
 		}
+
 	}
 }
 
@@ -194,18 +197,8 @@ void Game::UpdateGame() {
 	}
 	mUpdatingEntities = false;
 
-	// update pending entities
-	for (auto pending : mPendingEntities) {
-		mEntities.emplace_back(pending);
-	}
-	mPendingEntities.clear();
-
 	// update dead entities
 	std::vector<Entity*> deadEntities;
-	for (auto entity : mEntities) {
-		/*TODO:Entity‚ÉState‚ð’Ç‰Á
-		*/
-	}
 
 	for (auto entity : deadEntities) {
 		delete entity;
@@ -224,10 +217,13 @@ void Game::AddEntity(Entity * entity) {
 
 void Game::RemoveEntity(Entity * entity) {
 	// if is in entities
-	auto iter = std::find(mEntities.begin(), mEntities.end(), entity);
-	if (iter != mEntities.end()) {
-		std::iter_swap(iter, mEntities.end() - 1);
-		mEntities.pop_back();
+	for (auto it = mEntities.begin(); it != mEntities.end();) {
+		if (*it == entity) {
+			it = mEntities.erase(it);
+		}
+		else {
+			++it;
+		}
 	}
 }
 

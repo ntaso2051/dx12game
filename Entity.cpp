@@ -59,9 +59,13 @@ void Entity::AddComponent(Component* component) {
 }
 
 void Entity::RemoveComponent(Component* component) {
-	auto iter = std::find(mComponents.begin(), mComponents.end(), component);
-	if (iter != mComponents.end()) {
-		mComponents.erase(iter);
+	for (auto it = mComponents.begin(); it != mComponents.end();) {
+		if (*it == component) {
+			it = mComponents.erase(it);
+		}
+		else {
+			++it;
+		}
 	}
 }
 

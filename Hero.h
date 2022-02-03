@@ -7,6 +7,7 @@ class Hero :public Entity {
 public:
 	Hero(class Game* game, XMFLOAT3 pos);
 	Hero(class Game* game, XMFLOAT3 pos, class ParameterComponent* param);
+	~Hero();
 	void Attack();
 	void SetPosition(XMINT2 pos);
 	void UpdateEntity(float deltaTime) override;

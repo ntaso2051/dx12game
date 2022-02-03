@@ -36,6 +36,7 @@ public:
 	XMMATRIX GetViewMat() { return mViewMat; }
 	XMMATRIX GetProjMat() { return mProjMat; }
 	class Hero* GetHero() { return mHero; }
+	bool GetUpdatingEntities() { return mUpdatingEntities; }
 private:
 	void UpdateGame();
 	Window* mWindow;

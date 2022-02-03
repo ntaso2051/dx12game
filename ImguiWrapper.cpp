@@ -142,13 +142,10 @@ void ImguiWrapper::Draw() {
 	}
 	{
 		Begin("Enemy State");
-		auto enemy = mGame->GetChrManager()->GetEnemies();
-		for (auto e : enemy) {
-			auto epc = static_cast<ParameterComponent*>(e->GetComponent("ParameterComponent"));
-			Text("EnemyState");
-			Text("HP EXP LEVEL ATTACK (%d, %d, %d, %d)", epc->GetHp(), epc->GetExp(), epc->GetLevel(), epc->GetAttack());
-			Text("Pos (%d, %d)", e->GetPosition().x, e->GetPosition().y);
-		}
+		auto enemy = mGame->GetChrManager();
+		Text("Enemies count %d", enemy->EnemiesCnt());
+		Text("Enemies count by Enemy %d", enemy->EnemiesCntByEnemy());
+		Text("Turn %d", enemy->GetPhase());
 		End();
 	}
 	Render();

@@ -10,16 +10,22 @@
 #include "SpriteComponent.h"
 #include <string>
 
-CharacterManager::CharacterManager(Hero* hero) : mHero(hero) {
+CharacterManager::CharacterManager(Hero* hero) : mHero(hero), mEnemiesCount(0) {
 	mPhase = Phase::HeroPhase;
 }
 
 CharacterManager::~CharacterManager() {
 	for (auto e : mEnemies) {
-		mHero->GetGame()->RemoveEntity(static_cast<Entity*>(e));
 		delete e;
 	}
 	mEnemies.clear();
+}
+
+void CharacterManager::Update() {
+	if (mEnemiesCount == mEnemies.size()) {
+		ChangePhase();
+		mEnemiesCount = 0;
+	}
 }
 
 void CharacterManager::ChangePhase() {
@@ -28,6 +34,9 @@ void CharacterManager::ChangePhase() {
 	}
 	else {
 		mPhase = Phase::HeroPhase;
+		for (auto e : mEnemies) {
+			e->SetEndTurn();
+		}
 	}
 }
 
@@ -56,6 +65,19 @@ void CharacterManager::AddEnemy(Enemy* enemy) {
 	mEnemies.push_back(enemy);
 }
 
+void CharacterManager::EraseEnemy(Enemy* en) {
+	for (auto it = mEnemies.begin(); it != mEnemies.end();) {
+		if (*it == en) {
+			it = mEnemies.erase(it);
+			delete en;
+		}
+		else {
+			++it;
+		}
+	}
+}
+
+
 // Ž€–S’Ê’m‚ðPrameterComponent‚©‚ç‘—‚é‚Ì‚ÅCEntity->Enemy‚Ì•ÏŠ·‚ð‚±‚±‚Å‚â‚éD
 void CharacterManager::RemoveEnemy(Entity* enemy) {
 	// if is in entities
@@ -63,10 +85,4 @@ void CharacterManager::RemoveEnemy(Entity* enemy) {
 	XMFLOAT3 pos = en->GetPosition();
 	en->GetGame()->GetDgGen()->SetCellType(pos.x, pos.y, Const::Cell::Floor);
 	static_cast<SpriteComponent*>(en->GetComponent("SpriteComponent"))->SetActive(false);
-
-	auto iter = std::find(mEnemies.begin(), mEnemies.end(), en);
-	if (iter != mEnemies.end()) {
-		std::iter_swap(iter, mEnemies.end() - 1);
-		mEnemies.pop_back();
-	}
 }

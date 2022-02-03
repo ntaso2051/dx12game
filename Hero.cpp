@@ -26,6 +26,8 @@ Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, p
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 }
 
+Hero::~Hero() {}
+
 void Hero::Attack() {
 	mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
 }
@@ -41,7 +43,7 @@ void Hero::UpdateEntity(float deltaTime) {
 	// ˆÚ“®Œ³‚ðFloor‚É•ÏX
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Floor);
 	// “ü—Íˆ—
-	if (!mIsMoving) {
+	if (!mIsMoving && mGame->GetChrManager()->GetPhase() == CharacterManager::Phase::HeroPhase) {
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::W_KEY)) {
 			mDirection = XMINT2(0, 1);
 			mIsMoving = true;
@@ -57,6 +59,12 @@ void Hero::UpdateEntity(float deltaTime) {
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::A_KEY)) {
 			mDirection = XMINT2(-1, 0);
 			mIsMoving = true;
+		}
+
+		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::Z_KEY)) {
+			mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
+			// ƒ^[ƒ“‚ð“G‚É“n‚·
+			mGame->GetChrManager()->ChangePhase();
 		}
 	}
 
@@ -77,13 +85,12 @@ void Hero::UpdateEntity(float deltaTime) {
 		mPosition.y = mPrePos.y + mDirection.y;
 		mPrePos = XMINT2(mPosition.x, mPosition.y);
 		mIsMoving = false;
+		// ƒ^[ƒ“‚ð“G‚É“n‚·
+		mGame->GetChrManager()->ChangePhase();
 	}
 
 
 
-	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::Z_KEY)) {
-		mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
-	}
 	// ˆÚ“®æ‚ðHero‚É•ÏX
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 }
