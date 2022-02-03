@@ -4,8 +4,8 @@ namespace Const {
 
 	const int MINI_MAP_CELL_SIZE = 12;
 
-	const int FLOOR_MAX_WIDTH = 50;
-	const int FLOOR_MAX_HEIGHT = 32;
+	const int FLOOR_MAX_WIDTH = 64;
+	const int FLOOR_MAX_HEIGHT = 64;
 	const int AREA_MIN_WIDTH = 4;
 	const int AREA_MIN_HEIGHT = 4;
 	const int ROOM_PADING = 4;

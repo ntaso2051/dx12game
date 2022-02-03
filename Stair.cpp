@@ -14,5 +14,4 @@ Stair::Stair(Game* game, XMFLOAT3 pos) : Entity(game) {
 }
 
 Stair::~Stair() {
-
 }

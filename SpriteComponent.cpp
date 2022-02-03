@@ -35,8 +35,8 @@ void SpriteComponent::SetActive(bool active) {
 void SpriteComponent::Update(float deltaTime) {
 	if (mActiveSelf) {
 		XMMATRIX worldMat = XMMatrixScaling(1.0f / Const::CELL_SIZE, 1.0f / Const::CELL_SIZE, 1.0f);
-		XMINT2 heroPos = mOwner->GetGame()->GetHero()->GetPosition();
-		XMINT2 ownerPos = mOwner->GetPosition();
+		XMFLOAT3 heroPos = mOwner->GetGame()->GetHero()->GetPosition();
+		XMFLOAT3 ownerPos = mOwner->GetPosition();
 		worldMat *= XMMatrixTranslation(2.0f * (ownerPos.x - heroPos.x) / Const::CELL_SIZE, 2.0f * (ownerPos.y - heroPos.y) / Const::CELL_SIZE, 1.0f);
 		mSpriteRenderer->ReComputeMatrix(worldMat, mOwner->GetGame()->GetViewMat(), mOwner->GetGame()->GetProjMat());
 		mSpriteRenderer->Draw();
