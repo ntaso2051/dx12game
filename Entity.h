@@ -9,6 +9,7 @@ using namespace DirectX;
 class Entity {
 public:
 	Entity(class Game* game);
+	Entity(Game* game, XMFLOAT3 pos);
 	virtual ~Entity();
 
 	void Update(float deltaTime);
@@ -24,14 +25,12 @@ public:
 
 	const int GetUpdateOrder() { return mUpdateOrder; }
 
-	bool Comp(const Entity* l, const Entity* r) { return (l->mUpdateOrder < r->mUpdateOrder); }
-
-	XMINT2 GetPosition() { return mPosition; }
+	XMFLOAT3 GetPosition() { return mPosition; }
 	class Game* GetGame();
 protected:
 	class Game* mGame;
 	std::vector<class Component*>mComponents;
 	// ç¿ïWä÷òA
-	XMINT2 mPosition;
+	XMFLOAT3 mPosition;
 	int mUpdateOrder;
 };

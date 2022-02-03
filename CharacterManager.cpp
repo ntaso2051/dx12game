@@ -40,7 +40,7 @@ Entity* CharacterManager::FindEnemyByPos(XMINT2 pos) {
 	return nullptr;
 }
 
-void CharacterManager::AttackRequest(XMINT2 pos, XMINT2 dir) {
+void CharacterManager::AttackRequest(XMFLOAT3 pos, XMINT2 dir) {
 	Entity* enemy = FindEnemyByPos(XMINT2(pos.x + dir.x, pos.y + dir.y));
 	if (enemy != nullptr) {
 		DamageCalc(static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent")), static_cast<ParameterComponent*>(static_cast<Enemy*>(enemy)->GetComponent("ParameterComponent")));
@@ -60,7 +60,7 @@ void CharacterManager::AddEnemy(Enemy* enemy) {
 void CharacterManager::RemoveEnemy(Entity* enemy) {
 	// if is in entities
 	Enemy* en = static_cast<Enemy*>(enemy);
-	XMINT2 pos = en->GetPosition();
+	XMFLOAT3 pos = en->GetPosition();
 	en->GetGame()->GetDgGen()->SetCellType(pos.x, pos.y, Const::Cell::Floor);
 	static_cast<SpriteComponent*>(en->GetComponent("SpriteComponent"))->SetActive(false);
 

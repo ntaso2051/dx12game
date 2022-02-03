@@ -12,8 +12,10 @@ public:
 	void UpdateEntity(float deltaTime) override;
 	class Component* GetHeroParam() { return mComponents[1]; }
 	XMINT2 GetDir() { return mDirection; }
+	bool GetIsMoving() { return mIsMoving; }
 private:
-	// ‚Æ‚è‚ ‚¦‚¸
-	float move = 0.0f;
+	float mMoveSpeed = 5.0f;
 	XMINT2 mDirection;
+	XMINT2 mPrePos;
+	bool mIsMoving;
 };

@@ -6,6 +6,10 @@ Entity::Entity(Game* game) :mGame(game) {
 	mGame->AddEntity(this);
 }
 
+Entity::Entity(Game* game, XMFLOAT3 pos) : mGame(game), mPosition(pos) {
+	mGame->AddEntity(this);
+}
+
 Entity::~Entity() {
 	mGame->RemoveEntity(this);
 	for (auto comp : mComponents) {

@@ -98,12 +98,13 @@ void ImguiWrapper::Draw() {
 	}
 	// Hero info debug imgui
 	{
-		XMINT2 heroPos = mGame->GetHero()->GetPosition();
+		XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
 		XMINT2 heroDir = mGame->GetHero()->GetDir();
 		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetHeroParam());
-
+		bool heroIsMoving = mGame->GetHero()->GetIsMoving();
 		Begin("Hero State");
-		Text("Position(%3d, %3d)", heroPos.x, heroPos.y);
+		Checkbox("IsMoving", &heroIsMoving);
+		Text("Position(%f, %f)", heroPos.x, heroPos.y);
 		Text("HP: %d", pc->GetHp());
 		Text("EXP: %d", pc->GetExp());
 		Text("LEVEL: %d", pc->GetLevel());
