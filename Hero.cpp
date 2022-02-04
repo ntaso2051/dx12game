@@ -12,19 +12,21 @@
 using namespace DirectX;
 
 
-Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mIsMoving(false), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)) {
+Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	ParameterComponent* pc = new ParameterComponent(this, Const::HERO_INIT_HP, Const::HERO_INIT_EXP, Const::HERO_INIT_LEVEL, Const::HERO_INIT_ATTACK);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 	mUpdateOrder = 100;
 }
 
-Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, pos), mIsMoving(false), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)) {
+Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	AddComponent(param);
 	mDirection = XMINT2(0, -1);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 }
+
+Hero::~Hero() {}
 
 void Hero::Attack() {
 	mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
@@ -41,27 +43,37 @@ void Hero::UpdateEntity(float deltaTime) {
 	// 移動元をFloorに変更
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Floor);
 	// 入力処理
-	if (!mIsMoving) {
+	if (mState == Const::State::Idle && mGame->GetChrManager()->GetPhase() == CharacterManager::Phase::HeroPhase) {
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::W_KEY)) {
 			mDirection = XMINT2(0, 1);
-			mIsMoving = true;
+			mState = Const::State::Move;
 		}
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::S_KEY)) {
 			mDirection = XMINT2(0, -1);
-			mIsMoving = true;
+			mState = Const::State::Move;
 		}
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::D_KEY)) {
 			mDirection = XMINT2(1, 0);
-			mIsMoving = true;
+			mState = Const::State::Move;
 		}
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::A_KEY)) {
 			mDirection = XMINT2(-1, 0);
-			mIsMoving = true;
+			mState = Const::State::Move;
+		}
+
+		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::Z_KEY)) {
+			mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
+			// ターンを敵に渡す
+			// アニメーションを付けるならAttackにする
+			mState = Const::State::Idle;
+			mGame->GetChrManager()->ChangePhase();
 		}
 	}
 
 	if (
-		(mIsMoving) &&
+		// 動いているか
+		(mState == Const::State::Move) &&
+		// 移動先が壁か敵ではないか
 		mGame->GetDgGen()->getCellType(mPrePos.x + mDirection.x, mPrePos.y + mDirection.y) != Const::Cell::Wall &&
 		mGame->GetDgGen()->getCellType(mPrePos.x + mDirection.x, mPrePos.y + mDirection.y) != Const::Cell::Enemy
 		) {
@@ -69,21 +81,20 @@ void Hero::UpdateEntity(float deltaTime) {
 		mPosition.y += mMoveSpeed * deltaTime * mDirection.y;
 	}
 	else {
-		mIsMoving = false;
+		mState = Const::State::Idle;
 	}
 
-	if (mIsMoving && (std::abs(mPosition.x - mPrePos.x) >= 0.999f || std::abs(mPosition.y - mPrePos.y) >= 0.999f)) {
+	if (mState == Const::State::Move && (std::abs(mPosition.x - mPrePos.x) >= 0.999f || std::abs(mPosition.y - mPrePos.y) >= 0.999f)) {
 		mPosition.x = mPrePos.x + mDirection.x;
 		mPosition.y = mPrePos.y + mDirection.y;
 		mPrePos = XMINT2(mPosition.x, mPosition.y);
-		mIsMoving = false;
+		mState = Const::State::Idle;
+		// ターンを敵に渡す
+		mGame->GetChrManager()->ChangePhase();
 	}
 
 
 
-	if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::Z_KEY)) {
-		mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
-	}
 	// 移動先をHeroに変更
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 }

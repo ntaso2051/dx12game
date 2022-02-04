@@ -59,6 +59,8 @@ public:
 
 	XMFLOAT2 getRandomPosInRoom();
 
+	int GetCurrentRoom(XMINT2 pos);
+
 	void setFloor();
 
 	void SetCellType(int x, int y, Const::Cell::Type cellType);

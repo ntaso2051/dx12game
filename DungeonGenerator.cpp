@@ -214,6 +214,20 @@ XMFLOAT2 DungeonGenerator::getRandomPosInRoom() {
 	return res;
 }
 
+int DungeonGenerator::GetCurrentRoom(XMINT2 pos) {
+	for (int id = 0; id < mAreas.size(); id++) {
+		if (
+			pos.x >= mAreas[id]->room->x &&
+			pos.x < mAreas[id]->room->x + mAreas[id]->room->w &&
+			pos.y >= mAreas[id]->room->y &&
+			pos.y < mAreas[id]->room->y + mAreas[id]->room->h
+			) {
+			return id;
+		}
+	}
+}
+
+
 Floor::Floor() {
 	data.resize(Const::FLOOR_MAX_HEIGHT);
 	for (int i = 0; i < Const::FLOOR_MAX_HEIGHT; i++) {

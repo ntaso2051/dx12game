@@ -2,10 +2,12 @@
 namespace Const {
 	const int CELL_SIZE = 16;
 
+	const int INIT_ENEMIES_NUM = 20;
+
 	const int MINI_MAP_CELL_SIZE = 12;
 
-	const int FLOOR_MAX_WIDTH = 64;
-	const int FLOOR_MAX_HEIGHT = 64;
+	const int FLOOR_MAX_WIDTH = 32;
+	const int FLOOR_MAX_HEIGHT = 32;
 	const int AREA_MIN_WIDTH = 4;
 	const int AREA_MIN_HEIGHT = 4;
 	const int ROOM_PADING = 4;
@@ -51,14 +53,11 @@ namespace Const {
 		};
 	};
 
-	enum Dir {
-		N,
-		NE,
-		E,
-		SE,
-		S,
-		SW,
-		W,
-		NW,
+	enum State {
+		Move,		// 動いてる間
+		Idle,		// 入力待ち
+		End,		// ターン中の行動が終わった状態
+		Attack, // 攻撃中
+		Dead,		// 死んでる
 	};
 };  // namespace Const

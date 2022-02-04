@@ -11,6 +11,7 @@ public:
 	void Update(float deltaTime) override;
 	int GetDrawOrder() { return mDrawOrder; };
 	class SpriteRenderer* GetSpriteRenderer() { return mSpriteRenderer; }
+	bool ActiveSelf() { return mActiveSelf; }
 protected:
 	class SpriteRenderer* mSpriteRenderer;
 	int mDrawOrder;

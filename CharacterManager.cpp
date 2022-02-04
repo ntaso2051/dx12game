@@ -10,16 +10,26 @@
 #include "SpriteComponent.h"
 #include <string>
 
-CharacterManager::CharacterManager(Hero* hero) : mHero(hero) {
+CharacterManager::CharacterManager(Hero* hero) : mHero(hero), mEnemiesCount(0), mEnemiesTotal(Const::INIT_ENEMIES_NUM) {
 	mPhase = Phase::HeroPhase;
 }
 
 CharacterManager::~CharacterManager() {
 	for (auto e : mEnemies) {
-		mHero->GetGame()->RemoveEntity(static_cast<Entity*>(e));
 		delete e;
 	}
 	mEnemies.clear();
+}
+
+void CharacterManager::Update() {
+	if (mEnemiesCount == mEnemies.size()) {
+		ChangePhase();
+		mEnemiesCount = 0;
+	}
+
+	for (auto de : mDeadEnemies) {
+		// delete de;
+	}
 }
 
 void CharacterManager::ChangePhase() {
@@ -28,6 +38,11 @@ void CharacterManager::ChangePhase() {
 	}
 	else {
 		mPhase = Phase::HeroPhase;
+		for (auto e : mEnemies) {
+			if (e->GetState() != Const::State::Dead) {
+				e->SetState(Const::State::Idle);
+			}
+		}
 	}
 }
 
@@ -47,26 +62,44 @@ void CharacterManager::AttackRequest(XMFLOAT3 pos, XMINT2 dir) {
 	}
 }
 
-
-void CharacterManager::DamageCalc(ParameterComponent* attack, ParameterComponent* damaged) {
-	damaged->Damaged(attack);
+void CharacterManager::AttackRequestByEnemy(Component* param) {
+	DamageCalc(static_cast<ParameterComponent*>(param), static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent")));
 }
 
-void CharacterManager::AddEnemy(Enemy* enemy) {
+void CharacterManager::DamageCalc(ParameterComponent* attack, ParameterComponent* damaged) {
+	if (attack != nullptr && damaged != nullptr)
+		damaged->Damaged(attack);
+}
+
+void CharacterManager::AddEnemy(Enemy * enemy) {
 	mEnemies.push_back(enemy);
 }
 
+void CharacterManager::EraseEnemy(Enemy * en) {
+	for (auto it = mEnemies.begin(); it != mEnemies.end();) {
+		if (*it == en) {
+			it = mEnemies.erase(it);
+			// delete en;
+		}
+		else {
+			++it;
+		}
+	}
+}
+
+
 // 死亡通知をPrameterComponentから送るので，Entity->Enemyの変換をここでやる．
-void CharacterManager::RemoveEnemy(Entity* enemy) {
-	// if is in entities
+void CharacterManager::RemoveEnemy(Entity * enemy) {
 	Enemy* en = static_cast<Enemy*>(enemy);
 	XMFLOAT3 pos = en->GetPosition();
+	// 元居た場所をFloorにする．
 	en->GetGame()->GetDgGen()->SetCellType(pos.x, pos.y, Const::Cell::Floor);
+	// 描画しなくする．
 	static_cast<SpriteComponent*>(en->GetComponent("SpriteComponent"))->SetActive(false);
-
-	auto iter = std::find(mEnemies.begin(), mEnemies.end(), en);
-	if (iter != mEnemies.end()) {
-		std::iter_swap(iter, mEnemies.end() - 1);
-		mEnemies.pop_back();
-	}
+	// StateをDeadにする．
+	en->SetState(Const::State::Dead);
+	mEnemiesTotal--;
+	en->SetPosition(XMFLOAT3(-1, -1, 0));
+	EraseEnemy(en);
+	mDeadEnemies.emplace_back(en);
 }

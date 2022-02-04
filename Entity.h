@@ -26,6 +26,7 @@ public:
 	const int GetUpdateOrder() { return mUpdateOrder; }
 
 	XMFLOAT3 GetPosition() { return mPosition; }
+	void SetPosition(XMFLOAT3 pos) { mPosition = pos; }
 	class Game* GetGame();
 protected:
 	class Game* mGame;
