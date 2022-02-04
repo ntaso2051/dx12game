@@ -12,14 +12,14 @@
 using namespace DirectX;
 
 
-Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mIsMoving(false), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)) {
+Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	ParameterComponent* pc = new ParameterComponent(this, Const::HERO_INIT_HP, Const::HERO_INIT_EXP, Const::HERO_INIT_LEVEL, Const::HERO_INIT_ATTACK);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 	mUpdateOrder = 100;
 }
 
-Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, pos), mIsMoving(false), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)) {
+Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
 	AddComponent(param);
 	mDirection = XMINT2(0, -1);
@@ -43,33 +43,37 @@ void Hero::UpdateEntity(float deltaTime) {
 	// ˆÚ“®Œ³‚ðFloor‚É•ÏX
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Floor);
 	// “ü—Íˆ—
-	if (!mIsMoving && mGame->GetChrManager()->GetPhase() == CharacterManager::Phase::HeroPhase) {
+	if (mState == Const::State::Idle && mGame->GetChrManager()->GetPhase() == CharacterManager::Phase::HeroPhase) {
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::W_KEY)) {
 			mDirection = XMINT2(0, 1);
-			mIsMoving = true;
+			mState = Const::State::Move;
 		}
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::S_KEY)) {
 			mDirection = XMINT2(0, -1);
-			mIsMoving = true;
+			mState = Const::State::Move;
 		}
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::D_KEY)) {
 			mDirection = XMINT2(1, 0);
-			mIsMoving = true;
+			mState = Const::State::Move;
 		}
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::A_KEY)) {
 			mDirection = XMINT2(-1, 0);
-			mIsMoving = true;
+			mState = Const::State::Move;
 		}
 
 		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::Z_KEY)) {
 			mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
 			// ƒ^[ƒ“‚ð“G‚É“n‚·
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ð•t‚¯‚é‚È‚çAttack‚É‚·‚é
+			mState = Const::State::Idle;
 			mGame->GetChrManager()->ChangePhase();
 		}
 	}
 
 	if (
-		(mIsMoving) &&
+		// “®‚¢‚Ä‚¢‚é‚©
+		(mState == Const::State::Move) &&
+		// ˆÚ“®æ‚ª•Ç‚©“G‚Å‚Í‚È‚¢‚©
 		mGame->GetDgGen()->getCellType(mPrePos.x + mDirection.x, mPrePos.y + mDirection.y) != Const::Cell::Wall &&
 		mGame->GetDgGen()->getCellType(mPrePos.x + mDirection.x, mPrePos.y + mDirection.y) != Const::Cell::Enemy
 		) {
@@ -77,14 +81,14 @@ void Hero::UpdateEntity(float deltaTime) {
 		mPosition.y += mMoveSpeed * deltaTime * mDirection.y;
 	}
 	else {
-		mIsMoving = false;
+		mState = Const::State::Idle;
 	}
 
-	if (mIsMoving && (std::abs(mPosition.x - mPrePos.x) >= 0.999f || std::abs(mPosition.y - mPrePos.y) >= 0.999f)) {
+	if (mState == Const::State::Move && (std::abs(mPosition.x - mPrePos.x) >= 0.999f || std::abs(mPosition.y - mPrePos.y) >= 0.999f)) {
 		mPosition.x = mPrePos.x + mDirection.x;
 		mPosition.y = mPrePos.y + mDirection.y;
 		mPrePos = XMINT2(mPosition.x, mPosition.y);
-		mIsMoving = false;
+		mState = Const::State::Idle;
 		// ƒ^[ƒ“‚ð“G‚É“n‚·
 		mGame->GetChrManager()->ChangePhase();
 	}

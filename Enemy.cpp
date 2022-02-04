@@ -8,7 +8,7 @@
 #include "Hero.h"
 #include "Random.h"
 
-Enemy::Enemy(Game* game, XMFLOAT3 pos) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mIsMoving(false), mEndTurn(false) {
+Enemy::Enemy(Game* game, XMFLOAT3 pos) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
 	mSc = new SpriteComponent(this, Const::TexId::Blob);
 	ParameterComponent* pc = new ParameterComponent(this, Const::BLOB_INIT_HP, Const::BLOB_INIT_EXP, Const::BLOB_INIT_LEVEL, Const::BLOB_INIT_ATTACK);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Enemy);
@@ -16,13 +16,37 @@ Enemy::Enemy(Game* game, XMFLOAT3 pos) : Entity(game, pos), mDirection(XMINT2(0,
 }
 
 Enemy::~Enemy() {
+
 }
 
 
+bool Enemy::SearchEightDirections() {
+	auto e = mGame->GetDgGen()->getCellType(mPrePos.x + 1, mPrePos.y);
+	auto w = mGame->GetDgGen()->getCellType(mPrePos.x - 1, mPrePos.y);
+	auto n = mGame->GetDgGen()->getCellType(mPrePos.x, mPrePos.y + 1);
+	auto s = mGame->GetDgGen()->getCellType(mPrePos.x, mPrePos.y - 1);
+	auto ne = mGame->GetDgGen()->getCellType(mPrePos.x + 1, mPrePos.y + 1);
+	auto nw = mGame->GetDgGen()->getCellType(mPrePos.x - 1, mPrePos.y + 1);
+	auto sw = mGame->GetDgGen()->getCellType(mPrePos.x - 1, mPrePos.y - 1);
+	auto se = mGame->GetDgGen()->getCellType(mPrePos.x + 1, mPrePos.y - 1);
+
+	if (e == Const::Cell::Hero || w == Const::Cell::Hero || n == Const::Cell::Hero || s == Const::Cell::Hero || ne == Const::Cell::Hero || nw == Const::Cell::Hero || sw == Const::Cell::Hero || se == Const::Cell::Hero) {
+		return true;
+	}
+
+	return false;
+}
+
 void Enemy::UpdateEntity(float deltaTime) {
 	if (mGame->GetChrManager()->GetPhase() == CharacterManager::Phase::EnemiesPhase) {
-		if (mSc->ActiveSelf()) {
-			if (!mIsMoving && !mEndTurn) {
+		if (mState == Const::State::Idle) {
+			if (SearchEightDirections()) {
+				mGame->GetChrManager()->AttackRequestByEnemy(this->GetComponent("ParameterComponent"));
+				// Attackアニメーションを作るときにAttackを使う
+				mState = Const::State::End;
+				mGame->GetChrManager()->IncEnemyCnt();
+			}
+			else {
 				mGame->GetDgGen()->SetCellType(mPrePos.x, mPrePos.y, Const::Cell::Floor);
 				XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
 				int heroRoomId = mGame->GetDgGen()->GetCurrentRoom(XMINT2(heroPos.x, heroPos.y));
@@ -43,33 +67,26 @@ void Enemy::UpdateEntity(float deltaTime) {
 					cellType != Const::Cell::Enemy &&
 					cellType != Const::Cell::Hero
 					) {
-					mIsMoving = true;
+					mState = Const::State::Move;
 					mGame->GetDgGen()->SetCellType(x, y, Const::Cell::Enemy);
 				}
 				else {
 					mGame->GetDgGen()->SetCellType(mPrePos.x, mPrePos.y, Const::Cell::Enemy);
-					mEndTurn = true;
-					mGame->GetChrManager()->IncEnemyCnt();
-				}
-			}
-			else if (mIsMoving && !mEndTurn) {
-				mPosition.x += deltaTime * 5 * mDirection.x;
-				mPosition.y += deltaTime * 5 * mDirection.y;
-
-				if (std::abs(mPosition.x - mPrePos.x) >= 0.999f || std::abs(mPosition.y - mPrePos.y) >= 0.999f) {
-					mPosition.x = mPrePos.x + mDirection.x;
-					mPosition.y = mPrePos.y + mDirection.y;
-					mIsMoving = false;
-					mEndTurn = true;
-					mPrePos = XMINT2(mPosition.x, mPosition.y);
+					mState = Const::State::End;
 					mGame->GetChrManager()->IncEnemyCnt();
 				}
 			}
 		}
-		else {
-			if (!mEndTurn) {
+		else if (mState == Const::State::Move) {
+			mPosition.x += deltaTime * 5 * mDirection.x;
+			mPosition.y += deltaTime * 5 * mDirection.y;
+
+			if (std::abs(mPosition.x - mPrePos.x) >= 0.999f || std::abs(mPosition.y - mPrePos.y) >= 0.999f) {
+				mPosition.x = mPrePos.x + mDirection.x;
+				mPosition.y = mPrePos.y + mDirection.y;
+				mState = Const::State::End;
+				mPrePos = XMINT2(mPosition.x, mPosition.y);
 				mGame->GetChrManager()->IncEnemyCnt();
-				mEndTurn = true;
 			}
 		}
 	}

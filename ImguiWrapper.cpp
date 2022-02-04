@@ -101,9 +101,7 @@ void ImguiWrapper::Draw() {
 		XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
 		XMINT2 heroDir = mGame->GetHero()->GetDir();
 		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetHeroParam());
-		bool heroIsMoving = mGame->GetHero()->GetIsMoving();
 		Begin("Hero State");
-		Checkbox("IsMoving", &heroIsMoving);
 		Text("Position(%f, %f)", heroPos.x, heroPos.y);
 		Text("HP: %d", pc->GetHp());
 		Text("EXP: %d", pc->GetExp());
@@ -142,10 +140,19 @@ void ImguiWrapper::Draw() {
 	}
 	{
 		Begin("Enemy State");
-		auto enemy = mGame->GetChrManager();
-		Text("Enemies count %d", enemy->EnemiesCnt());
-		Text("Enemies count by Enemy %d", enemy->EnemiesCntByEnemy());
-		Text("Turn %d", enemy->GetPhase());
+		int cnt = mGame->GetChrManager()->GetEnemiesCnt();
+		int total = mGame->GetChrManager()->GetEnemiesTotal();
+		Text("Count: %d, Total: %d", cnt, total);
+		auto enemy = mGame->GetChrManager()->GetEnemies();
+		for (int i = 0; i < enemy.size(); i++) {
+			auto state = enemy[i]->GetState();
+			Text("Enemy[%d]: %d", i, state);
+		}
+		auto deadEnemy = mGame->GetChrManager()->GetDeadEnemies();
+		for (int i = 0; i < deadEnemy.size(); i++) {
+			auto pos = deadEnemy[i]->GetPosition();
+			Text("DeadEnemy[i] (%f, %f)", pos.x, pos.y);
+		}
 		End();
 	}
 	Render();

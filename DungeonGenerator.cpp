@@ -227,6 +227,7 @@ int DungeonGenerator::GetCurrentRoom(XMINT2 pos) {
 	}
 }
 
+
 Floor::Floor() {
 	data.resize(Const::FLOOR_MAX_HEIGHT);
 	for (int i = 0; i < Const::FLOOR_MAX_HEIGHT; i++) {

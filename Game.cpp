@@ -100,7 +100,7 @@ void Game::Init() {
 
 	mCharacterManager = new CharacterManager(mHero);
 
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < Const::INIT_ENEMIES_NUM; i++) {
 		initPos = mDgGen->getRandomPosInRoom();
 		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 		mCharacterManager->AddEnemy(blob);
@@ -130,7 +130,7 @@ void Game::InitDungeon() {
 
 	mCharacterManager = new CharacterManager(mHero);
 
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < Const::INIT_ENEMIES_NUM; i++) {
 		initPos = mDgGen->getRandomPosInRoom();
 		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 		mCharacterManager->AddEnemy(blob);
