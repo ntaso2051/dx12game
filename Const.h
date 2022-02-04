@@ -46,10 +46,13 @@ namespace Const {
 
 	namespace TexId {
 		enum Type {
-			Hero,
 			Wall,
 			Blob,
 			STAIR,
+
+			HFront1,
+			HFront2,
+			HFront3,
 		};
 	};
 

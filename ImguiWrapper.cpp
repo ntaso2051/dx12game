@@ -100,7 +100,7 @@ void ImguiWrapper::Draw() {
 	{
 		XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
 		XMINT2 heroDir = mGame->GetHero()->GetDir();
-		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetHeroParam());
+		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetComponent("ParameterComponent"));
 		Begin("Hero State");
 		Text("Position(%f, %f)", heroPos.x, heroPos.y);
 		Text("HP: %d", pc->GetHp());

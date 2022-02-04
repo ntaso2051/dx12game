@@ -76,10 +76,12 @@ void Game::Init() {
 	if (FAILED(mDx12Wrapper->InitGraphicPipelineForSprite())) {
 	}
 
-	LoadImgFile(L"Resources/Images/myicon.png");
 	LoadImgFile(L"Resources/Images/Wall.png");
 	LoadImgFile(L"Resources/Images/blob.png");
 	LoadImgFile(L"Resources/Images/stairs.png");
+	LoadImgFile(L"Resources/Images/herofront1.png");
+	LoadImgFile(L"Resources/Images/herofront2.png");
+	LoadImgFile(L"Resources/Images/herofront3.png");
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput, this);
 

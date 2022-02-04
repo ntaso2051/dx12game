@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimSpriteComponent.cpp" />
     <ClCompile Include="CharacterManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimSpriteComponent.h" />
     <ClInclude Include="CharacterManager.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Component.h" />

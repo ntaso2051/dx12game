@@ -40,13 +40,13 @@ bool Enemy::SearchEightDirections() {
 void Enemy::UpdateEntity(float deltaTime) {
 	if (mGame->GetChrManager()->GetPhase() == CharacterManager::Phase::EnemiesPhase) {
 		if (mState == Const::State::Idle) {
-			if (SearchEightDirections()) {
+			if (SearchEightDirections()) {	// 攻撃する
 				mGame->GetChrManager()->AttackRequestByEnemy(this->GetComponent("ParameterComponent"));
 				// Attackアニメーションを作るときにAttackを使う
 				mState = Const::State::End;
 				mGame->GetChrManager()->IncEnemyCnt();
 			}
-			else {
+			else {	// 攻撃しない
 				mGame->GetDgGen()->SetCellType(mPrePos.x, mPrePos.y, Const::Cell::Floor);
 				XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
 				int heroRoomId = mGame->GetDgGen()->GetCurrentRoom(XMINT2(heroPos.x, heroPos.y));
