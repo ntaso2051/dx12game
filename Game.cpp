@@ -15,6 +15,9 @@
 #include "Stair.h"
 #include "SpriteRenderer.h"
 #include "ParameterComponent.h"
+#include "Item.h"
+#include "Weapon.h"
+#include "Food.h"
 
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
@@ -79,6 +82,8 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/Wall.png");
 	LoadImgFile(L"Resources/Images/blob.png");
 	LoadImgFile(L"Resources/Images/stairs.png");
+	LoadImgFile(L"Resources/Images/weapon.png");
+	LoadImgFile(L"Resources/Images/food.png");
 	LoadImgFile(L"Resources/Images/herofront1.png");
 	LoadImgFile(L"Resources/Images/herofront2.png");
 	LoadImgFile(L"Resources/Images/herofront3.png");
@@ -107,6 +112,20 @@ void Game::Init() {
 		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 		mCharacterManager->AddEnemy(blob);
 	}
+
+	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
+		initPos = mDgGen->getRandomPosInRoomItem();
+		Weapon* weapon = new Weapon(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Weapon);
+		mItems.push_back(static_cast<Item*>(weapon));
+	}
+
+	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
+		initPos = mDgGen->getRandomPosInRoomItem();
+		Food* food = new Food(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Food);
+		mItems.push_back(static_cast<Item*>(food));
+	}
+
+	SortEntitiesByUpdateOrder();
 }
 
 void Game::InitDungeon() {
@@ -115,8 +134,12 @@ void Game::InitDungeon() {
 	for (auto wall : mWalls) {
 		delete wall;
 	}
+	for (auto item : mItems) {
+		delete item;
+	}
 	delete mStair;
 	mWalls.clear();
+	mItems.clear();
 	delete mDgGen;
 	mDgGen = nullptr;
 	mDgGen = new DungeonGenerator();
@@ -138,6 +161,16 @@ void Game::InitDungeon() {
 		mCharacterManager->AddEnemy(blob);
 	}
 
+	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
+		initPos = mDgGen->getRandomPosInRoomItem();
+		Weapon* weapon = new Weapon(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Weapon);
+		mItems.push_back(static_cast<Item*>(weapon));
+	}
+	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
+		initPos = mDgGen->getRandomPosInRoomItem();
+		Food* food = new Food(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Food);
+		mItems.push_back(static_cast<Item*>(food));
+	}
 	SortEntitiesByUpdateOrder();
 
 	mIsUpdateGame = true;

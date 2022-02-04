@@ -214,6 +214,21 @@ XMFLOAT2 DungeonGenerator::getRandomPosInRoom() {
 	return res;
 }
 
+XMFLOAT2 DungeonGenerator::getRandomPosInRoomItem() {
+	int id = mRand->randInt(0, mAreas.size() - 1);
+	XMFLOAT2 res;
+	res.x = mRand->randInt(mAreas[id]->room->x,
+		mAreas[id]->room->x + mAreas[id]->room->w - 1);
+	res.y = mRand->randInt(mAreas[id]->room->y,
+		mAreas[id]->room->y + mAreas[id]->room->h - 1);
+	res.x;
+	res.y;
+	if (mFloor->data[res.y][res.x] != Const::Cell::Floor && mFloor->data[res.y][res.x] != Const::Cell::Enemy) {
+		res = getRandomPosInRoomItem();
+	}
+	return res;
+}
+
 int DungeonGenerator::GetCurrentRoom(XMINT2 pos) {
 	for (int id = 0; id < mAreas.size(); id++) {
 		if (

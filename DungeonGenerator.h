@@ -59,6 +59,8 @@ public:
 
 	XMFLOAT2 getRandomPosInRoom();
 
+	XMFLOAT2 getRandomPosInRoomItem();
+
 	int GetCurrentRoom(XMINT2 pos);
 
 	void setFloor();
