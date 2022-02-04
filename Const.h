@@ -2,7 +2,8 @@
 namespace Const {
 	const int CELL_SIZE = 16;
 
-	const int INIT_ENEMIES_NUM = 20;
+	const int INIT_ENEMIES_NUM = 5;
+	const int INIT_ITEM_NUM = 5;
 
 	const int MINI_MAP_CELL_SIZE = 12;
 
@@ -49,6 +50,9 @@ namespace Const {
 			Wall,
 			Blob,
 			STAIR,
+
+			Weapon,
+			Food,
 
 			HFront1,
 			HFront2,

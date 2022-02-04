@@ -58,6 +58,7 @@ private:
 	class Hero* mHero;
 	class Stair* mStair;
 	std::vector<class Wall*> mWalls;
+	std::vector<class Item*> mItems;
 
 	XMMATRIX mViewMat;
 	XMMATRIX mProjMat;

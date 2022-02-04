@@ -139,6 +139,7 @@
     <ClCompile Include="Dx12Wrapper.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Floor.cpp" />
+    <ClCompile Include="Food.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="ImguiWrapper.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="imGui\imgui_tables.cpp" />
     <ClCompile Include="imGui\imgui_widgets.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ParameterComponent.cpp" />
     <ClCompile Include="Random.cpp" />
@@ -159,6 +161,7 @@
     <ClCompile Include="Stair.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Wall.cpp" />
+    <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +174,7 @@
     <ClInclude Include="Dx12Wrapper.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Floor.h" />
+    <ClInclude Include="Food.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="ImguiWrapper.h" />
@@ -183,6 +187,7 @@
     <ClInclude Include="imGui\imstb_textedit.h" />
     <ClInclude Include="imGui\imstb_truetype.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="ParameterComponent.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Shader.h" />
@@ -191,6 +196,7 @@
     <ClInclude Include="Stair.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Wall.h" />
+    <ClInclude Include="Weapon.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
