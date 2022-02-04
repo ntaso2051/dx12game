@@ -11,7 +11,6 @@ public:
 	void Attack();
 	void SetPosition(XMINT2 pos);
 	void UpdateEntity(float deltaTime) override;
-	class Component* GetHeroParam() { return mComponents[1]; }
 	XMINT2 GetDir() { return mDirection; }
 private:
 	float mMoveSpeed = 5.0f;

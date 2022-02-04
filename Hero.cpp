@@ -8,19 +8,27 @@
 #include "DungeonGenerator.h"
 #include "ParameterComponent.h"
 #include "CharacterManager.h"
+#include "AnimSpriteComponent.h"
 
 using namespace DirectX;
 
 
 Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
-	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
+	std::vector<int> texIds = {
+		Const::TexId::HFront1,
+		Const::TexId::HFront2,
+		Const::TexId::HFront3,
+		Const::TexId::HFront2,
+	};
+	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::HFront1);
+	AnimSpriteComponent* asc = new AnimSpriteComponent(this, texIds);
 	ParameterComponent* pc = new ParameterComponent(this, Const::HERO_INIT_HP, Const::HERO_INIT_EXP, Const::HERO_INIT_LEVEL, Const::HERO_INIT_ATTACK);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 	mUpdateOrder = 100;
 }
 
 Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
-	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::Hero);
+	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::HFront1);
 	AddComponent(param);
 	mDirection = XMINT2(0, -1);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
