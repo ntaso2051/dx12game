@@ -12,6 +12,7 @@ public:
 		Once,
 	};
 	virtual void UpdateEntity(float deltaTime) override;
+	virtual void Adopt();
 protected:
 	class SpriteComponent* mSpriteComponent;
 };

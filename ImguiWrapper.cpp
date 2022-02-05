@@ -16,9 +16,13 @@ using namespace DirectX;
 ImguiWrapper::ImguiWrapper(HWND hwnd, Dx12Wrapper* dx12, Input* input, Game* game) :mDx12Wrapper(dx12), mInput(input), mGame(game) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	(void)io;
 
+	ImGuiIO& io = ImGui::GetIO();
+	ImFontConfig conf;
+	conf.MergeMode = true;
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("Resources/fonts/PixelMplus10-Regular.ttf", 18.0f, &conf, io.Fonts->GetGlyphRangesJapanese());
+	(void)io;
 	ImGui::StyleColorsDark();
 
 	int NUM_FRAMES_IN_FLIGHT = 3;
@@ -122,16 +126,16 @@ void ImguiWrapper::Draw() {
 					colStr += "  ";
 				}
 				else if (data[i][j] == Const::Cell::Hero) {
-					colStr += "HR";
+					colStr += u8"P1";
 				}
 				else if (data[i][j] == Const::Cell::Enemy) {
-					colStr += "EM";
+					colStr += u8"EM";
 				}
 				else if (data[i][j] == Const::Cell::Stair) {
-					colStr += "xx";
+					colStr += u8"ST";
 				}
 				else {
-					colStr += "[]";
+					colStr += u8"[]";
 				}
 			}
 			Text("%s\n\r", colStr.c_str());

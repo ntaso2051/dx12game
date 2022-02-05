@@ -22,3 +22,7 @@ void Item::UpdateEntity(float deltaTime) {
 		}
 	}
 }
+
+void Item::Adopt() {
+
+}
