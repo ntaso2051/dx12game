@@ -8,12 +8,13 @@
 #include "DungeonGenerator.h"
 #include "ParameterComponent.h"
 #include "CharacterManager.h"
+#include "Item.h"
 #include "Enemy.h"
 
 using namespace ImGui;
 using namespace DirectX;
 
-ImguiWrapper::ImguiWrapper(HWND hwnd, Dx12Wrapper* dx12, Input* input, Game* game) :mDx12Wrapper(dx12), mInput(input), mGame(game) {
+ImguiWrapper::ImguiWrapper(HWND hwnd, Dx12Wrapper* dx12, Input* input, Game* game) :mDx12Wrapper(dx12), mInput(input), mGame(game), mItemCmd(false) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
@@ -21,7 +22,7 @@ ImguiWrapper::ImguiWrapper(HWND hwnd, Dx12Wrapper* dx12, Input* input, Game* gam
 	ImFontConfig conf;
 	conf.MergeMode = true;
 	io.Fonts->AddFontDefault();
-	io.Fonts->AddFontFromFileTTF("Resources/fonts/PixelMplus10-Regular.ttf", 18.0f, &conf, io.Fonts->GetGlyphRangesJapanese());
+	io.Fonts->AddFontFromFileTTF("Resources/fonts/PixelMplus10-Regular.ttf", 12.0f, &conf, io.Fonts->GetGlyphRangesJapanese());
 	(void)io;
 	ImGui::StyleColorsDark();
 
@@ -113,6 +114,42 @@ void ImguiWrapper::Draw() {
 		Text("ATTACK: %d", pc->GetAttack());
 		Text("mDirection: %d, %d", heroDir.x, heroDir.y);
 
+		Text(u8"アイテム");
+
+		End();
+	}
+	// Item List
+	if (!mItemCmd) {
+		Begin(u8"アイテムリスト");
+		auto items = mGame->GetHero()->GetMyItems();
+		for (int i = 0; i < items.size(); i++) {
+			auto item = items[i];
+			std::string label = std::to_string(i + 1) + u8"：" + item->GetName() + "  " + item->GetInfo();
+			if (Button(label.c_str()) && !mItemCmd) {
+				mItemCmd = true;
+				mSelectedItem = item;
+			}
+		}
+		End();
+	}
+	// Item Command
+	if (mItemCmd) {
+		std::string label = mSelectedItem->GetName();
+		Begin(label.c_str());
+		if (Button(u8"使う")) {
+			mSelectedItem->Adapt();
+			mSelectedItem = nullptr;
+			mItemCmd = false;
+		}
+		if (Button(u8"捨てる")) {
+			mSelectedItem->Remove();
+			mSelectedItem = nullptr;
+			mItemCmd = false;
+		}
+		if (Button(u8"何もしない")) {
+			mItemCmd = false;
+			mSelectedItem = nullptr;
+		}
 		End();
 	}
 	// Render minimap

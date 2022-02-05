@@ -9,6 +9,8 @@
 #include "ParameterComponent.h"
 #include "CharacterManager.h"
 #include "AnimSpriteComponent.h"
+#include "Item.h"
+#include <typeinfo>
 
 using namespace DirectX;
 
@@ -107,3 +109,17 @@ void Hero::UpdateEntity(float deltaTime) {
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 }
 
+void Hero::RemoveItem(Item * item) {
+	for (auto it = mItems.begin(); it != mItems.end();) {
+		if (*it == item) {
+			it = mItems.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+}
+
+void Hero::UseItem(Item * item) {
+
+}

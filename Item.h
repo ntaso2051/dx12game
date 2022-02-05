@@ -12,7 +12,14 @@ public:
 		Once,
 	};
 	virtual void UpdateEntity(float deltaTime) override;
-	virtual void Adopt();
+	virtual void Adapt();
+
+	void Remove();
+
+	std::string GetName() { return mName; }
+	std::string GetInfo() { return mInfo; }
 protected:
 	class SpriteComponent* mSpriteComponent;
+	std::string mName;
+	std::string mInfo;
 };

@@ -33,14 +33,16 @@ void CharacterManager::Update() {
 }
 
 void CharacterManager::ChangePhase() {
-	if (mPhase == Phase::HeroPhase) {
-		mPhase = Phase::EnemiesPhase;
-	}
-	else {
-		mPhase = Phase::HeroPhase;
-		for (auto e : mEnemies) {
-			if (e->GetState() != Const::State::Dead) {
-				e->SetState(Const::State::Idle);
+	if (mEnemies.size()) {
+		if (mPhase == Phase::HeroPhase) {
+			mPhase = Phase::EnemiesPhase;
+		}
+		else {
+			mPhase = Phase::HeroPhase;
+			for (auto e : mEnemies) {
+				if (e->GetState() != Const::State::Dead) {
+					e->SetState(Const::State::Idle);
+				}
 			}
 		}
 	}

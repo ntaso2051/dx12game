@@ -37,6 +37,8 @@ public:
 	XMMATRIX GetProjMat() { return mProjMat; }
 	class Hero* GetHero() { return mHero; }
 	bool GetUpdatingEntities() { return mUpdatingEntities; }
+
+	void RemoveFallenItem(class Item*);
 private:
 	void UpdateGame();
 	Window* mWindow;
@@ -58,7 +60,7 @@ private:
 	class Hero* mHero;
 	class Stair* mStair;
 	std::vector<class Wall*> mWalls;
-	std::vector<class Item*> mItems;
+	std::vector<class Item*> mFallenItems;
 
 	XMMATRIX mViewMat;
 	XMMATRIX mProjMat;
