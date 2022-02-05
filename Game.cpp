@@ -116,13 +116,13 @@ void Game::Init() {
 	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
 		initPos = mDgGen->getRandomPosInRoomItem();
 		Weapon* weapon = new Weapon(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Weapon);
-		mItems.push_back(static_cast<Item*>(weapon));
+		mFallenItems.push_back(static_cast<Item*>(weapon));
 	}
 
 	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
 		initPos = mDgGen->getRandomPosInRoomItem();
 		Food* food = new Food(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Food);
-		mItems.push_back(static_cast<Item*>(food));
+		mFallenItems.push_back(static_cast<Item*>(food));
 	}
 
 	SortEntitiesByUpdateOrder();
@@ -134,12 +134,12 @@ void Game::InitDungeon() {
 	for (auto wall : mWalls) {
 		delete wall;
 	}
-	for (auto item : mItems) {
+	for (auto item : mFallenItems) {
 		delete item;
 	}
 	delete mStair;
 	mWalls.clear();
-	mItems.clear();
+	mFallenItems.clear();
 	delete mDgGen;
 	mDgGen = nullptr;
 	mDgGen = new DungeonGenerator();
@@ -164,12 +164,12 @@ void Game::InitDungeon() {
 	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
 		initPos = mDgGen->getRandomPosInRoomItem();
 		Weapon* weapon = new Weapon(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Weapon);
-		mItems.push_back(static_cast<Item*>(weapon));
+		mFallenItems.push_back(static_cast<Item*>(weapon));
 	}
 	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
 		initPos = mDgGen->getRandomPosInRoomItem();
 		Food* food = new Food(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Food);
-		mItems.push_back(static_cast<Item*>(food));
+		mFallenItems.push_back(static_cast<Item*>(food));
 	}
 	SortEntitiesByUpdateOrder();
 
@@ -265,4 +265,15 @@ void Game::RemoveEntity(Entity * entity) {
 
 void Game::SortEntitiesByUpdateOrder() {
 	std::sort(mEntities.begin(), mEntities.end(), [](Entity * l, Entity * r) {return l->GetUpdateOrder() < r->GetUpdateOrder(); });
+}
+
+void Game::RemoveFallenItem(Item * item) {
+	for (auto it = mFallenItems.begin(); it != mFallenItems.end();) {
+		if (*it == item) {
+			it = mFallenItems.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
 }

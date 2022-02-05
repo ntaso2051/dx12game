@@ -4,7 +4,7 @@
 #include "Hero.h"
 #include "DungeonGenerator.h"
 
-Item::Item(Game* game, XMFLOAT3 pos, Const::TexId::Type texId) : Entity(game, pos) {
+Item::Item(Game* game, XMFLOAT3 pos, Const::TexId::Type texId) : Entity(game, pos), mInfo("") {
 	mSpriteComponent = new SpriteComponent(this, texId);
 	mGame->GetDgGen()->SetCellType(pos.x, pos.y, Const::Cell::Item);
 	mUpdateOrder = 100;
@@ -19,6 +19,20 @@ void Item::UpdateEntity(float deltaTime) {
 		if (heroPos.x == mPosition.x && heroPos.y == mPosition.y) {
 			mSpriteComponent->SetActive(false);
 			mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
+			mGame->GetHero()->PushItem(this);
+			mGame->RemoveFallenItem(this);
 		}
 	}
+}
+
+void Item::Adapt() {
+
+}
+
+void Item::Deadapt() {
+
+}
+
+void Item::Remove() {
+	mGame->GetHero()->RemoveItem(this);
 }

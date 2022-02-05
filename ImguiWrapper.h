@@ -21,4 +21,6 @@ private:
 	class Game* mGame;
 	ComPtr<ID3D12DescriptorHeap>mDescHeap;
 	ImVec4 mClearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	class Item* mSelectedItem;
+	bool mItemCmd;
 };

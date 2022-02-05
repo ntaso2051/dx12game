@@ -6,5 +6,4 @@ public:
 	Food(class Game* game, XMFLOAT3 pos, Const::TexId::Type texId);
 	~Food();
 private:
-	Item::Type mType;
 };
