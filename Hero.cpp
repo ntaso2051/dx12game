@@ -22,8 +22,53 @@ Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mDirection(XMINT2(0, -1
 		Const::TexId::HFront3,
 		Const::TexId::HFront2,
 	};
+	std::vector<int> texIds2 = {
+		Const::TexId::HRight1,
+		Const::TexId::HRight2,
+		Const::TexId::HRight3,
+		Const::TexId::HRight2,
+	};
+	std::vector<int> texIds3 = {
+		Const::TexId::HLeft1,
+		Const::TexId::HLeft2,
+		Const::TexId::HLeft3,
+		Const::TexId::HLeft2,
+	};
+	std::vector<int> texIds4 = {
+		Const::TexId::HBack1,
+		Const::TexId::HBack2,
+		Const::TexId::HBack3,
+		Const::TexId::HBack2,
+	};
+	std::vector<int> texIds5 = {
+		Const::TexId::HFrontRight1,
+		Const::TexId::HFrontRight2,
+		Const::TexId::HFrontRight3,
+		Const::TexId::HFrontRight2,
+	};
+	std::vector<int> texIds6 = {
+		Const::TexId::HFrontLeft1,
+		Const::TexId::HFrontLeft2,
+		Const::TexId::HFrontLeft3,
+		Const::TexId::HFrontLeft2,
+	};
+	std::vector<int> texIds7 = {
+		Const::TexId::HBackRight1,
+		Const::TexId::HBackRight2,
+		Const::TexId::HBackRight3,
+		Const::TexId::HBackRight2,
+	};
+	std::vector<int> texIds8 = {
+		Const::TexId::HBackLeft1,
+		Const::TexId::HBackLeft2,
+		Const::TexId::HBackLeft3,
+		Const::TexId::HBackLeft2,
+	};
+	std::vector<std::vector<int>> texIdss = {
+		texIds, texIds2, texIds3, texIds4, texIds5, texIds6, texIds7, texIds8,
+	};
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::HFront1);
-	AnimSpriteComponent* asc = new AnimSpriteComponent(this, texIds);
+	mASC = new AnimSpriteComponent(this, texIdss);
 	ParameterComponent* pc = new ParameterComponent(this, Const::HERO_INIT_HP, Const::HERO_INIT_EXP, Const::HERO_INIT_LEVEL, Const::HERO_INIT_ATTACK);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 	mUpdateOrder = 100;
@@ -36,7 +81,9 @@ Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, p
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 }
 
-Hero::~Hero() {}
+Hero::~Hero() {
+	delete mASC;
+}
 
 void Hero::Attack() {
 	mGame->GetChrManager()->AttackRequest(mPosition, mDirection);
@@ -54,20 +101,105 @@ void Hero::UpdateEntity(float deltaTime) {
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Floor);
 	// 入力処理
 	if (mState == Const::State::Idle && mGame->GetChrManager()->GetPhase() == CharacterManager::Phase::HeroPhase) {
-		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::W_KEY)) {
-			mDirection = XMINT2(0, 1);
-			mState = Const::State::Move;
+		if (!mGame->GetInput()->GetKey(Input::KEY_INFO::SHIFT_KEY)) {
+			if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::W_KEY)) {
+				mDirection = XMINT2(0, 1);
+				mASC->SetId(Dir::Back);
+				mState = Const::State::Move;
+			}
+			if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::S_KEY)) {
+				mDirection = XMINT2(0, -1);
+				mASC->SetId(Dir::Front);
+				mState = Const::State::Move;
+			}
+			if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::D_KEY)) {
+				mDirection = XMINT2(1, 0);
+				mASC->SetId(Dir::Left);
+				mState = Const::State::Move;
+			}
+			if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::A_KEY)) {
+				mDirection = XMINT2(-1, 0);
+				mASC->SetId(Dir::Right);
+				mState = Const::State::Move;
+			}
 		}
-		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::S_KEY)) {
-			mDirection = XMINT2(0, -1);
-			mState = Const::State::Move;
+		// シフトを押しながらだと向きのみ変えられる．
+		if (mGame->GetInput()->GetKey(Input::KEY_INFO::SHIFT_KEY)) {
+			if (
+				mGame->GetInput()->GetKey(Input::KEY_INFO::W_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::A_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::S_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::D_KEY)
+				) {
+				mDirection = XMINT2(0, 1);
+				mASC->SetId(Dir::Back);
+			}
+			if (
+				mGame->GetInput()->GetKey(Input::KEY_INFO::S_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::A_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::W_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::D_KEY)
+				) {
+				mDirection = XMINT2(0, -1);
+				mASC->SetId(Dir::Front);
+			}
+			if (
+				mGame->GetInput()->GetKey(Input::KEY_INFO::D_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::A_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::S_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::W_KEY)
+				) {
+				mDirection = XMINT2(1, 0);
+				mASC->SetId(Dir::Left);
+			}
+			if (
+				mGame->GetInput()->GetKey(Input::KEY_INFO::A_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::W_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::S_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::D_KEY)
+				) {
+				mDirection = XMINT2(-1, 0);
+				mASC->SetId(Dir::Right);
+			}
+			if (
+				mGame->GetInput()->GetKey(Input::KEY_INFO::W_KEY) &&
+				mGame->GetInput()->GetKey(Input::KEY_INFO::D_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::A_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::S_KEY)
+				) {
+				mDirection = XMINT2(1, 1);
+				mASC->SetId(Dir::BackRight);
+			}
+			if (
+				mGame->GetInput()->GetKey(Input::KEY_INFO::W_KEY) &&
+				mGame->GetInput()->GetKey(Input::KEY_INFO::A_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::D_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::S_KEY)
+				) {
+				mDirection = XMINT2(-1, 1);
+				mASC->SetId(Dir::BackLeft);
+			}
+			if (
+				mGame->GetInput()->GetKey(Input::KEY_INFO::S_KEY) &&
+				mGame->GetInput()->GetKey(Input::KEY_INFO::D_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::W_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::A_KEY)
+				) {
+				mDirection = XMINT2(1, -1);
+				mASC->SetId(Dir::FrontLeft);
+			}
+			if (
+				mGame->GetInput()->GetKey(Input::KEY_INFO::S_KEY) &&
+				mGame->GetInput()->GetKey(Input::KEY_INFO::A_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::W_KEY) &&
+				!mGame->GetInput()->GetKey(Input::KEY_INFO::D_KEY)
+				) {
+				mDirection = XMINT2(-1, -1);
+				mASC->SetId(Dir::FrontRight);
+			}
 		}
-		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::D_KEY)) {
-			mDirection = XMINT2(1, 0);
-			mState = Const::State::Move;
-		}
-		if (mGame->GetInput()->GetKeyEnter(Input::KEY_INFO::A_KEY)) {
-			mDirection = XMINT2(-1, 0);
+
+		if (mGame->GetInput()->GetKeyExit(Input::SHIFT_KEY)) {
 			mState = Const::State::Move;
 		}
 

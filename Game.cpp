@@ -87,6 +87,27 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/herofront1.png");
 	LoadImgFile(L"Resources/Images/herofront2.png");
 	LoadImgFile(L"Resources/Images/herofront3.png");
+	LoadImgFile(L"Resources/Images/heroright1.png");
+	LoadImgFile(L"Resources/Images/heroright2.png");
+	LoadImgFile(L"Resources/Images/heroright3.png");
+	LoadImgFile(L"Resources/Images/heroleft1.png");
+	LoadImgFile(L"Resources/Images/heroleft2.png");
+	LoadImgFile(L"Resources/Images/heroleft3.png");
+	LoadImgFile(L"Resources/Images/heroback1.png");
+	LoadImgFile(L"Resources/Images/heroback2.png");
+	LoadImgFile(L"Resources/Images/heroback3.png");
+	LoadImgFile(L"Resources/Images/herofrontright1.png");
+	LoadImgFile(L"Resources/Images/herofrontright2.png");
+	LoadImgFile(L"Resources/Images/herofrontright3.png");
+	LoadImgFile(L"Resources/Images/herofrontleft1.png");
+	LoadImgFile(L"Resources/Images/herofrontleft2.png");
+	LoadImgFile(L"Resources/Images/herofrontleft3.png");
+	LoadImgFile(L"Resources/Images/herobackright1.png");
+	LoadImgFile(L"Resources/Images/herobackright2.png");
+	LoadImgFile(L"Resources/Images/herobackright3.png");
+	LoadImgFile(L"Resources/Images/herobackleft1.png");
+	LoadImgFile(L"Resources/Images/herobackleft2.png");
+	LoadImgFile(L"Resources/Images/herobackleft3.png");
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput, this);
 

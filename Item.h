@@ -14,7 +14,7 @@ public:
 	virtual void UpdateEntity(float deltaTime) override;
 	virtual void Adapt();
 	virtual void Deadapt();
-	void Remove();
+	virtual void Remove();
 
 	std::string GetName() { return mName; }
 	std::string GetInfo() { return mInfo; }

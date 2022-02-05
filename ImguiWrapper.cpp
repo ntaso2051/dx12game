@@ -79,6 +79,9 @@ void ImguiWrapper::Draw() {
 		bool pushZ = mInput->GetKey(Input::KEY_INFO::Z_KEY);
 		bool enterZ = mInput->GetKeyEnter(Input::KEY_INFO::Z_KEY);
 		bool exitZ = mInput->GetKeyExit(Input::KEY_INFO::Z_KEY);
+		bool pushSHIFT = mInput->GetKey(Input::KEY_INFO::SHIFT_KEY);
+		bool enterSHIFT = mInput->GetKeyEnter(Input::KEY_INFO::SHIFT_KEY);
+		bool exitSHIFT = mInput->GetKeyExit(Input::KEY_INFO::SHIFT_KEY);
 
 		Begin("KeyState");
 		Checkbox("GetKey(w)", &pushW);
@@ -99,6 +102,9 @@ void ImguiWrapper::Draw() {
 		Checkbox("GetKey(Z)", &pushZ);
 		Checkbox("GetKeyEnter(Z)", &enterZ);
 		Checkbox("GetKeyExit(Z)", &exitZ);
+		Checkbox("GetKey(SHIFT)", &pushSHIFT);
+		Checkbox("GetKeyEnter(SHIFT)", &enterSHIFT);
+		Checkbox("GetKeyExit(SHIFT)", &exitSHIFT);
 		End();
 	}
 	// Hero info debug imgui

@@ -7,5 +7,6 @@ public:
 	~Weapon();
 	void Adapt() override;
 	void Deadapt() override;
+	void Remove() override;
 private:
 };
