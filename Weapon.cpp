@@ -28,3 +28,8 @@ void Weapon::Deadapt() {
 		mGame->GetHero()->AttachOrRemoveEquipment(Hero::Equipment::Weapon, false);
 	}
 }
+
+void Weapon::Remove() {
+	Item::Remove();
+	Deadapt();
+}

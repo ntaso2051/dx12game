@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="AnimSpriteComponent.h" />
     <ClInclude Include="CharacterManager.h" />
+    <ClInclude Include="DirectionsAnimSpriteComponent.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Const.h" />

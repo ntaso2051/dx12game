@@ -17,6 +17,7 @@ public:
 		D_KEY,
 		SPACE_KEY,
 		Z_KEY,
+		SHIFT_KEY,
 		MAX_KEY_INFO,
 	};
 
@@ -45,5 +46,6 @@ private:
 		DIK_D,
 		DIK_SPACE,
 		DIK_Z,
+		DIK_LSHIFT,
 	};
 };

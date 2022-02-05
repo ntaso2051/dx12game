@@ -24,6 +24,17 @@ public:
 		Shield,
 		Max,
 	};
+
+	enum Dir {
+		Front,
+		Right,
+		Left,
+		Back,
+		FrontRight,
+		FrontLeft,
+		BackRight,
+		BackLeft,
+	};
 	void AttachOrRemoveEquipment(Equipment id, bool ok) { mIsAttached[id] = ok; }
 	bool GetIsAttached(Equipment id) { return mIsAttached[id]; }
 private:
@@ -34,4 +45,5 @@ private:
 	std::vector<class Item*>mItems;
 	std::vector<bool> mIsAttached;
 	int mActCnt;
+	class AnimSpriteComponent* mASC;
 };
