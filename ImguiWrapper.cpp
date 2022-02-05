@@ -112,6 +112,7 @@ void ImguiWrapper::Draw() {
 		Text("EXP: %d", pc->GetExp());
 		Text("LEVEL: %d", pc->GetLevel());
 		Text("ATTACK: %d", pc->GetAttack());
+		Text("HUNGER: %d", pc->GetHunger());
 		Text("mDirection: %d, %d", heroDir.x, heroDir.y);
 
 		Text(u8"ƒAƒCƒeƒ€");
@@ -146,6 +147,13 @@ void ImguiWrapper::Draw() {
 			mSelectedItem = nullptr;
 			mItemCmd = false;
 		}
+		// if (mSelectedItem->GetType() == Item::Type::Equipment) {
+		if (Button(u8"‚Í‚¸‚·")) {
+			mSelectedItem->Deadapt();
+			mSelectedItem = nullptr;
+			mItemCmd = false;
+		}
+		// }
 		if (Button(u8"‰½‚à‚µ‚È‚¢")) {
 			mItemCmd = false;
 			mSelectedItem = nullptr;

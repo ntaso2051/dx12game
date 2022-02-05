@@ -8,18 +8,21 @@ public:
 	Item(class Game* game, XMFLOAT3 pos, Const::TexId::Type texId);
 	virtual ~Item();
 	enum Type {
-		Weapon,
+		Equipment,
 		Once,
 	};
 	virtual void UpdateEntity(float deltaTime) override;
 	virtual void Adapt();
-
+	virtual void Deadapt();
 	void Remove();
 
 	std::string GetName() { return mName; }
 	std::string GetInfo() { return mInfo; }
+
+	int GetType() { return mType; }
 protected:
 	class SpriteComponent* mSpriteComponent;
 	std::string mName;
 	std::string mInfo;
+	int mType;
 };

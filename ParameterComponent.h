@@ -11,13 +11,17 @@ public:
 	void SetExp(int exp) { mExp = exp; }
 	void SetLevel(int level) { mLevel = level; }
 	void SetAttack(int attack) { mAttack = attack; }
+	void SetHunger(int hunger) { mHunger = hunger; }
 	int GetHp() { return mHp; }
 	int GetExp() { return mExp; }
 	int GetLevel() { return mLevel; }
 	int GetAttack() { return mAttack; }
+	int GetHunger() { return mHunger; }
+
 protected:
 	int mHp;
 	int mExp;
 	int mLevel;
 	int mAttack;
+	int mHunger;
 };

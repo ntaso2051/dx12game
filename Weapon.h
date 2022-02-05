@@ -6,6 +6,6 @@ public:
 	Weapon(class Game* game, XMFLOAT3 pos, Const::TexId::Type texId);
 	~Weapon();
 	void Adapt() override;
+	void Deadapt() override;
 private:
-	Item::Type mType;
 };

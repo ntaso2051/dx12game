@@ -15,7 +15,7 @@
 using namespace DirectX;
 
 
-Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
+Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle), mIsAttached(std::vector<bool>(Equipment::Max, false)), mActCnt(0) {
 	std::vector<int> texIds = {
 		Const::TexId::HFront1,
 		Const::TexId::HFront2,
@@ -29,7 +29,7 @@ Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mDirection(XMINT2(0, -1
 	mUpdateOrder = 100;
 }
 
-Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
+Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle), mIsAttached(std::vector<bool>(Equipment::Max, false)), mActCnt(0) {
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::HFront1);
 	AddComponent(param);
 	mDirection = XMINT2(0, -1);

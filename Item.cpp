@@ -29,6 +29,10 @@ void Item::Adapt() {
 
 }
 
+void Item::Deadapt() {
+
+}
+
 void Item::Remove() {
 	mGame->GetHero()->RemoveItem(this);
 }

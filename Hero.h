@@ -24,6 +24,8 @@ public:
 		Shield,
 		Max,
 	};
+	void AttachOrRemoveEquipment(Equipment id, bool ok) { mIsAttached[id] = ok; }
+	bool GetIsAttached(Equipment id) { return mIsAttached[id]; }
 private:
 	float mMoveSpeed = 5.0f;
 	XMINT2 mDirection;
@@ -31,4 +33,5 @@ private:
 	Const::State mState;
 	std::vector<class Item*>mItems;
 	std::vector<bool> mIsAttached;
+	int mActCnt;
 };
