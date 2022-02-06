@@ -3,6 +3,7 @@
 #include "SpriteComponent.h"
 #include "Hero.h"
 #include "DungeonGenerator.h"
+#include "ImguiWrapper.h"
 
 Item::Item(Game* game, XMFLOAT3 pos, Const::TexId::Type texId) : Entity(game, pos), mInfo("") {
 	mSpriteComponent = new SpriteComponent(this, texId);
@@ -21,6 +22,8 @@ void Item::UpdateEntity(float deltaTime) {
 			mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 			mGame->GetHero()->PushItem(this);
 			mGame->RemoveFallenItem(this);
+			std::string log = mName + u8" ‚ð‚Ä‚É‚¢‚ê‚½I";
+			mGame->GetImgui()->Cout(log);
 		}
 	}
 }
@@ -34,5 +37,6 @@ void Item::Deadapt() {
 }
 
 void Item::Remove() {
+	std::string log = mName + u8" ‚ð‚·‚Ä‚½I";
 	mGame->GetHero()->RemoveItem(this);
 }
