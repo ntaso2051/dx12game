@@ -29,6 +29,7 @@ public:
 	class Input* GetInput() { return mInput; }
 	class DungeonGenerator* GetDgGen() { return mDgGen; }
 	class CharacterManager* GetChrManager() { return mCharacterManager; }
+	class ImguiWrapper* GetImgui() { return mImguiWrapper; }
 
 	void LoadImgFile(const wchar_t* filename);
 	class Texture* GetTexture() { return mTextures[0]; }

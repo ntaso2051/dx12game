@@ -3,6 +3,7 @@
 #include "SpriteComponent.h"
 #include "ParameterComponent.h"
 #include "Hero.h"
+#include "ImguiWrapper.h"
 
 Weapon::Weapon(Game* game, XMFLOAT3 pos, Const::TexId::Type texId) :Item(game, pos, texId) {
 	mName = u8"‚Â‚é‚¬";
@@ -17,6 +18,8 @@ void Weapon::Adapt() {
 		pc->SetAttack(pc->GetAttack() + 4);
 		mInfo = u8"‚»‚¤‚Ñ‚¿‚ã‚¤";
 		mGame->GetHero()->AttachOrRemoveEquipment(Hero::Weapon, true);
+		std::string log = mName + u8"‚ð‚»‚¤‚Ñ‚µ‚½I";
+		mGame->GetImgui()->Cout(log);
 	}
 }
 
@@ -26,6 +29,8 @@ void Weapon::Deadapt() {
 		pc->SetAttack(pc->GetAttack() - 4);
 		mInfo = "";
 		mGame->GetHero()->AttachOrRemoveEquipment(Hero::Equipment::Weapon, false);
+		std::string log = mName + u8"‚ð‚Í‚¸‚µ‚½I";
+		mGame->GetImgui()->Cout(log);
 	}
 }
 

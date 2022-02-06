@@ -9,6 +9,7 @@
 #include "DungeonGenerator.h"
 #include "SpriteComponent.h"
 #include <string>
+#include "ImguiWrapper.h"
 
 CharacterManager::CharacterManager(Hero* hero) : mHero(hero), mEnemiesCount(0), mEnemiesTotal(Const::INIT_ENEMIES_NUM) {
 	mPhase = Phase::HeroPhase;
@@ -59,8 +60,12 @@ Entity* CharacterManager::FindEnemyByPos(XMINT2 pos) {
 
 void CharacterManager::AttackRequest(XMFLOAT3 pos, XMINT2 dir) {
 	Entity* enemy = FindEnemyByPos(XMINT2(pos.x + dir.x, pos.y + dir.y));
+	ParameterComponent * heroParam = static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent"));
 	if (enemy != nullptr) {
-		DamageCalc(static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent")), static_cast<ParameterComponent*>(static_cast<Enemy*>(enemy)->GetComponent("ParameterComponent")));
+		DamageCalc(heroParam, static_cast<ParameterComponent*>(static_cast<Enemy*>(enemy)->GetComponent("ParameterComponent")));
+		mHero->GetGame()->GetImgui()->Cout(u8"プレイヤーのこうげき！");
+		std::string log = u8"てきに" + std::to_string(heroParam->GetAttack()) + u8"のダメージをあたえた！";
+		mHero->GetGame()->GetImgui()->Cout(log);
 	}
 }
 

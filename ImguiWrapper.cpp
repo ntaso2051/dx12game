@@ -125,6 +125,14 @@ void ImguiWrapper::Draw() {
 
 		End();
 	}
+	// ログ
+	{
+		Begin(u8"ログ");
+		for (auto log : mLogs) {
+			Text("%s", log.c_str());
+		}
+		End();
+	}
 	// Item List
 	if (!mItemCmd) {
 		Begin(u8"アイテムリスト");
@@ -213,4 +221,12 @@ void ImguiWrapper::Draw() {
 	Render();
 	mDx12Wrapper->CmdList()->SetDescriptorHeaps(1, mDescHeap.GetAddressOf());
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), mDx12Wrapper->CmdList().Get());
+}
+
+void ImguiWrapper::Cout(std::string log) {
+	mLogs.insert(mLogs.begin(), log);
+}
+
+void ImguiWrapper::ClearLogs() {
+	mLogs.clear();
 }

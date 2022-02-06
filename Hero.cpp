@@ -11,6 +11,7 @@
 #include "AnimSpriteComponent.h"
 #include "Item.h"
 #include <typeinfo>
+#include "ImguiWrapper.h"
 
 using namespace DirectX;
 
@@ -198,7 +199,7 @@ void Hero::UpdateEntity(float deltaTime) {
 				mASC->SetId(Dir::FrontRight);
 			}
 		}
-
+		// Shift‚ð—£‚·‚ÆŒü‚¢‚Ä‚¢‚é•ûŒü‚ÉˆÚ“®‚·‚é
 		if (mGame->GetInput()->GetKeyExit(Input::SHIFT_KEY)) {
 			mState = Const::State::Move;
 		}
