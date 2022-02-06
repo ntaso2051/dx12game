@@ -18,11 +18,13 @@
 #include "Item.h"
 #include "Weapon.h"
 #include "Food.h"
+#include "UI.h"
+#include "UIRenderComponent.h"
 
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
 
-Game::Game(HINSTANCE hinst) :mUpdatingEntities(false), mIsUpdateGame(true) {
+Game::Game(HINSTANCE hinst) :mUpdatingEntities(false), mIsUpdateGame(true), mFloorNum(1) {
 	mLastTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();// Window�̍쐬
 	mWindow = new Window();
 	mWindow->Init();
@@ -108,6 +110,19 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/herobackleft1.png");
 	LoadImgFile(L"Resources/Images/herobackleft2.png");
 	LoadImgFile(L"Resources/Images/herobackleft3.png");
+	LoadImgFile(L"Resources/Images/uiback.png");
+	LoadImgFile(L"Resources/Images/0.png");
+	LoadImgFile(L"Resources/Images/1.png");
+	LoadImgFile(L"Resources/Images/2.png");
+	LoadImgFile(L"Resources/Images/3.png");
+	LoadImgFile(L"Resources/Images/4.png");
+	LoadImgFile(L"Resources/Images/5.png");
+	LoadImgFile(L"Resources/Images/6.png");
+	LoadImgFile(L"Resources/Images/7.png");
+	LoadImgFile(L"Resources/Images/8.png");
+	LoadImgFile(L"Resources/Images/9.png");
+	LoadImgFile(L"Resources/Images/b.png");
+	LoadImgFile(L"Resources/Images/f.png");
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput, this);
 
@@ -146,10 +161,14 @@ void Game::Init() {
 		mFallenItems.push_back(static_cast<Item*>(food));
 	}
 
+
+	mUI = new UI(this);
+	mUI->Activate(mFloorNum);
 	SortEntitiesByUpdateOrder();
 }
 
 void Game::InitDungeon() {
+	mUI->Activate(mFloorNum);
 	ParameterComponent* heroParam = static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent"));
 	delete mCharacterManager;
 	for (auto wall : mWalls) {
@@ -236,6 +255,7 @@ void Game::Loop() {
 
 		if (mDgGen->getCellType(mHero->GetPosition().x, mHero->GetPosition().y) == Const::Cell::Stair) {
 			mIsUpdateGame = false;
+			IncFloorNum();
 			InitDungeon();
 		}
 

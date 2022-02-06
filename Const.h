@@ -79,6 +79,20 @@ namespace Const {
 			HBackLeft1,
 			HBackLeft2,
 			HBackLeft3,
+
+			UI,
+			UI0,
+			UI1,
+			UI2,
+			UI3,
+			UI4,
+			UI5,
+			UI6,
+			UI7,
+			UI8,
+			UI9,
+			UIB,
+			UIF,
 		};
 	};
 

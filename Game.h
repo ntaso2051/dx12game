@@ -40,6 +40,9 @@ public:
 	bool GetUpdatingEntities() { return mUpdatingEntities; }
 
 	void RemoveFallenItem(class Item*);
+
+	int GetFloorNum() { return mFloorNum; }
+	void IncFloorNum() { mFloorNum++; }
 private:
 	void UpdateGame();
 	Window* mWindow;
@@ -57,6 +60,7 @@ private:
 
 	std::vector<class Texture*> mTextures;
 
+	class UI* mUI;
 	class CharacterManager* mCharacterManager;
 	class Hero* mHero;
 	class Stair* mStair;
@@ -65,4 +69,6 @@ private:
 
 	XMMATRIX mViewMat;
 	XMMATRIX mProjMat;
+
+	int mFloorNum;
 };

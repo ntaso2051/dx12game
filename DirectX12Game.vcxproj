@@ -160,6 +160,8 @@
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Stair.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UIRenderComponent.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -196,6 +198,8 @@
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Stair.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="UI.h" />
+    <ClInclude Include="UIRenderComponent.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="Window.h" />

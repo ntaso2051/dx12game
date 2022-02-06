@@ -4,7 +4,7 @@
 class SpriteComponent : public Component {
 public:
 	SpriteComponent(class Entity* owner, int textureId, int drawOrder = 100);
-	~SpriteComponent();
+	~SpriteComponent() override;
 
 	virtual void Draw();
 	void SetActive(bool active);

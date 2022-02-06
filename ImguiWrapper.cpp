@@ -112,7 +112,7 @@ void ImguiWrapper::Draw() {
 		XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
 		XMINT2 heroDir = mGame->GetHero()->GetDir();
 		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetComponent("ParameterComponent"));
-		Begin("Hero State");
+		Begin(u8"プレイヤーステータス");
 		Text("Position(%f, %f)", heroPos.x, heroPos.y);
 		Text("HP: %d", pc->GetHp());
 		Text("EXP: %d", pc->GetExp());
@@ -120,8 +120,8 @@ void ImguiWrapper::Draw() {
 		Text("ATTACK: %d", pc->GetAttack());
 		Text("HUNGER: %d", pc->GetHunger());
 		Text("mDirection: %d, %d", heroDir.x, heroDir.y);
+		Text("B%dF", mGame->GetFloorNum());
 
-		Text(u8"アイテム");
 
 		End();
 	}
