@@ -114,7 +114,7 @@ void ImguiWrapper::Draw() {
 		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetComponent("ParameterComponent"));
 		Begin(u8"プレイヤーステータス");
 		Text("Position(%f, %f)", heroPos.x, heroPos.y);
-		Text("HP: %d", pc->GetHp());
+		Text("HP: %d / %d", pc->GetHp(), pc->GetMaxHp());
 		Text("EXP: %d", pc->GetExp());
 		Text("LEVEL: %d", pc->GetLevel());
 		Text("ATTACK: %d", pc->GetAttack());

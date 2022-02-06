@@ -9,7 +9,7 @@ public:
 	void Activate(int floor);
 	void Deactivate();
 private:
-	float mDisplayTime = 3.0f;
+	float mDisplayTime = 10.0f;
 	const float mDisplayTimeMax = 3.0f;
 	class UIRenderComponent* mUrc;
 	class UIRenderComponent* mUIB;

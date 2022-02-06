@@ -11,6 +11,10 @@
 Enemy::Enemy(Game* game, XMFLOAT3 pos) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
 	mSc = new SpriteComponent(this, Const::TexId::Blob);
 	ParameterComponent* pc = new ParameterComponent(this, Const::BLOB_INIT_HP, Const::BLOB_INIT_EXP, Const::BLOB_INIT_LEVEL, Const::BLOB_INIT_ATTACK);
+	pc->SetAttack(mGame->GetFloorNum() * 2 + pc->GetAttack());
+	pc->SetMaxHp(mGame->GetFloorNum() * 2 + pc->GetMaxHp());
+	pc->SetHp(mGame->GetFloorNum() * 2 + pc->GetHp());
+	pc->SetExp(mGame->GetFloorNum() + pc->GetExp());
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Enemy);
 	mUpdateOrder = 110;
 }
