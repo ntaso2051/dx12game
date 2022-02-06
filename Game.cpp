@@ -24,7 +24,7 @@
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
 
-Game::Game(HINSTANCE hinst) :mUpdatingEntities(false), mIsUpdateGame(true), mFloorNum(1) {
+Game::Game(HINSTANCE hinst) :mUpdatingEntities(false), mIsUpdateGame(true), mFloorNum(1), mIsDisplayUI(true), mIsStarted(false) {
 	mLastTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();// Window�̍쐬
 	mWindow = new Window();
 	mWindow->Init();
@@ -123,6 +123,8 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/9.png");
 	LoadImgFile(L"Resources/Images/b.png");
 	LoadImgFile(L"Resources/Images/f.png");
+	LoadImgFile(L"Resources/Images/title.png");
+	LoadImgFile(L"Resources/Images/pressenter.png");
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput, this);
 
@@ -163,7 +165,7 @@ void Game::Init() {
 
 
 	mUI = new UI(this);
-	mUI->Activate(mFloorNum);
+	mUI->ActivateTitle();
 	SortEntitiesByUpdateOrder();
 }
 
@@ -241,6 +243,10 @@ void Game::Loop() {
 			break;
 		}
 		mInput->UpdateKeyState();
+		if (mInput->GetKey(Input::KEY_INFO::RETURN_KEY)) {
+			mUI->DeactivateTitle();
+			mUI->Activate(mFloorNum);
+		}
 		mDx12Wrapper->StartDraw();
 		if (mIsUpdateGame) {
 			UpdateGame();

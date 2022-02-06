@@ -93,6 +93,9 @@ namespace Const {
 			UI9,
 			UIB,
 			UIF,
+
+			Title,
+			TitleSub,
 		};
 	};
 

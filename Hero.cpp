@@ -98,6 +98,7 @@ void Hero::SetPosition(XMINT2 pos) {
 }
 
 void Hero::UpdateEntity(float deltaTime) {
+	if (!mGame->GetIsStarted() || mGame->GetIsDisplayUI()) return;
 	// ˆÚ“®Œ³‚ğFloor‚É•ÏX
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Floor);
 	// “ü—Íˆ—
