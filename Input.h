@@ -18,6 +18,7 @@ public:
 		SPACE_KEY,
 		Z_KEY,
 		SHIFT_KEY,
+		RETURN_KEY,
 		MAX_KEY_INFO,
 	};
 
@@ -47,5 +48,6 @@ private:
 		DIK_SPACE,
 		DIK_Z,
 		DIK_LSHIFT,
+		DIK_RETURN,
 	};
 };

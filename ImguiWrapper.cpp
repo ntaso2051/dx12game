@@ -60,7 +60,7 @@ void ImguiWrapper::Draw() {
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	// KeyState debug imgui
-	{
+	if (!mGame->GetIsDisplayUI()) {
 		bool pushW = mInput->GetKey(Input::KEY_INFO::W_KEY);
 		bool enterW = mInput->GetKeyEnter(Input::KEY_INFO::W_KEY);
 		bool exitW = mInput->GetKeyExit(Input::KEY_INFO::W_KEY);
@@ -108,7 +108,7 @@ void ImguiWrapper::Draw() {
 		End();
 	}
 	// Hero info debug imgui
-	{
+	if (!mGame->GetIsDisplayUI()) {
 		XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
 		XMINT2 heroDir = mGame->GetHero()->GetDir();
 		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetComponent("ParameterComponent"));
@@ -126,7 +126,7 @@ void ImguiWrapper::Draw() {
 		End();
 	}
 	// ログ
-	{
+	if (!mGame->GetIsDisplayUI()) {
 		Begin(u8"ログ");
 		for (auto log : mLogs) {
 			Text("%s", log.c_str());
@@ -134,48 +134,50 @@ void ImguiWrapper::Draw() {
 		End();
 	}
 	// Item List
-	if (!mItemCmd) {
-		Begin(u8"アイテムリスト");
-		auto items = mGame->GetHero()->GetMyItems();
-		for (int i = 0; i < items.size(); i++) {
-			auto item = items[i];
-			std::string label = std::to_string(i + 1) + u8"：" + item->GetName() + "  " + item->GetInfo();
-			if (Button(label.c_str()) && !mItemCmd) {
-				mItemCmd = true;
-				mSelectedItem = item;
+	if (!mGame->GetIsDisplayUI()) {
+		if (!mItemCmd) {
+			Begin(u8"アイテムリスト");
+			auto items = mGame->GetHero()->GetMyItems();
+			for (int i = 0; i < items.size(); i++) {
+				auto item = items[i];
+				std::string label = std::to_string(i + 1) + u8"：" + item->GetName() + "  " + item->GetInfo();
+				if (Button(label.c_str()) && !mItemCmd) {
+					mItemCmd = true;
+					mSelectedItem = item;
+				}
 			}
+			End();
 		}
-		End();
-	}
-	// Item Command
-	if (mItemCmd) {
-		std::string label = mSelectedItem->GetName();
-		Begin(label.c_str());
-		if (Button(u8"使う")) {
-			mSelectedItem->Adapt();
-			mSelectedItem = nullptr;
-			mItemCmd = false;
+		// Item Command
+		if (mItemCmd) {
+			std::string label = mSelectedItem->GetName();
+			Begin(label.c_str());
+			if (Button(u8"使う")) {
+				mSelectedItem->Adapt();
+				mSelectedItem = nullptr;
+				mItemCmd = false;
+			}
+			if (Button(u8"捨てる")) {
+				mSelectedItem->Remove();
+				mSelectedItem = nullptr;
+				mItemCmd = false;
+			}
+			// if (mSelectedItem->GetType() == Item::Type::Equipment) {
+			if (Button(u8"はずす")) {
+				mSelectedItem->Deadapt();
+				mSelectedItem = nullptr;
+				mItemCmd = false;
+			}
+			// }
+			if (Button(u8"何もしない")) {
+				mItemCmd = false;
+				mSelectedItem = nullptr;
+			}
+			End();
 		}
-		if (Button(u8"捨てる")) {
-			mSelectedItem->Remove();
-			mSelectedItem = nullptr;
-			mItemCmd = false;
-		}
-		// if (mSelectedItem->GetType() == Item::Type::Equipment) {
-		if (Button(u8"はずす")) {
-			mSelectedItem->Deadapt();
-			mSelectedItem = nullptr;
-			mItemCmd = false;
-		}
-		// }
-		if (Button(u8"何もしない")) {
-			mItemCmd = false;
-			mSelectedItem = nullptr;
-		}
-		End();
 	}
 	// Render minimap
-	{
+	if (!mGame->GetIsDisplayUI()) {
 		Begin("MiniMap");
 		auto data = mGame->GetDgGen()->getFloor()->data;
 		for (int i = data.size() - 1; i >= 0; i--) {
@@ -201,7 +203,7 @@ void ImguiWrapper::Draw() {
 		}
 		End();
 	}
-	{
+	if (!mGame->GetIsDisplayUI()) {
 		Begin("Enemy State");
 		int cnt = mGame->GetChrManager()->GetEnemiesCnt();
 		int total = mGame->GetChrManager()->GetEnemiesTotal();

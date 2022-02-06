@@ -43,6 +43,11 @@ public:
 
 	int GetFloorNum() { return mFloorNum; }
 	void IncFloorNum() { mFloorNum++; }
+
+	bool GetIsDisplayUI() { return mIsDisplayUI; }
+	void SetIsDisplayUI(bool ok) { mIsDisplayUI = ok; }
+	bool GetIsStarted() { return mIsStarted; }
+	void SetIsStarted(bool ok) { mIsStarted = ok; }
 private:
 	void UpdateGame();
 	Window* mWindow;
@@ -71,4 +76,7 @@ private:
 	XMMATRIX mProjMat;
 
 	int mFloorNum;
+
+	bool mIsDisplayUI;
+	bool mIsStarted;
 };
