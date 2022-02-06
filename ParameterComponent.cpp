@@ -6,9 +6,10 @@
 #include "CharacterManager.h"
 #include "Enemy.h"
 #include "SpriteComponent.h"
+#include "ImguiWrapper.h"
 
-ParameterComponent::ParameterComponent(Entity* owner, int hp, int exp, int level, int attack) : Component(owner), mHp(hp), mExp(exp), mLevel(level), mAttack(attack), mHunger(100) {
-
+ParameterComponent::ParameterComponent(Entity* owner, int hp, int exp, int level, int attack) : Component(owner), mMaxHp(hp), mHp(hp), mExp(exp), mLevel(level), mAttack(attack), mHunger(100) {
+	UpdateStatus();
 }
 
 ParameterComponent::~ParameterComponent() {}
@@ -19,4 +20,24 @@ void ParameterComponent::Damaged(ParameterComponent* pc) {
 		pc->mExp += mExp;
 		mOwner->GetGame()->GetChrManager()->RemoveEnemy(mOwner);
 	}
+}
+
+void ParameterComponent::LevelUp() {
+	if (mExp >= (1 << (mLevel + 1))) {
+		mLevel++;
+		std::string log = u8"ƒŒƒxƒ‹‚ª" + std::to_string(mLevel) + u8"‚É‚ ‚ª‚Á‚½I";
+		mOwner->GetGame()->GetImgui()->Cout(log);
+		UpdateStatus();
+	}
+}
+
+void ParameterComponent::UpdateStatus() {
+	if (!(mLevel % 2)) {
+		mAttack++;
+		mMaxHp += 2;
+	}
+}
+
+void ParameterComponent::Update(float deltaTime) {
+	LevelUp();
 }

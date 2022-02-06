@@ -210,6 +210,7 @@ void Hero::UpdateEntity(float deltaTime) {
 			// アニメーションを付けるならAttackにする
 			mState = Const::State::Idle;
 			mGame->GetChrManager()->ChangePhase();
+			mActCnt = (mActCnt + 1) % 1000;
 		}
 	}
 
@@ -234,6 +235,7 @@ void Hero::UpdateEntity(float deltaTime) {
 		mState = Const::State::Idle;
 		// ターンを敵に渡す
 		mGame->GetChrManager()->ChangePhase();
+		mActCnt = (mActCnt + 1) % 1000;
 	}
 
 
