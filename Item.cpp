@@ -22,7 +22,7 @@ void Item::UpdateEntity(float deltaTime) {
 			mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 			mGame->GetHero()->PushItem(this);
 			mGame->RemoveFallenItem(this);
-			std::string log = mName + u8" をてにいれた！";
+			std::string log = mName + u8"をてにいれた！";
 			mGame->GetImgui()->Cout(log);
 		}
 	}
@@ -37,6 +37,7 @@ void Item::Deadapt() {
 }
 
 void Item::Remove() {
-	std::string log = mName + u8" をすてた！";
+	std::string log = mName + u8"をすてた！";
+	mGame->GetImgui()->Cout(log);
 	mGame->GetHero()->RemoveItem(this);
 }
