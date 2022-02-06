@@ -32,6 +32,7 @@ namespace Const {
 
 	const float CHARACTER_MOVE_TIME = 0.5f;
 
+
 	namespace Cell {
 		enum Type {
 			None,
