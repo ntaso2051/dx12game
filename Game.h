@@ -48,6 +48,8 @@ public:
 	void SetIsDisplayUI(bool ok) { mIsDisplayUI = ok; }
 	bool GetIsStarted() { return mIsStarted; }
 	void SetIsStarted(bool ok) { mIsStarted = ok; }
+	bool GetIsDead() { return mIsDead; }
+	void SetIsDead(bool ok) { mIsDead = ok; }
 private:
 	void UpdateGame();
 	Window* mWindow;
@@ -79,4 +81,5 @@ private:
 
 	bool mIsDisplayUI;
 	bool mIsStarted;
+	bool mIsDead;
 };

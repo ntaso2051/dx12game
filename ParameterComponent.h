@@ -7,6 +7,8 @@ public:
 
 	void Update(float deltaTime) override;
 
+	bool IsHero();
+
 	void Damaged(ParameterComponent* pc);
 	void LevelUp();
 	void UpdateStatus();

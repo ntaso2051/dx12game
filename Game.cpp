@@ -24,7 +24,7 @@
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
 
-Game::Game(HINSTANCE hinst) :mUpdatingEntities(false), mIsUpdateGame(true), mFloorNum(1), mIsDisplayUI(true), mIsStarted(false) {
+Game::Game(HINSTANCE hinst) :mUpdatingEntities(false), mIsUpdateGame(true), mFloorNum(1), mIsDisplayUI(true), mIsStarted(false), mIsDead(false) {
 	mLastTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();// Window�̍쐬
 	mWindow = new Window();
 	mWindow->Init();

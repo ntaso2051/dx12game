@@ -7,6 +7,7 @@
 #include "Enemy.h"
 #include "SpriteComponent.h"
 #include "ImguiWrapper.h"
+#include <typeinfo>
 
 ParameterComponent::ParameterComponent(Entity* owner, int hp, int exp, int level, int attack) : Component(owner), mMaxHp(hp), mHp(hp), mExp(exp), mLevel(level), mAttack(attack), mHunger(100) {
 	UpdateStatus();
@@ -17,8 +18,14 @@ ParameterComponent::~ParameterComponent() {}
 void ParameterComponent::Damaged(ParameterComponent* pc) {
 	mHp -= pc->mAttack;
 	if (mHp < 0) {
-		pc->mExp += mExp;
-		mOwner->GetGame()->GetChrManager()->RemoveEnemy(mOwner);
+		if (IsHero()) {
+			mOwner->GetGame()->SetIsDead(true);
+			mOwner->GetGame()->SetIsStarted(false);
+		}
+		else {
+			pc->mExp += mExp;
+			mOwner->GetGame()->GetChrManager()->RemoveEnemy(mOwner);
+		}
 	}
 }
 
@@ -33,11 +40,18 @@ void ParameterComponent::LevelUp() {
 
 void ParameterComponent::UpdateStatus() {
 	if (!(mLevel % 2)) {
-		mAttack++;
+		mAttack += 2;
 		mMaxHp += 2;
 	}
 }
 
 void ParameterComponent::Update(float deltaTime) {
-	LevelUp();
+	if (IsHero()) {
+		LevelUp();
+	}
+}
+
+bool ParameterComponent::IsHero() {
+	std::string cn = typeid(*mOwner).name();
+	return (cn == "class Hero");
 }
