@@ -8,6 +8,7 @@
 #include "SpriteComponent.h"
 #include "ImguiWrapper.h"
 #include <typeinfo>
+#include "SaveData.h"
 
 ParameterComponent::ParameterComponent(Entity* owner, int hp, int exp, int level, int attack) : Component(owner), mMaxHp(hp), mHp(hp), mExp(exp), mLevel(level), mAttack(attack), mHunger(100) {
 	UpdateStatus();
@@ -21,6 +22,7 @@ void ParameterComponent::Damaged(ParameterComponent* pc) {
 		if (IsHero()) {
 			mOwner->GetGame()->SetIsDead(true);
 			mOwner->GetGame()->SetIsStarted(false);
+			mOwner->GetGame()->GetSaveData()->Clear();
 		}
 		else {
 			pc->mExp += mExp;

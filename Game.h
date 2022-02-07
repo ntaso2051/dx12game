@@ -30,6 +30,7 @@ public:
 	class DungeonGenerator* GetDgGen() { return mDgGen; }
 	class CharacterManager* GetChrManager() { return mCharacterManager; }
 	class ImguiWrapper* GetImgui() { return mImguiWrapper; }
+	class SaveData* GetSaveData() { return mSaveData; }
 
 	void LoadImgFile(const wchar_t* filename);
 	class Texture* GetTexture() { return mTextures[0]; }

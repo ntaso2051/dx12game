@@ -6,6 +6,8 @@
 #include "ParameterComponent.h"
 #include <typeinfo>
 #include <iostream>
+#include <filesystem>
+#include <fstream>
 
 SaveData::SaveData(Game* game) : mGame(game) {
 
@@ -16,8 +18,21 @@ SaveData::~SaveData() {
 }
 
 bool SaveData::IsSaveFileExist() {
-	std::ifstream ifs(filename);
-	return ifs.is_open();
+	std::ifstream fin(filename);
+	if (!fin.is_open()) {
+		fin.close();
+		std::ofstream fout(filename);
+		fout << "";
+		fout.close();
+	}
+	std::string tmp = "";
+	fin >> tmp;
+	bool res = true;
+	if (tmp == "") {
+		res = false;
+	}
+	fin.close();
+	return res;
 }
 
 void SaveData::Read() {
@@ -47,7 +62,7 @@ void SaveData::Write() {
 	if (!fout) return;
 	Hero* hero = mGame->GetHero();
 	ParameterComponent* pc = static_cast<ParameterComponent*>(hero->GetComponent("ParameterComponent"));
-	fout << mGame->GetFloorNum() - 1 << "\n";
+	fout << mGame->GetFloorNum() << "\n";
 	fout << pc->GetMaxHp() << "\n";
 	fout << pc->GetHp() << "\n";
 	fout << pc->GetExp() << "\n";
@@ -60,5 +75,14 @@ void SaveData::Write() {
 		fout << typeid(*item).name() << "\n";
 	}
 
+	fout.close();
+}
+
+
+
+void SaveData::Clear() {
+	std::ofstream fout(filename);
+	if (!fout)return;
+	fout << "";
 	fout.close();
 }

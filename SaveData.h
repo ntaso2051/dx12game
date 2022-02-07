@@ -10,6 +10,8 @@ public:
 	void Read();
 	void Write();
 
+	void Clear();
+
 	bool IsSaveFileExist();
 	struct ItemData {
 		std::string classname;
