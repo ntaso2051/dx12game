@@ -37,6 +37,7 @@ public:
 	};
 	void AttachOrRemoveEquipment(Equipment id, bool ok) { mIsAttached[id] = ok; }
 	bool GetIsAttached(Equipment id) { return mIsAttached[id]; }
+	void ReadFromSaveData(class SaveData* savedata);
 private:
 	float mMoveSpeed = 5.0f;
 	XMINT2 mDirection;

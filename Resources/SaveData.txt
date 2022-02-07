@@ -1,0 +1,17 @@
+3
+104
+15
+56
+5
+31
+100
+class Food
+class Food
+class Weapon
+class Food
+class Food
+class Weapon
+class Food
+class Food
+class Weapon
+class Food

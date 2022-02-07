@@ -7,4 +7,9 @@ Food::Food(Game* game, XMFLOAT3 pos, Const::TexId::Type texId) :Item(game, pos, 
 	mType = Item::Type::Once;
 }
 
+Food::Food(Game* game) : Item(game) {
+	mName = u8"ВѕВс";
+	mType = Item::Type::Once;
+}
+
 Food::~Food() {}

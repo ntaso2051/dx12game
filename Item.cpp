@@ -11,19 +11,25 @@ Item::Item(Game* game, XMFLOAT3 pos, Const::TexId::Type texId) : Entity(game, po
 	mUpdateOrder = 100;
 }
 
+Item::Item(Game* game) : Entity(game, XMFLOAT3(-1.0f, -1.0f, 0.0f)) {
+	mUpdateOrder = 100;
+}
+
 Item::~Item() {
 }
 
 void Item::UpdateEntity(float deltaTime) {
-	if (mSpriteComponent->ActiveSelf()) {
-		XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
-		if (heroPos.x == mPosition.x && heroPos.y == mPosition.y) {
-			mSpriteComponent->SetActive(false);
-			mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
-			mGame->GetHero()->PushItem(this);
-			mGame->RemoveFallenItem(this);
-			std::string log = mName + u8"‚ð‚Ä‚É‚¢‚ê‚½I";
-			mGame->GetImgui()->Cout(log);
+	if (mSpriteComponent != nullptr) {
+		if (mSpriteComponent->ActiveSelf()) {
+			XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
+			if (heroPos.x == mPosition.x && heroPos.y == mPosition.y) {
+				mSpriteComponent->SetActive(false);
+				mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
+				mGame->GetHero()->PushItem(this);
+				mGame->RemoveFallenItem(this);
+				std::string log = mName + u8"‚ð‚Ä‚É‚¢‚ê‚½I";
+				mGame->GetImgui()->Cout(log);
+			}
 		}
 	}
 }

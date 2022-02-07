@@ -12,6 +12,8 @@
 #include "Item.h"
 #include <typeinfo>
 #include "ImguiWrapper.h"
+#include "SaveData.h"
+#include "Weapon.h"
 
 using namespace DirectX;
 
@@ -73,6 +75,17 @@ Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mDirection(XMINT2(0, -1
 	ParameterComponent* pc = new ParameterComponent(this, Const::HERO_INIT_HP, Const::HERO_INIT_EXP, Const::HERO_INIT_LEVEL, Const::HERO_INIT_ATTACK);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 	mUpdateOrder = 100;
+}
+
+void Hero::ReadFromSaveData(SaveData* savedata) {
+	ParameterComponent* pc = static_cast<ParameterComponent*>(GetComponent("ParameterComponent"));
+	SaveData::Data d = savedata->GetData();
+	pc->SetMaxHp(d.maxHp);
+	pc->SetHp(d.hp);
+	pc->SetExp(d.exp);
+	pc->SetLevel(d.level);
+	pc->SetHunger(d.hunger);
+	pc->SetAttack(d.attack);
 }
 
 Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle), mIsAttached(std::vector<bool>(Equipment::Max, false)), mActCnt(0) {
