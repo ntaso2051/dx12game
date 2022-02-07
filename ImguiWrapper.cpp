@@ -60,7 +60,7 @@ void ImguiWrapper::Draw() {
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	// KeyState debug imgui
-	if (!mGame->GetIsDisplayUI()) {
+	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
 		bool pushW = mInput->GetKey(Input::KEY_INFO::W_KEY);
 		bool enterW = mInput->GetKeyEnter(Input::KEY_INFO::W_KEY);
 		bool exitW = mInput->GetKeyExit(Input::KEY_INFO::W_KEY);
@@ -108,7 +108,7 @@ void ImguiWrapper::Draw() {
 		End();
 	}
 	// Hero info debug imgui
-	if (!mGame->GetIsDisplayUI()) {
+	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
 		XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
 		XMINT2 heroDir = mGame->GetHero()->GetDir();
 		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetComponent("ParameterComponent"));
@@ -134,7 +134,7 @@ void ImguiWrapper::Draw() {
 		End();
 	}
 	// Item List
-	if (!mGame->GetIsDisplayUI()) {
+	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
 		if (!mItemCmd) {
 			Begin(u8"アイテムリスト");
 			auto items = mGame->GetHero()->GetMyItems();
@@ -149,7 +149,7 @@ void ImguiWrapper::Draw() {
 			End();
 		}
 		// Item Command
-		if (mItemCmd) {
+		if (mItemCmd && !mGame->GetIsDead()) {
 			std::string label = mSelectedItem->GetName();
 			Begin(label.c_str());
 			if (Button(u8"使う")) {
@@ -177,7 +177,7 @@ void ImguiWrapper::Draw() {
 		}
 	}
 	// Render minimap
-	if (!mGame->GetIsDisplayUI()) {
+	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
 		Begin("MiniMap");
 		auto data = mGame->GetDgGen()->getFloor()->data;
 		for (int i = data.size() - 1; i >= 0; i--) {
@@ -203,7 +203,7 @@ void ImguiWrapper::Draw() {
 		}
 		End();
 	}
-	if (!mGame->GetIsDisplayUI()) {
+	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
 		Begin("Enemy State");
 		int cnt = mGame->GetChrManager()->GetEnemiesCnt();
 		int total = mGame->GetChrManager()->GetEnemiesTotal();
@@ -218,6 +218,20 @@ void ImguiWrapper::Draw() {
 			auto pos = deadEnemy[i]->GetPosition();
 			Text("DeadEnemy[i] (%f, %f)", pos.x, pos.y);
 		}
+		End();
+	}
+	if (mGame->GetIsDead()) {
+		Begin(u8"リザルト");
+		int floor = mGame->GetFloorNum();
+		std::string result = "";
+		if (floor >= 99) {
+			result = u8"ダンジョンをクリアした！";
+		}
+		else {
+			result = "B" + std::to_string(floor) + "F" + +u8"でしんでしまった！";
+		}
+		Text(result.c_str());
+		Text(u8"ゲームを終了してください");
 		End();
 	}
 	Render();
