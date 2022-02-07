@@ -273,16 +273,19 @@ void Hero::UseItem(Item * item) {
 void Hero::TurnEnd() {
 	mGame->GetChrManager()->ChangePhase();
 	mActCnt = (mActCnt + 1) % 1000;
+	// 3ターンごとにHPを回復させる
 	if (!(mActCnt % 3)) {
 		if (mPC->GetHp() < mPC->GetMaxHp() && mPC->GetHunger() > 0) {
 			mPC->SetHp((mPC->GetHp() + 1) % (mPC->GetMaxHp() + 1));
 		}
 	}
-	if (!(mActCnt % 2)) {
+	// 5ターンごとに満腹度を減らす
+	if (!(mActCnt % 5)) {
 		if (mPC->GetHunger() > 0) {
 			mPC->SetHunger((mPC->GetHunger() - 1) % (101));
 		}
 	}
+	// 満腹度が0の状態で歩くとHPが減る
 	if (mPC->GetHunger() == 0) {
 		mPC->SetHp((mPC->GetHp() - 1));
 	}
