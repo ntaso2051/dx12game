@@ -6,6 +6,7 @@
 class Item : public Entity {
 public:
 	Item(class Game* game, XMFLOAT3 pos, Const::TexId::Type texId);
+	Item(class Game* game);
 	virtual ~Item();
 	enum Type {
 		Equipment,

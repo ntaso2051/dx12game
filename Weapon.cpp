@@ -10,6 +10,11 @@ Weapon::Weapon(Game* game, XMFLOAT3 pos, Const::TexId::Type texId) :Item(game, p
 	mType = Item::Type::Equipment;
 }
 
+Weapon::Weapon(Game* game) : Item(game) {
+	mName = u8"�邬";
+	mType = Item::Type::Equipment;
+}
+
 Weapon::~Weapon() {}
 
 void Weapon::Adapt() {

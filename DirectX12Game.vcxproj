@@ -155,6 +155,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ParameterComponent.cpp" />
     <ClCompile Include="Random.cpp" />
+    <ClCompile Include="SaveData.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="ParameterComponent.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="SaveData.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="SpriteRenderer.h" />

@@ -20,6 +20,7 @@
 #include "Food.h"
 #include "UI.h"
 #include "UIRenderComponent.h"
+#include "SaveData.h"
 
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
@@ -45,6 +46,7 @@ Game::Game(HINSTANCE hinst) :mUpdatingEntities(false), mIsUpdateGame(true), mFlo
 Game::~Game() {
 	delete mWindow;
 	delete mDx12Wrapper;
+	delete mSaveData;
 }
 
 void Game::LoadImgFile(const wchar_t* filename) {
@@ -128,6 +130,12 @@ void Game::Init() {
 
 	mImguiWrapper = new ImguiWrapper(mWindow->GetHwnd(), mDx12Wrapper, mInput, this);
 
+
+	mSaveData = new SaveData(this);
+	if (mSaveData->IsSaveFileExist()) {
+		mSaveData->Read();
+		mFloorNum = mSaveData->GetData().floorNum;
+	}
 	mDgGen = new DungeonGenerator();
 	mDgGen->createDg();
 	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
@@ -142,6 +150,20 @@ void Game::Init() {
 
 	initPos = mDgGen->getRandomPosInRoom();
 	mHero = new Hero(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
+
+	if (mSaveData->IsSaveFileExist()) {
+		mHero->ReadFromSaveData(mSaveData);
+		for (auto item : mSaveData->GetData().items) {
+			if (item.classname == "Weapon") {
+				Weapon* weapon = new Weapon(this);
+				mHero->PushItem(weapon);
+			}
+			if (item.classname == "Food") {
+				Food* food = new Food(this);
+				mHero->PushItem(food);
+			}
+		}
+	}
 
 	mCharacterManager = new CharacterManager(mHero);
 
@@ -167,9 +189,12 @@ void Game::Init() {
 	mUI = new UI(this);
 	mUI->ActivateTitle();
 	SortEntitiesByUpdateOrder();
+
+
 }
 
 void Game::InitDungeon() {
+	mSaveData->Write();
 	mUI->Activate(mFloorNum);
 	ParameterComponent* heroParam = static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent"));
 	delete mCharacterManager;

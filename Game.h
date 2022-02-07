@@ -82,4 +82,6 @@ private:
 	bool mIsDisplayUI;
 	bool mIsStarted;
 	bool mIsDead;
+
+	class SaveData* mSaveData;
 };
