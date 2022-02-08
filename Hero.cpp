@@ -72,20 +72,19 @@ Hero::Hero(Game* game, XMFLOAT3 pos) :Entity(game, pos), mDirection(XMINT2(0, -1
 	};
 	SpriteComponent* sc = new SpriteComponent(this, Const::TexId::HFront1);
 	mASC = new AnimSpriteComponent(this, texIdss);
-	ParameterComponent* pc = new ParameterComponent(this, Const::HERO_INIT_HP, Const::HERO_INIT_EXP, Const::HERO_INIT_LEVEL, Const::HERO_INIT_ATTACK);
+	mPC = new ParameterComponent(this, Const::HERO_INIT_HP, Const::HERO_INIT_EXP, Const::HERO_INIT_LEVEL, Const::HERO_INIT_ATTACK);
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Hero);
 	mUpdateOrder = 100;
 }
 
 void Hero::ReadFromSaveData(SaveData* savedata) {
-	ParameterComponent* pc = static_cast<ParameterComponent*>(GetComponent("ParameterComponent"));
 	SaveData::Data d = savedata->GetData();
-	pc->SetMaxHp(d.maxHp);
-	pc->SetHp(d.hp);
-	pc->SetExp(d.exp);
-	pc->SetLevel(d.level);
-	pc->SetHunger(d.hunger);
-	pc->SetAttack(d.attack);
+	mPC->SetMaxHp(d.maxHp);
+	mPC->SetHp(d.hp);
+	mPC->SetExp(d.exp);
+	mPC->SetLevel(d.level);
+	mPC->SetHunger(d.hunger);
+	mPC->SetAttack(d.attack);
 }
 
 Hero::Hero(Game* game, XMFLOAT3 pos, ParameterComponent* param) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle), mIsAttached(std::vector<bool>(Equipment::Max, false)), mActCnt(0) {
@@ -223,8 +222,7 @@ void Hero::UpdateEntity(float deltaTime) {
 			// ターンを敵に渡す
 			// アニメーションを付けるならAttackにする
 			mState = Const::State::Idle;
-			mGame->GetChrManager()->ChangePhase();
-			mActCnt = (mActCnt + 1) % 1000;
+			TurnEnd();
 		}
 	}
 
@@ -248,8 +246,7 @@ void Hero::UpdateEntity(float deltaTime) {
 		mPrePos = XMINT2(mPosition.x, mPosition.y);
 		mState = Const::State::Idle;
 		// ターンを敵に渡す
-		mGame->GetChrManager()->ChangePhase();
-		mActCnt = (mActCnt + 1) % 1000;
+		TurnEnd();
 	}
 
 
@@ -271,4 +268,25 @@ void Hero::RemoveItem(Item * item) {
 
 void Hero::UseItem(Item * item) {
 
+}
+
+void Hero::TurnEnd() {
+	mGame->GetChrManager()->ChangePhase();
+	mActCnt = (mActCnt + 1) % 1000;
+	// 3ターンごとにHPを回復させる
+	if (!(mActCnt % 3)) {
+		if (mPC->GetHp() < mPC->GetMaxHp() && mPC->GetHunger() > 0) {
+			mPC->SetHp((mPC->GetHp() + 1) % (mPC->GetMaxHp() + 1));
+		}
+	}
+	// 5ターンごとに満腹度を減らす
+	if (!(mActCnt % 5)) {
+		if (mPC->GetHunger() > 0) {
+			mPC->SetHunger((mPC->GetHunger() - 1) % (101));
+		}
+	}
+	// 満腹度が0の状態で歩くとHPが減る
+	if (mPC->GetHunger() == 0) {
+		mPC->SetHp((mPC->GetHp() - 1));
+	}
 }

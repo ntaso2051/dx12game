@@ -17,6 +17,8 @@ public:
 	void RemoveItem(class Item* item);
 	void UseItem(class Item* item);
 
+	void TurnEnd();
+
 	std::vector<class Item*> GetMyItems() { return mItems; }
 
 	enum Equipment {
@@ -47,4 +49,5 @@ private:
 	std::vector<bool> mIsAttached;
 	int mActCnt;
 	class AnimSpriteComponent* mASC;
+	class ParameterComponent* mPC;
 };

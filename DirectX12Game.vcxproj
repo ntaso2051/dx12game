@@ -141,6 +141,7 @@
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="Food.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Herbs.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="ImguiWrapper.cpp" />
     <ClCompile Include="imGui\imgui.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Floor.h" />
     <ClInclude Include="Food.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Herbs.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="ImguiWrapper.h" />
     <ClInclude Include="imGui\imconfig.h" />

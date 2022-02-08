@@ -19,11 +19,13 @@ public:
 
 	std::string GetName() { return mName; }
 	std::string GetInfo() { return mInfo; }
+	std::string GetDetails() { return mDetails; }
 
 	int GetType() { return mType; }
 protected:
 	class SpriteComponent* mSpriteComponent;
 	std::string mName;
 	std::string mInfo;
+	std::string mDetails;
 	int mType;
 };

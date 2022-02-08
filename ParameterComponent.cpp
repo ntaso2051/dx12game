@@ -18,6 +18,10 @@ ParameterComponent::~ParameterComponent() {}
 
 void ParameterComponent::Damaged(ParameterComponent* pc) {
 	mHp -= pc->mAttack;
+	if (IsHero()) {
+		std::string log = std::to_string(pc->mAttack) + u8"のダメージをうけた！";
+		mOwner->GetGame()->GetImgui()->Cout(log);
+	}
 	if (mHp < 0) {
 		if (IsHero()) {
 			mOwner->GetGame()->SetIsDead(true);

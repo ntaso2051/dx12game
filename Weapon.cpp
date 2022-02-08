@@ -7,11 +7,13 @@
 
 Weapon::Weapon(Game* game, XMFLOAT3 pos, Const::TexId::Type texId) :Item(game, pos, texId) {
 	mName = u8"‚Â‚é‚¬";
+	mDetails = u8"‚±‚¤‚°‚«‚ª‚ ‚ª‚é";
 	mType = Item::Type::Equipment;
 }
 
 Weapon::Weapon(Game* game) : Item(game) {
 	mName = u8"‚Â‚é‚¬";
+	mDetails = u8"‚±‚¤‚°‚«‚ª‚ ‚ª‚é";
 	mType = Item::Type::Equipment;
 }
 
