@@ -27,7 +27,7 @@ UI::UI(Game* game) :Entity(game, XMFLOAT3(1.0f, 1.0f, 1.0f)) {
 	}
 	Deactivate();
 	DeactivateTitle();
-	mUpdateOrder = 130;
+	mUpdateOrder = 150;
 }
 
 UI::~UI() {}

@@ -8,7 +8,7 @@
 #include "Hero.h"
 #include "Random.h"
 
-Enemy::Enemy(Game* game, XMFLOAT3 pos) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle) {
+Enemy::Enemy(Game* game, XMFLOAT3 pos) : Entity(game, pos), mDirection(XMINT2(0, -1)), mPrePos(XMINT2(pos.x, pos.y)), mState(Const::State::Idle), mIsTarget(false) {
 	mSc = new SpriteComponent(this, Const::TexId::Blob);
 	ParameterComponent* pc = new ParameterComponent(this, Const::BLOB_INIT_HP, Const::BLOB_INIT_EXP, Const::BLOB_INIT_LEVEL, Const::BLOB_INIT_ATTACK);
 	pc->SetAttack(mGame->GetFloorNum() * 2 + pc->GetAttack());
@@ -16,7 +16,7 @@ Enemy::Enemy(Game* game, XMFLOAT3 pos) : Entity(game, pos), mDirection(XMINT2(0,
 	pc->SetHp(mGame->GetFloorNum() * 2 + pc->GetHp());
 	pc->SetExp(mGame->GetFloorNum() + pc->GetExp());
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Enemy);
-	mUpdateOrder = 110;
+	mUpdateOrder = 140;
 }
 
 Enemy::~Enemy() {
@@ -56,12 +56,27 @@ void Enemy::UpdateEntity(float deltaTime) {
 				int heroRoomId = mGame->GetDgGen()->GetCurrentRoom(XMINT2(heroPos.x, heroPos.y));
 				int myRoomId = mGame->GetDgGen()->GetCurrentRoom(XMINT2(mPosition.x, mPosition.y));
 				if (heroRoomId == myRoomId) {
-					mDirection.x = (heroPos.x - mPosition.x >= 0) ? 1 : -1;
-					mDirection.y = (heroPos.y - mPosition.y >= 0) ? 1 : -1;
+					mIsTarget = true;
+				}
+				if (mIsTarget) {
+					if (heroPos.x - mPrePos.x == 0) {
+						mDirection.x = 0;
+					}
+					else {
+						mDirection.x = (heroPos.x - mPrePos.x >= 0) ? 1 : -1;
+					}
+					if (heroPos.y - mPrePos.y == 0) {
+						mDirection.y = 0;
+					}
+					else {
+						mDirection.y = (heroPos.y - mPrePos.y >= 0) ? 1 : -1;
+					}
 				}
 				else {
-					mDirection.x = 1;
-					mDirection.y = 0;
+					mGame->GetDgGen()->SetCellType(mPrePos.x, mPrePos.y, Const::Cell::Enemy);
+					mState = Const::State::End;
+					mGame->GetChrManager()->IncEnemyCnt();
+					return;
 				}
 				int x = mPrePos.x + mDirection.x;
 				int y = mPrePos.y + mDirection.y;

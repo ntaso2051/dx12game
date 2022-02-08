@@ -16,4 +16,5 @@ private:
 	XMINT2 mDirection;
 	XMINT2 mPrePos;
 	Const::State mState;
+	bool mIsTarget;
 };

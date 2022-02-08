@@ -282,7 +282,7 @@ void Game::Loop() {
 			break;
 		}
 		mInput->UpdateKeyState();
-		if (mInput->GetKey(Input::KEY_INFO::RETURN_KEY)) {
+		if (mInput->GetKey(Input::KEY_INFO::RETURN_KEY) && !mIsDead) {
 			mUI->DeactivateTitle();
 			mUI->Activate(mFloorNum);
 		}
