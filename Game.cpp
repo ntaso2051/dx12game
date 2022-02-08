@@ -173,36 +173,13 @@ void Game::Init() {
 
 	mCharacterManager = new CharacterManager(mHero);
 
-	for (int i = 0; i < Const::INIT_ENEMIES_NUM; i++) {
-		initPos = mDgGen->getRandomPosInRoom();
-		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
-		mCharacterManager->AddEnemy(blob);
-	}
+	CreateEnemies();
 
-	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
-		initPos = mDgGen->getRandomPosInRoomItem();
-		Weapon* weapon = new Weapon(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Weapon);
-		mFallenItems.push_back(static_cast<Item*>(weapon));
-	}
-
-	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
-		initPos = mDgGen->getRandomPosInRoomItem();
-		Food* food = new Food(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Food);
-		mFallenItems.push_back(static_cast<Item*>(food));
-	}
-
-	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
-		initPos = mDgGen->getRandomPosInRoomItem();
-		Herbs* herbs = new Herbs(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Herbs);
-		mFallenItems.push_back(static_cast<Item*>(herbs));
-	}
-
+	CreateItems();
 
 	mUI = new UI(this);
 	mUI->ActivateTitle();
 	SortEntitiesByUpdateOrder();
-
-
 }
 
 void Game::InitDungeon() {
@@ -234,12 +211,26 @@ void Game::InitDungeon() {
 
 	mCharacterManager = new CharacterManager(mHero);
 
+	CreateEnemies();
+
+	CreateItems();
+
+	SortEntitiesByUpdateOrder();
+
+	mIsUpdateGame = true;
+}
+
+void Game::CreateEnemies() {
+	auto initPos = mDgGen->getRandomPosInRoom();
 	for (int i = 0; i < Const::INIT_ENEMIES_NUM; i++) {
 		initPos = mDgGen->getRandomPosInRoom();
 		Enemy* blob = new Enemy(this, XMFLOAT3(initPos.x, initPos.y, 1.0f));
 		mCharacterManager->AddEnemy(blob);
 	}
+}
 
+void Game::CreateItems() {
+	XMFLOAT2 initPos;
 	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
 		initPos = mDgGen->getRandomPosInRoomItem();
 		Weapon* weapon = new Weapon(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Weapon);
@@ -255,12 +246,7 @@ void Game::InitDungeon() {
 		Herbs* herbs = new Herbs(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Herbs);
 		mFallenItems.push_back(static_cast<Item*>(herbs));
 	}
-
-	SortEntitiesByUpdateOrder();
-
-	mIsUpdateGame = true;
 }
-
 
 void Game::NewFloors() {
 	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {

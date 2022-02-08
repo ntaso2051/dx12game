@@ -1,0 +1,30 @@
+3
+104
+98
+53
+5
+11
+83
+class Weapon
+class Weapon
+class Food
+class Herbs
+class Weapon
+class Herbs
+class Herbs
+class Herbs
+class Herbs
+class Weapon
+class Weapon
+class Food
+class Food
+class Food
+class Weapon
+class Food
+class Food
+class Weapon
+class Herbs
+class Herbs
+class Herbs
+class Weapon
+class Herbs

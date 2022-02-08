@@ -18,6 +18,8 @@ public:
 	~Game();
 	void Init();
 	void InitDungeon();
+	void CreateEnemies();
+	void CreateItems();
 	void NewFloors();
 	void Loop();
 
