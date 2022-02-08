@@ -31,6 +31,9 @@ void CharacterManager::Update() {
 	for (auto de : mDeadEnemies) {
 		// delete de;
 	}
+	if (mEnemies.size() == 0) {
+		mHero->GetGame()->CreateEnemies();
+	}
 }
 
 void CharacterManager::ChangePhase() {
