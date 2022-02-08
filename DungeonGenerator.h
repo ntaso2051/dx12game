@@ -70,6 +70,8 @@ public:
 	Floor* getFloor() { return mFloor; }
 	Const::Cell::Type getCellType(int x, int y) { return mFloor->data[y][x]; }
 
+	class Random* GetRandom() { return mRand; }
+
 private:
 	Floor* mFloor;
 	std::vector<Area*> mAreas;
