@@ -62,6 +62,7 @@ void ImguiWrapper::Draw() {
 
 	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
 		Begin(u8"‚»‚¤‚³‚¹‚Â‚ß‚¢");
+		Text(u8"B99F‚ð‚ß‚´‚»‚¤I");
 		Text(u8"WASD‚ÅŽl•ûŒü‚É‚·‚·‚Þ‚±‚Æ‚ª‚Å‚«‚é");
 		Text(u8"¶SHIFT‚ð‰Ÿ‚µ‚È‚ª‚çWASD‚ð‰Ÿ‚·‚Æ”ª•ûŒü‚ÉŒü‚«‚ª•Ï‚¦‚ç‚ê‚é");
 		Text(u8"¶SHIFT‚ð‚Í‚È‚·‚ÆŒü‚¢‚Ä‚¢‚é•ûŒü‚É‚·‚·‚Þ");
@@ -215,7 +216,7 @@ void ImguiWrapper::Draw() {
 		}
 		End();
 	}
-	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
+	if (false) {
 		Begin("Enemy State");
 		int cnt = mGame->GetChrManager()->GetEnemiesCnt();
 		int total = mGame->GetChrManager()->GetEnemiesTotal();

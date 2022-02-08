@@ -1,0 +1,10 @@
+4
+102
+78
+6
+2
+9
+72
+class Weapon
+class Clock
+class Food

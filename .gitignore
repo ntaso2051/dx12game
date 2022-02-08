@@ -3,7 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 # ignore library
-imGui/
+
 
 # for mac
 .DS_Store
