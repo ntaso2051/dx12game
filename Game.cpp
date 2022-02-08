@@ -22,6 +22,7 @@
 #include "UIRenderComponent.h"
 #include "SaveData.h"
 #include "Herbs.h"
+#include "Bomb.h"
 
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
@@ -90,6 +91,7 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/weapon.png");
 	LoadImgFile(L"Resources/Images/food.png");
 	LoadImgFile(L"Resources/Images/herbs.png");
+	LoadImgFile(L"Resources/Images/bomb.png");
 	LoadImgFile(L"Resources/Images/herofront1.png");
 	LoadImgFile(L"Resources/Images/herofront2.png");
 	LoadImgFile(L"Resources/Images/herofront3.png");
@@ -167,6 +169,10 @@ void Game::Init() {
 			if (item.classname == "Herbs") {
 				Herbs* herbs = new Herbs(this);
 				mHero->PushItem(herbs);
+			}
+			if (item.classname == "Bomb") {
+				Bomb* bomb = new Bomb(this);
+				mHero->PushItem(bomb);
 			}
 		}
 	}
@@ -246,6 +252,9 @@ void Game::CreateItems() {
 		Herbs* herbs = new Herbs(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Herbs);
 		mFallenItems.push_back(static_cast<Item*>(herbs));
 	}
+	initPos = mDgGen->getRandomPosInRoomItem();
+	Bomb* bomb = new Bomb(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Bomb);
+	mFallenItems.push_back(static_cast<Item*>(bomb));
 }
 
 void Game::NewFloors() {
