@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimSpriteComponent.cpp" />
+    <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="CharacterManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -170,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimSpriteComponent.h" />
+    <ClInclude Include="Bomb.h" />
     <ClInclude Include="CharacterManager.h" />
     <ClInclude Include="DirectionsAnimSpriteComponent.h" />
     <ClInclude Include="Enemy.h" />
