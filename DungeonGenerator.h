@@ -8,9 +8,12 @@ using namespace DirectX;
 
 class Floor {
 public:
-	Floor();
+	Floor(int fw, int fh);
 	~Floor();
 	std::vector<std::vector<Const::Cell::Type>> data;
+private:
+	int mFloorMaxWidth;
+	int mFloorMaxHeight;
 };
 
 class Room {
@@ -49,7 +52,7 @@ public:
 
 class DungeonGenerator {
 public:
-	DungeonGenerator();
+	DungeonGenerator(int fw, int fh);
 	~DungeonGenerator();
 	void createDg();
 	void draw();
@@ -76,4 +79,6 @@ private:
 	Floor* mFloor;
 	std::vector<Area*> mAreas;
 	class Random* mRand;
+	int mFloorMaxWidth;
+	int mFloorMaxHeight;
 };
