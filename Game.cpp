@@ -189,6 +189,7 @@ void Game::Init() {
 }
 
 void Game::InitDungeon() {
+	mHero->ResetLimitTime();
 	mSaveData->Write();
 	mUI->Activate(mFloorNum);
 	ParameterComponent* heroParam = static_cast<ParameterComponent*>(mHero->GetComponent("ParameterComponent"));

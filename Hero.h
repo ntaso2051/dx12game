@@ -40,8 +40,11 @@ public:
 	void AttachOrRemoveEquipment(Equipment id, bool ok) { mIsAttached[id] = ok; }
 	bool GetIsAttached(Equipment id) { return mIsAttached[id]; }
 	void ReadFromSaveData(class SaveData* savedata);
+	float GetLimitTime() { return mLimitTime; }
+	void ResetLimitTime() { mLimitTime = Const::LIMIT_TIME_MAX; }
 private:
 	float mMoveSpeed = 5.0f;
+	float mLimitTime = Const::LIMIT_TIME_MAX;
 	XMINT2 mDirection;
 	XMINT2 mPrePos;
 	Const::State mState;
