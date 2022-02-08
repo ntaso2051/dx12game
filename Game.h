@@ -18,6 +18,7 @@ public:
 	~Game();
 	void Init();
 	void InitDungeon();
+	void CreateDgGen();
 	void CreateEnemies();
 	void CreateItems();
 	void NewFloors();

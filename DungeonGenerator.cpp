@@ -32,7 +32,7 @@ void Aisle::set(int north, int south, int west, int east) {
 Aisle::Aisle() { this->set(-1, -1, -1, -1); }
 Aisle::~Aisle() {}
 
-DungeonGenerator::DungeonGenerator() { mRand = new Random(); }
+DungeonGenerator::DungeonGenerator(int fw, int fh) :mFloorMaxWidth(fw), mFloorMaxHeight(fh) { mRand = new Random(); }
 
 DungeonGenerator::~DungeonGenerator() {
 	delete mFloor;
@@ -44,10 +44,10 @@ DungeonGenerator::~DungeonGenerator() {
 
 void DungeonGenerator::createDg() {
 	delete mFloor;
-	mFloor = new Floor();
+	mFloor = new Floor(mFloorMaxWidth, mFloorMaxHeight);
 
 	Area* area = new Area();
-	area->set(0, 0, Const::FLOOR_MAX_WIDTH, Const::FLOOR_MAX_HEIGHT, 0);
+	area->set(0, 0, mFloorMaxWidth, mFloorMaxHeight, 0);
 	mAreas.push_back(area);
 
 	splitArea(mAreas[0], 1, true);
@@ -75,13 +75,13 @@ void DungeonGenerator::splitArea(Area * area, int id, bool isVertical) {
 	int p = mRand->randInt(randmin, randmax - 2);
 	Area * newArea = new Area();
 	if (isVertical) {
-		newArea->set(area->x + p, area->y, Const::FLOOR_MAX_WIDTH - (p + area->x),
+		newArea->set(area->x + p, area->y, mFloorMaxWidth - (p + area->x),
 			area->h, id + 1);
 		area->set(area->x, area->y, p, area->h, id);
 	}
 	else {
 		newArea->set(area->x, area->y + p, area->w,
-			Const::FLOOR_MAX_HEIGHT - (p + area->y), id + 1);
+			mFloorMaxHeight - (p + area->y), id + 1);
 		area->set(area->x, area->y, area->w, p, id);
 	}
 
@@ -123,7 +123,7 @@ void DungeonGenerator::connectRooms() {
 		}
 
 		// if y+h==FLOOR_MAX_HEIGHT, there is not south area.
-		if (mAreas[i]->y + mAreas[i]->h != Const::FLOOR_MAX_HEIGHT) {
+		if (mAreas[i]->y + mAreas[i]->h != mFloorMaxHeight) {
 			int south = mRand->randInt(mAreas[i]->room->x,
 				mAreas[i]->room->x + mAreas[i]->room->w - 1);
 			for (int j = mAreas[i]->room->y + mAreas[i]->room->h;
@@ -144,7 +144,7 @@ void DungeonGenerator::connectRooms() {
 		}
 
 		// if x+w==FLOOR_MAX_WIDTH, there is not east area.
-		if (mAreas[i]->x + mAreas[i]->w != Const::FLOOR_MAX_WIDTH) {
+		if (mAreas[i]->x + mAreas[i]->w != mFloorMaxWidth) {
 			int east = mRand->randInt(mAreas[i]->room->y,
 				mAreas[i]->room->y + mAreas[i]->room->h - 1);
 			for (int j = mAreas[i]->room->x + mAreas[i]->room->w;
@@ -243,14 +243,14 @@ int DungeonGenerator::GetCurrentRoom(XMINT2 pos) {
 }
 
 
-Floor::Floor() {
-	data.resize(Const::FLOOR_MAX_HEIGHT);
-	for (int i = 0; i < Const::FLOOR_MAX_HEIGHT; i++) {
-		data[i].resize(Const::FLOOR_MAX_WIDTH);
+Floor::Floor(int fw, int fh) :mFloorMaxWidth(fw), mFloorMaxHeight(fh) {
+	data.resize(fh);
+	for (int i = 0; i < fh; i++) {
+		data[i].resize(fw);
 	}
 
-	for (int i = 0; i < Const::FLOOR_MAX_HEIGHT; i++) {
-		for (int j = 0; j < Const::FLOOR_MAX_WIDTH; j++) {
+	for (int i = 0; i < fh; i++) {
+		for (int j = 0; j < fw; j++) {
 			data[i][j] = Const::Cell::Wall;
 		}
 	}

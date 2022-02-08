@@ -140,8 +140,7 @@ void Game::Init() {
 		mSaveData->Read();
 		mFloorNum = mSaveData->GetData().floorNum;
 	}
-	mDgGen = new DungeonGenerator();
-	mDgGen->createDg();
+	CreateDgGen();
 	for (int i = 0; i < mDgGen->getFloor()->data.size(); i++) {
 		for (int j = 0; j < mDgGen->getFloor()->data[0].size(); j++) {
 			if (mDgGen->getFloor()->data[i][j] != Const::Cell::Wall) {
@@ -205,8 +204,8 @@ void Game::InitDungeon() {
 	mFallenItems.clear();
 	delete mDgGen;
 	mDgGen = nullptr;
-	mDgGen = new DungeonGenerator();
-	mDgGen->createDg();
+
+	CreateDgGen();
 
 	NewFloors();
 
@@ -225,6 +224,12 @@ void Game::InitDungeon() {
 	SortEntitiesByUpdateOrder();
 
 	mIsUpdateGame = true;
+}
+
+void Game::CreateDgGen() {
+	int pad = mFloorNum / 10;
+	mDgGen = new DungeonGenerator(Const::FLOOR_MAX_WIDTH + pad * 4, Const::FLOOR_MAX_HEIGHT + pad * 4);
+	mDgGen->createDg();
 }
 
 void Game::CreateEnemies() {
@@ -281,6 +286,9 @@ void Game::Loop() {
 		if (msg.message == WM_QUIT) {
 			break;
 		}
+
+
+		if (mFloorNum == 99) { mIsDead = true; }
 		mInput->UpdateKeyState();
 		if (mInput->GetKey(Input::KEY_INFO::RETURN_KEY) && !mIsDead) {
 			mUI->DeactivateTitle();
