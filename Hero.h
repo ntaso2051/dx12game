@@ -40,6 +40,7 @@ public:
 	void AttachOrRemoveEquipment(Equipment id, bool ok) { mIsAttached[id] = ok; }
 	bool GetIsAttached(Equipment id) { return mIsAttached[id]; }
 	void ReadFromSaveData(class SaveData* savedata);
+	void UpLimitTime(float upTime) { mLimitTime += upTime; }
 	float GetLimitTime() { return mLimitTime; }
 	void ResetLimitTime() { mLimitTime = Const::LIMIT_TIME_MAX; }
 private:

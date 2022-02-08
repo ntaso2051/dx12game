@@ -23,6 +23,8 @@
 #include "SaveData.h"
 #include "Herbs.h"
 #include "Bomb.h"
+#include "Clock.h"
+#include "Random.h"
 
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
@@ -92,6 +94,7 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/food.png");
 	LoadImgFile(L"Resources/Images/herbs.png");
 	LoadImgFile(L"Resources/Images/bomb.png");
+	LoadImgFile(L"Resources/Images/clock.png");
 	LoadImgFile(L"Resources/Images/herofront1.png");
 	LoadImgFile(L"Resources/Images/herofront2.png");
 	LoadImgFile(L"Resources/Images/herofront3.png");
@@ -173,6 +176,10 @@ void Game::Init() {
 				Bomb* bomb = new Bomb(this);
 				mHero->PushItem(bomb);
 			}
+			if (item.classname == "Clock") {
+				Clock* cl = new Clock(this);
+				mHero->PushItem(cl);
+			}
 		}
 	}
 
@@ -243,24 +250,36 @@ void Game::CreateEnemies() {
 
 void Game::CreateItems() {
 	XMFLOAT2 initPos;
-	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
+	int r = mDgGen->GetRandom()->randInt(0, mFloorNum / 10 + 1);
+	for (int i = 0; i < r; i++) {
 		initPos = mDgGen->getRandomPosInRoomItem();
 		Weapon* weapon = new Weapon(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Weapon);
 		mFallenItems.push_back(static_cast<Item*>(weapon));
 	}
-	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
+	r = mDgGen->GetRandom()->randInt(0, 3);
+	for (int i = 0; i < r; i++) {
 		initPos = mDgGen->getRandomPosInRoomItem();
 		Food* food = new Food(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Food);
 		mFallenItems.push_back(static_cast<Item*>(food));
 	}
-	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
+	r = mDgGen->GetRandom()->randInt(0, mFloorNum / 10 + 1);
+	for (int i = 0; i < r; i++) {
 		initPos = mDgGen->getRandomPosInRoomItem();
 		Herbs* herbs = new Herbs(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Herbs);
 		mFallenItems.push_back(static_cast<Item*>(herbs));
 	}
-	initPos = mDgGen->getRandomPosInRoomItem();
-	Bomb* bomb = new Bomb(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Bomb);
-	mFallenItems.push_back(static_cast<Item*>(bomb));
+	r = mDgGen->GetRandom()->randInt(0, mFloorNum / 10 + 1);
+	for (int i = 0; i < r; i++) {
+		initPos = mDgGen->getRandomPosInRoomItem();
+		Clock* clock = new Clock(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Clock);
+		mFallenItems.push_back(static_cast<Item*>(clock));
+	}
+	r = mDgGen->GetRandom()->randInt(0, 1);
+	for (int i = 0; i < r; i++) {
+		initPos = mDgGen->getRandomPosInRoomItem();
+		Bomb* bomb = new Bomb(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Bomb);
+		mFallenItems.push_back(static_cast<Item*>(bomb));
+	}
 }
 
 void Game::NewFloors() {
