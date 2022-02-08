@@ -125,15 +125,13 @@ void ImguiWrapper::Draw() {
 		XMINT2 heroDir = mGame->GetHero()->GetDir();
 		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetComponent("ParameterComponent"));
 		Begin(u8"プレイヤーステータス");
-		Text("Position(%f, %f)", heroPos.x, heroPos.y);
-		Text("Limit %f", limitTime);
-		Text("HP: %d / %d", pc->GetHp(), pc->GetMaxHp());
-		Text("EXP: %d", pc->GetExp());
-		Text("LEVEL: %d", pc->GetLevel());
-		Text("ATTACK: %d", pc->GetAttack());
-		Text("HUNGER: %d", pc->GetHunger());
-		Text("mDirection: %d, %d", heroDir.x, heroDir.y);
 		Text("B%dF", mGame->GetFloorNum());
+		Text(u8"リミットタイム %f", limitTime);
+		Text("HP %d / %d", pc->GetHp(), pc->GetMaxHp());
+		Text(u8"けいけんち %d", pc->GetExp());
+		Text(u8"レベル %d", pc->GetLevel());
+		Text(u8"こうげき %d", pc->GetAttack());
+		Text(u8"まんぷくど %d", pc->GetHunger());
 
 
 		End();
@@ -203,12 +201,12 @@ void ImguiWrapper::Draw() {
 				else if (data[i][j] == Const::Cell::Hero) {
 					colStr += u8"P1";
 				}
-				else if (data[i][j] == Const::Cell::Enemy) {
-					colStr += u8"EM";
-				}
-				else if (data[i][j] == Const::Cell::Stair) {
-					colStr += u8"ST";
-				}
+				//else if (data[i][j] == Const::Cell::Enemy) {
+				//	colStr += u8"EM";
+				//}
+			//	else if (data[i][j] == Const::Cell::Stair) {
+			//		colStr += u8"ST";
+			//	}
 				else {
 					colStr += u8"[]";
 				}
