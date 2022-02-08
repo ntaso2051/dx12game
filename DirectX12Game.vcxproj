@@ -134,6 +134,7 @@
     <ClCompile Include="AnimSpriteComponent.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="CharacterManager.cpp" />
+    <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DungeonGenerator.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="AnimSpriteComponent.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="CharacterManager.h" />
+    <ClInclude Include="Clock.h" />
     <ClInclude Include="DirectionsAnimSpriteComponent.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Component.h" />
