@@ -54,6 +54,7 @@ namespace Const {
 
 			Weapon,
 			Food,
+			Herbs,
 
 			HFront1,
 			HFront2,

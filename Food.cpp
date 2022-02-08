@@ -8,12 +8,16 @@
 Food::Food(Game* game, XMFLOAT3 pos, Const::TexId::Type texId) :Item(game, pos, texId) {
 	mName = u8"‚Ï‚ñ";
 	mType = Item::Type::Once;
+	mDetails = u8"‚Ü‚ñ‚Õ‚­‚Ç‚ª‚©‚¢‚Ó‚­‚·‚é";
 }
 
 Food::Food(Game* game) : Item(game) {
 	mName = u8"‚Ï‚ñ";
 	mType = Item::Type::Once;
+	mDetails = u8"‚Ü‚ñ‚Õ‚­‚Ç‚ª‚©‚¢‚Ó‚­‚·‚é";
 }
+
+
 
 Food::~Food() {}
 

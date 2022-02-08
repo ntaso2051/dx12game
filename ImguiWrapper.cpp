@@ -59,8 +59,18 @@ void ImguiWrapper::Draw() {
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	// KeyState debug imgui
+
 	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
+		Begin(u8"そうさせつめい");
+		Text(u8"WASDで四方向にすすむことができる");
+		Text(u8"左SHIFTを押しながらWASDを押すと八方向に向きが変えられる");
+		Text(u8"左SHIFTをはなすと向いている方向にすすむ");
+		Text(u8"Zでこうげきできる");
+		Text(u8"アイテムリストウィンドウからアイテムを使うことができる");
+		End();
+	}
+	// KeyState debug imgui
+	if (false) {
 		bool pushW = mInput->GetKey(Input::KEY_INFO::W_KEY);
 		bool enterW = mInput->GetKeyEnter(Input::KEY_INFO::W_KEY);
 		bool exitW = mInput->GetKeyExit(Input::KEY_INFO::W_KEY);
@@ -152,6 +162,7 @@ void ImguiWrapper::Draw() {
 		if (mItemCmd && !mGame->GetIsDead()) {
 			std::string label = mSelectedItem->GetName();
 			Begin(label.c_str());
+			Text(mSelectedItem->GetDetails().c_str());
 			if (Button(u8"使う")) {
 				mSelectedItem->Adapt();
 				mSelectedItem = nullptr;
@@ -178,7 +189,7 @@ void ImguiWrapper::Draw() {
 	}
 	// Render minimap
 	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
-		Begin("MiniMap");
+		Begin(u8"ミニマップ");
 		auto data = mGame->GetDgGen()->getFloor()->data;
 		for (int i = data.size() - 1; i >= 0; i--) {
 			std::string colStr = "";

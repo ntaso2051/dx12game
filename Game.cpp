@@ -21,6 +21,7 @@
 #include "UI.h"
 #include "UIRenderComponent.h"
 #include "SaveData.h"
+#include "Herbs.h"
 
 using std::chrono::system_clock;
 using std::chrono::duration_cast;
@@ -88,6 +89,7 @@ void Game::Init() {
 	LoadImgFile(L"Resources/Images/stairs.png");
 	LoadImgFile(L"Resources/Images/weapon.png");
 	LoadImgFile(L"Resources/Images/food.png");
+	LoadImgFile(L"Resources/Images/herbs.png");
 	LoadImgFile(L"Resources/Images/herofront1.png");
 	LoadImgFile(L"Resources/Images/herofront2.png");
 	LoadImgFile(L"Resources/Images/herofront3.png");
@@ -162,6 +164,10 @@ void Game::Init() {
 				Food* food = new Food(this);
 				mHero->PushItem(food);
 			}
+			if (item.classname == "Herbs") {
+				Herbs* herbs = new Herbs(this);
+				mHero->PushItem(herbs);
+			}
 		}
 	}
 
@@ -183,6 +189,12 @@ void Game::Init() {
 		initPos = mDgGen->getRandomPosInRoomItem();
 		Food* food = new Food(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Food);
 		mFallenItems.push_back(static_cast<Item*>(food));
+	}
+
+	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
+		initPos = mDgGen->getRandomPosInRoomItem();
+		Herbs* herbs = new Herbs(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Herbs);
+		mFallenItems.push_back(static_cast<Item*>(herbs));
 	}
 
 
@@ -238,6 +250,12 @@ void Game::InitDungeon() {
 		Food* food = new Food(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Food);
 		mFallenItems.push_back(static_cast<Item*>(food));
 	}
+	for (int i = 0; i < Const::INIT_ITEM_NUM; i++) {
+		initPos = mDgGen->getRandomPosInRoomItem();
+		Herbs* herbs = new Herbs(this, XMFLOAT3(initPos.x, initPos.y, 1.0f), Const::TexId::Herbs);
+		mFallenItems.push_back(static_cast<Item*>(herbs));
+	}
+
 	SortEntitiesByUpdateOrder();
 
 	mIsUpdateGame = true;
