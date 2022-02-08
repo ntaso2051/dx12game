@@ -111,6 +111,13 @@ void Hero::SetPosition(XMINT2 pos) {
 
 void Hero::UpdateEntity(float deltaTime) {
 	if (!mGame->GetIsStarted() || mGame->GetIsDisplayUI()) return;
+
+	mLimitTime -= deltaTime;
+	if (mLimitTime < 0.0f) {
+		mPC->SetHp(-1);
+		mPC->Damaged(mPC);
+		mLimitTime = 500000.0f;
+	}
 	// ˆÚ“®Œ³‚ğFloor‚É•ÏX
 	mGame->GetDgGen()->SetCellType(mPosition.x, mPosition.y, Const::Cell::Floor);
 	// “ü—Íˆ—

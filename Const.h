@@ -30,6 +30,8 @@ namespace Const {
 	const int BLOB_INIT_LEVEL = 1;
 	const int BLOB_INIT_ATTACK = 1;
 
+	const float LIMIT_TIME_MAX = 60.0f;
+
 	const float CHARACTER_MOVE_TIME = 0.5f;
 
 

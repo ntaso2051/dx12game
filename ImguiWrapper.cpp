@@ -67,6 +67,7 @@ void ImguiWrapper::Draw() {
 		Text(u8"左SHIFTをはなすと向いている方向にすすむ");
 		Text(u8"Zでこうげきできる");
 		Text(u8"アイテムリストウィンドウからアイテムを使うことができる");
+		Text(u8"60秒以内に下りないとしんでしまう");
 		End();
 	}
 	// KeyState debug imgui
@@ -119,11 +120,13 @@ void ImguiWrapper::Draw() {
 	}
 	// Hero info debug imgui
 	if (!mGame->GetIsDisplayUI() && !mGame->GetIsDead()) {
+		float limitTime = mGame->GetHero()->GetLimitTime();
 		XMFLOAT3 heroPos = mGame->GetHero()->GetPosition();
 		XMINT2 heroDir = mGame->GetHero()->GetDir();
 		ParameterComponent* pc = static_cast<ParameterComponent*>(mGame->GetHero()->GetComponent("ParameterComponent"));
 		Begin(u8"プレイヤーステータス");
 		Text("Position(%f, %f)", heroPos.x, heroPos.y);
+		Text("Limit %f", limitTime);
 		Text("HP: %d / %d", pc->GetHp(), pc->GetMaxHp());
 		Text("EXP: %d", pc->GetExp());
 		Text("LEVEL: %d", pc->GetLevel());
